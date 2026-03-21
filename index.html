@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Harry Bour - Fotografia</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Lora:ital,wght@0,400;0,600&family=Inter:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      :root {
+        --bg-color: #f5f5f5;
+        --text-main: #080300;
+        --text-muted: #555;
+        --btn-bg: #fefefa;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --whatsapp-green: #25d366;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        user-select: none;
+      }
+
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        font-family: "Inter", sans-serif;
+        display: flex;
+        justify-content: center;
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+      }
+
+      .app-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+
+      @media (min-width: 768px) {
+        .app-container {
+          max-width: 75%;
+          border-left: 1px solid #ddd;
+          border-right: 1px solid #ddd;
+          background-color: #fafcff;
+        }
+      }
+
+      /* =========================================
+         HERO HEADER
+         ========================================= */
+      #hero-header {
+        display: none;
+        font-family: "Lora", serif;
+        text-align: center;
+        padding: 20px 15px 10px;
+        cursor: pointer;
+        border-bottom: 1px solid #eaeaea;
+        background-color: transparent;
+        flex-shrink: 0; /* Garante que o header não encolha */
+      }
+      #hero-header h1 {
+        font-size: 1.8rem;
+        font-weight: 400;
+        line-height: 1.2;
+        color: var(--text-main);
+      }
+      #hero-header h1 span {
+        display: block;
+        font-size: 1.2rem;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+
+      /* =========================================
+         TELA 1: SPLASH SCREEN
+         ========================================= */
+      #view-splash {
+        position: absolute;
+        inset: 0;
+        background-color: #fffaf1;
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+
+      .flash-overlay {
+        position: absolute;
+        inset: 0;
+        background-color: white;
+        z-index: 101;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .do-flash {
+        animation: photoFlash 1.5s ease-out forwards;
+      }
+      @keyframes photoFlash {
+        0% {
+          opacity: 1;
+        }
+        10% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+
+      .splash-title {
+        font-family: "Lora", serif;
+        font-size: 2.5rem;
+        font-weight: 400;
+        line-height: 1.2;
+        z-index: 102;
+      }
+      .splash-title span {
+        display: block;
+        font-size: 1.5rem;
+        color: var(--text-muted);
+      }
+
+      #btn-start {
+        margin-top: 250px;
+        opacity: 0;
+        transition: opacity 1s ease-in;
+        z-index: 102;
+        padding: 12px 30px;
+        font-family: "Inter", sans-serif;
+        background: var(--text-main);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+      #btn-start.visible {
+        opacity: 1;
+      }
+
+      /* =========================================
+         TELA 2: PASTAS (LISTA E BUSCA AJUSTADAS)
+         ========================================= */
+      #view-folders {
+        display: none;
+        flex-direction: column;
+        flex-grow: 1;
+        padding: 15px 15px 0 15px;
+        overflow: hidden;
+      }
+
+      .search-wrapper {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        padding-bottom: 15px;
+        flex-shrink: 0;
+      }
+
+      .search-container {
+        position: relative;
+        width: 70%;
+      }
+      #search-input {
+        width: 100%;
+        padding: 12px 15px 12px 40px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-family: "Inter", sans-serif;
+        font-size: 1rem;
+        outline: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+      }
+      #search-input:focus {
+        border-color: var(--text-main);
+      }
+      .search-icon {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+      }
+
+      .folders-scroll-area {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding-bottom: 20px;
+      }
+
+      .folders-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .folder-card {
+        background: var(--btn-bg);
+        border-radius: 12px;
+        padding: 15px 20px;
+        box-shadow: var(--shadow);
+        cursor: pointer;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 15px;
+        transition: transform 0.1s;
+      }
+      .folder-card:active {
+        transform: scale(0.98);
+      }
+      .folder-card i {
+        font-size: 1.8rem;
+        color: #444;
+      }
+      .folder-card span {
+        font-size: 1rem;
+        font-weight: 500;
+        font-family: "Inter", sans-serif;
+        text-align: left;
+      }
+
+      /* =========================================
+         TELA 3: MODAL DE SENHA
+         ========================================= */
+      #auth-modal {
+        display: none;
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(4px);
+        z-index: 200;
+        justify-content: center;
+        align-items: center;
+      }
+      .modal-content {
+        background: white;
+        padding: 30px 20px;
+        border-radius: 16px;
+        width: 85%;
+        max-width: 320px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      }
+      .modal-content h3 {
+        font-family: "Lora", serif;
+        margin-bottom: 5px;
+        font-weight: 600;
+      }
+      .modal-content p {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-bottom: 20px;
+      }
+
+      .input-group {
+        margin-bottom: 15px;
+      }
+      .input-group input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-family: "Inter", sans-serif;
+        font-size: 1rem;
+        outline: none;
+      }
+      .input-group input:focus {
+        border-color: var(--text-main);
+      }
+
+      .modal-error {
+        color: #d93025;
+        font-size: 0.8rem;
+        margin-bottom: 15px;
+        min-height: 16px;
+      }
+
+      .modal-actions {
+        display: flex;
+        gap: 10px;
+      }
+      .btn-modal {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-family: "Inter", sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+      }
+      .btn-cancel {
+        background: #f1f3f4;
+        color: #333;
+      }
+      .btn-submit {
+        background: var(--text-main);
+        color: white;
+      }
+
+      /* =========================================
+         TELA 4: GALERIA E CARROSSEL
+         ========================================= */
+      #view-content {
+        display: none;
+        flex-direction: column;
+        flex: 1 1 0; /* Ocupa o espaço restante perfeitamente */
+        padding: 0 15px;
+        overflow: hidden;
+      }
+
+      .event-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 10px 0 5px 0;
+        flex-shrink: 0; /* Impede o header de encolher */
+      }
+      .event-info {
+        display: flex;
+        flex-direction: column;
+      }
+      .event-name {
+        font-family: "Montserrat", sans-serif;
+        font-size: 1.3rem;
+        line-height: 1;
+        font-weight: 700;
+      }
+
+      .drive-link {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: var(--text-main);
+        font-family: "Inter", sans-serif;
+        font-size: 0.75rem;
+        text-align: center;
+        gap: 5px;
+      }
+      .drive-link i {
+        font-size: 1.8rem;
+      }
+
+      .carousel-area {
+        position: relative;
+        flex: 1 1 0;
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        margin-bottom: 15px;
+      }
+
+      .loader {
+        position: absolute;
+        font-family: "Inter", sans-serif;
+        color: var(--text-muted);
+        font-size: 1rem;
+        z-index: 20;
+      }
+
+      .carousel-track {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+
+      .slide {
+        position: absolute;
+        transition: all 0.4s ease;
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        object-fit: cover;
+        background-color: #eee;
+      }
+
+      .slide.active {
+        width: auto;
+        height: auto;
+        max-width: 90%;
+        max-height: 95%;
+        object-fit: contain;
+        z-index: 2;
+        opacity: 1;
+        transform: translateX(0) scale(1);
+      }
+
+      .slide.prev,
+      .slide.next {
+        width: 65%;
+        height: 70%;
+        z-index: 1;
+        opacity: 0.4;
+      }
+      .slide.prev {
+        transform: translateX(-65%) scale(0.8);
+      }
+      .slide.next {
+        transform: translateX(65%) scale(0.8);
+      }
+
+      .click-area-left,
+      .click-area-right {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 15%;
+        z-index: 10;
+        cursor: pointer;
+      }
+      .click-area-left {
+        left: 0;
+      }
+      .click-area-right {
+        right: 0;
+      }
+
+      .gallery-area {
+        display: none;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        flex: 1 1 0;
+        overflow-y: auto;
+        margin-bottom: 20px;
+      }
+      .gallery-area.active {
+        display: grid;
+      }
+      .gallery-item {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      .controls {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 10px; /* Reduzido levemente para dar espaço ao footer */
+        flex-shrink: 0; /* Impede o botão de sumir */
+      }
+
+      .btn-control {
+        background-color: var(--btn-bg);
+        border: none;
+        border-radius: 12px;
+        padding: 10px 20px;
+        box-shadow: var(--shadow);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        font-family: "Lora", serif;
+        font-size: 0.9rem;
+        color: var(--text-main);
+        cursor: pointer;
+        width: 100px;
+        transition: transform 0.1s;
+      }
+      .btn-control:active {
+        transform: scale(0.95);
+      }
+      .btn-control i {
+        font-size: 1.2rem;
+      }
+
+      /* =========================================
+         FOOTER
+         ========================================= */
+      footer {
+        padding: 15px 0;
+        border-top: 1px solid #eaeaea;
+        text-align: center;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        padding-bottom: max(10px, env(safe-area-inset-bottom));
+        flex-shrink: 0; /* O SEGREDO AQUI: Impede o footer de ser esmagado/sumir */
+        background-color: var(
+          --bg-color
+        ); /* Garante visibilidade sobre qualquer fundo */
+      }
+
+      .credit-line {
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+      .whatsapp-link {
+        color: var(--whatsapp-green);
+        font-size: 1.1rem;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <div id="hero-header" onclick="resetToHome()">
+        <h1>Harry Bour<span>Fotografia</span></h1>
+      </div>
+
+      <div id="view-splash">
+        <div class="flash-overlay do-flash"></div>
+        <h1 class="splash-title">Harry Bour<span>Fotografia</span></h1>
+        <button id="btn-start" onclick="openFoldersView()">Ver Fotos</button>
+      </div>
+
+      <div id="view-folders">
+        <div class="search-wrapper">
+          <div class="search-container">
+            <input
+              type="text"
+              id="search-input"
+              placeholder="Buscar ensaio..."
+              oninput="filterFolders()"
+              autocomplete="off"
+            />
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          </div>
+        </div>
+
+        <div class="folders-scroll-area">
+          <div
+            id="folders-loader"
+            class="loader"
+            style="position: relative; margin-top: 20px; text-align: center"
+          >
+            Procurando pastas...
+          </div>
+          <div class="folders-grid" id="folders-grid"></div>
+        </div>
+      </div>
+
+      <div id="auth-modal">
+        <div class="modal-content">
+          <h3 id="modal-folder-name">Nome da Pasta</h3>
+          <p>Por favor, identifique-se para acessar.</p>
+          <div class="modal-error" id="modal-error"></div>
+          <div class="input-group">
+            <input
+              type="text"
+              id="auth-user"
+              placeholder="Usuário"
+              autocomplete="off"
+            />
+          </div>
+          <div class="input-group">
+            <input type="password" id="auth-pass" placeholder="Senha" />
+          </div>
+          <div class="modal-actions">
+            <button class="btn-modal btn-cancel" onclick="closeModal()">
+              Cancelar
+            </button>
+            <button
+              class="btn-modal btn-submit"
+              id="btn-submit-auth"
+              onclick="submitAuth()"
+            >
+              Acessar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="view-content">
+        <header class="event-header">
+          <div class="event-info">
+            <h2 class="event-name" id="gallery-title">Carregando...</h2>
+          </div>
+          <a
+            href="#"
+            id="drive-link-btn"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="drive-link"
+          >
+            <i class="fa-regular fa-folder-open"></i>
+            <span>Ver no<br />Google Drive</span>
+          </a>
+        </header>
+
+        <main id="view-carousel" class="carousel-area">
+          <div id="loader" class="loader">Carregando galeria...</div>
+          <div class="click-area-left" onclick="moveCarousel(-1)"></div>
+          <div class="carousel-track" id="track"></div>
+          <div class="click-area-right" onclick="moveCarousel(1)"></div>
+        </main>
+
+        <main id="view-gallery" class="gallery-area"></main>
+
+        <div class="controls">
+          <button
+            class="btn-control"
+            id="btn-toggle-view"
+            onclick="toggleView()"
+            style="display: none"
+          >
+            <i class="fa-solid fa-border-all"></i>
+            <span id="text-toggle-view">Galeria</span>
+          </button>
+        </div>
+      </div>
+
+      <footer>
+        
+        <div class="credit-line">
+          Fotógrafo: Harry Bour
+          <a
+            href="https://wa.me/5511987741066"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="whatsapp-link"
+            ><i class="fa-brands fa-whatsapp"></i
+          ></a>
+        </div>
+      </footer>
+    </div>
+
+    <script
+      async
+      defer
+      src="https://apis.google.com/js/api.js"
+      onload="gapiLoaded()"
+    ></script>
+
+    <script>
+      // ==========================================
+      // CONFIGURAÇÕES
+      // ==========================================
+      const API_KEY = "AIzaSyBSqkKDWvXjswvsOzEeSWuXFq85G3xBELc";
+      const APPS_SCRIPT_URL =
+        "https://script.google.com/macros/s/AKfycbzWyhXX-h4ybRMo2u6Q2YpYkbPaVEJSt1Lcxv72w3Y1pDlw3f8-Dcduj_08TZ24u0dtYw/exec";
+
+      let imagesData = [];
+      let currentIndex = 0;
+      let isGalleryView = false;
+      let targetFolderId = "";
+
+      let allFolders = [];
+
+      // ==========================================
+      // ANIMAÇÃO SPLASH SCREEN
+      // ==========================================
+      setTimeout(() => {
+        document.getElementById("btn-start").classList.add("visible");
+      }, 1000);
+
+      function resetToHome() {
+        document.getElementById("view-content").style.display = "none";
+        document.getElementById("view-folders").style.display = "none";
+        document.getElementById("hero-header").style.display = "none";
+        document.getElementById("view-splash").style.display = "flex";
+        document.getElementById("search-input").value = "";
+      }
+
+      // ==========================================
+      // NAVEGAÇÃO E LISTAGEM DE PASTAS
+      // ==========================================
+      function openFoldersView() {
+        document.getElementById("view-splash").style.display = "none";
+        document.getElementById("hero-header").style.display = "block";
+        document.getElementById("view-folders").style.display = "flex";
+
+        if (allFolders.length === 0) {
+          fetchFolders();
+        } else {
+          renderFolders(allFolders);
+        }
+      }
+
+      async function fetchFolders() {
+        const loader = document.getElementById("folders-loader");
+        document.getElementById("folders-grid").innerHTML = "";
+        loader.style.display = "block";
+
+        try {
+          let response = await fetch(APPS_SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({ action: "getFolders" }),
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+          });
+
+          let result = await response.json();
+          loader.style.display = "none";
+
+          if (result.success && result.folders.length > 0) {
+            allFolders = result.folders.sort((a, b) =>
+              b.name.localeCompare(a.name)
+            );
+            renderFolders(allFolders);
+          } else {
+            loader.innerText = "Nenhuma pasta encontrada.";
+            loader.style.display = "block";
+          }
+        } catch (err) {
+          loader.innerText = "Erro ao buscar pastas.";
+          loader.style.display = "block";
+        }
+      }
+
+      function renderFolders(foldersToRender) {
+        const grid = document.getElementById("folders-grid");
+        grid.innerHTML = "";
+
+        if (foldersToRender.length === 0) {
+          grid.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-family: 'Inter', sans-serif;">Nenhum ensaio encontrado.</div>`;
+          return;
+        }
+
+        foldersToRender.forEach((folder) => {
+          const card = document.createElement("div");
+          card.className = "folder-card";
+          card.innerHTML = `<i class="fa-solid fa-camera-retro"></i><span>${folder.name}</span>`;
+          card.onclick = () => openModal(folder.id, folder.name);
+          grid.appendChild(card);
+        });
+      }
+
+      function filterFolders() {
+        const searchTerm = document
+          .getElementById("search-input")
+          .value.toLowerCase();
+        const filtered = allFolders.filter((f) =>
+          f.name.toLowerCase().includes(searchTerm)
+        );
+        renderFolders(filtered);
+      }
+
+      // ==========================================
+      // AUTENTICAÇÃO (MODAL)
+      // ==========================================
+      function openModal(id, name) {
+        targetFolderId = id;
+        document.getElementById("modal-folder-name").innerText = name;
+        document.getElementById("gallery-title").innerText = name;
+        document.getElementById("auth-user").value = "";
+        document.getElementById("auth-pass").value = "";
+        document.getElementById("modal-error").innerText = "";
+        document.getElementById("auth-modal").style.display = "flex";
+      }
+
+      function closeModal() {
+        document.getElementById("auth-modal").style.display = "none";
+      }
+
+      async function submitAuth() {
+        const user = document.getElementById("auth-user").value;
+        const pass = document.getElementById("auth-pass").value;
+        const errorDiv = document.getElementById("modal-error");
+        const btn = document.getElementById("btn-submit-auth");
+
+        if (!user || !pass) {
+          errorDiv.innerText = "Preencha usuário e senha.";
+          return;
+        }
+
+        btn.innerText = "Verificando...";
+        btn.disabled = true;
+
+        try {
+          let response = await fetch(APPS_SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({
+              action: "auth",
+              user: user,
+              pass: pass,
+              folderId: targetFolderId,
+            }),
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+          });
+
+          let result = await response.json();
+
+          if (result.success) {
+            closeModal();
+            document.getElementById("view-folders").style.display = "none";
+            document.getElementById("view-content").style.display = "flex";
+            listPhotos();
+          } else {
+            errorDiv.innerText = result.error || "Acesso negado.";
+          }
+        } catch (err) {
+          errorDiv.innerText = "Erro de conexão.";
+        }
+        btn.innerText = "Acessar";
+        btn.disabled = false;
+      }
+
+      // ==========================================
+      // GAPI E LÓGICA DE FOTOS / DRIVE / CARROSSEL
+      // ==========================================
+      function gapiLoaded() {
+        gapi.load("client", () => {
+          gapi.client
+            .init({
+              apiKey: API_KEY,
+              discoveryDocs: [
+                "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
+              ],
+            })
+            .then(() => {
+              console.log("GAPI inicializado e aguardando senha...");
+            });
+        });
+      }
+
+      async function listPhotos() {
+        document.getElementById("loader").style.display = "block";
+        document.getElementById("btn-toggle-view").style.display = "none";
+        document.getElementById("track").innerHTML = "";
+
+        try {
+          // 1. Busca a subpasta "DIGITAL" dentro da pasta do ensaio
+          let folderResponse = await gapi.client.drive.files.list({
+            q: `'${targetFolderId}' in parents and mimeType = 'application/vnd.google-apps.folder' and name = 'DIGITAL' and trashed = false`,
+            fields: "files(id, name)",
+          });
+
+          let folders = folderResponse.result.files;
+          let digitalFolderId = targetFolderId; // Fallback se não achar "DIGITAL"
+
+          if (folders && folders.length > 0) {
+            digitalFolderId = folders[0].id;
+          } else {
+            console.warn("Subpasta 'DIGITAL' não encontrada. Tentando raiz.");
+          }
+
+          // 2. Define o link do botão "Ver no Google Drive"
+          document.getElementById(
+            "drive-link-btn"
+          ).href = `https://drive.google.com/drive/folders/${targetFolderId}`;
+
+          // 3. Puxa as fotos usando a ID da subpasta DIGITAL
+          let response = await gapi.client.drive.files.list({
+            q: `'${digitalFolderId}' in parents and mimeType contains 'image/' and trashed = false`,
+            fields: "files(id, name, thumbnailLink)",
+            pageSize: 100,
+          });
+
+          let files = response.result.files;
+
+          if (files && files.length > 0) {
+            imagesData = files.map((file) =>
+              file.thumbnailLink.replace(/\=s\d+$/, "=s1000")
+            );
+
+            document.getElementById("loader").style.display = "none";
+            document.getElementById("btn-toggle-view").style.display = "flex";
+
+            currentIndex = 0;
+            isGalleryView = false;
+            initApp();
+          } else {
+            document.getElementById("loader").innerText =
+              "Nenhuma foto encontrada nesta pasta.";
+          }
+        } catch (err) {
+          console.error(err);
+          document.getElementById("loader").innerText =
+            "Erro ao carregar imagens.";
+        }
+      }
+
+      function initApp() {
+        renderCarousel();
+        renderGallery();
+        setupSwipe();
+      }
+
+      function renderCarousel() {
+        const track = document.getElementById("track");
+        track.innerHTML = "";
+        if (imagesData.length === 0) return;
+
+        imagesData.forEach((src, index) => {
+          const img = document.createElement("img");
+          img.src = src;
+
+          if (index === currentIndex) img.className = "slide active";
+          else if (index === getPrevIndex()) img.className = "slide prev";
+          else if (index === getNextIndex()) img.className = "slide next";
+          else {
+            img.className = "slide";
+            img.style.display = "none";
+          }
+
+          track.appendChild(img);
+        });
+      }
+
+      function getPrevIndex() {
+        return currentIndex === 0 ? imagesData.length - 1 : currentIndex - 1;
+      }
+      function getNextIndex() {
+        return currentIndex === imagesData.length - 1 ? 0 : currentIndex + 1;
+      }
+
+      function moveCarousel(direction) {
+        if (imagesData.length === 0) return;
+        if (direction === 1) currentIndex = getNextIndex();
+        else currentIndex = getPrevIndex();
+        renderCarousel();
+      }
+
+      let touchstartX = 0;
+      let touchendX = 0;
+      function setupSwipe() {
+        const carouselArea = document.getElementById("view-carousel");
+        carouselArea.addEventListener(
+          "touchstart",
+          (e) => {
+            touchstartX = e.changedTouches[0].screenX;
+          },
+          { passive: true }
+        );
+        carouselArea.addEventListener(
+          "touchend",
+          (e) => {
+            touchendX = e.changedTouches[0].screenX;
+            const swipeThreshold = 40;
+            if (touchendX < touchstartX - swipeThreshold) moveCarousel(1);
+            if (touchendX > touchstartX + swipeThreshold) moveCarousel(-1);
+          },
+          { passive: true }
+        );
+      }
+
+      function toggleView() {
+        const viewCarousel = document.getElementById("view-carousel");
+        const viewGallery = document.getElementById("view-gallery");
+        const btnText = document.getElementById("text-toggle-view");
+        const btnIcon = document.querySelector("#btn-toggle-view i");
+
+        isGalleryView = !isGalleryView;
+
+        if (isGalleryView) {
+          viewCarousel.style.display = "none";
+          viewGallery.classList.add("active");
+          btnText.innerText = "Carrossel";
+          btnIcon.className = "fa-solid fa-images";
+        } else {
+          viewGallery.classList.remove("active");
+          viewCarousel.style.display = "flex";
+          btnText.innerText = "Galeria";
+          btnIcon.className = "fa-solid fa-border-all";
+        }
+      }
+
+      function renderGallery() {
+        const gallery = document.getElementById("view-gallery");
+        gallery.innerHTML = "";
+
+        imagesData.forEach((src, index) => {
+          const img = document.createElement("img");
+          img.src = src;
+          img.className = "gallery-item";
+          img.onclick = () => {
+            currentIndex = index;
+            toggleView();
+            renderCarousel();
+          };
+          gallery.appendChild(img);
+        });
+      }
+    </script>
+  </body>
+</html>
