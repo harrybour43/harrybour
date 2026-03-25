@@ -1,1 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /harrybour/lumen.html
+Disallow: /harrybour/espaco-do-cliente.html
 
+Sitemap: https://harrybour43.github.io/harrybour/sitemap.xml
