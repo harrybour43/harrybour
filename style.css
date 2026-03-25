@@ -24,14 +24,14 @@
 
   /* Layout */
   --sidebar-width: 280px;
+  --header-height: 70px;
 }
 
 /* ------------------------------------------
    2. ACESSIBILIDADE (WCAG)
 ------------------------------------------ */
-/* Modo Claro Acessível (Offwhite Crema) */
 body.a11y-light-mode {
-  --bg-base: #fdfbf7; /* Offwhite crema */
+  --bg-base: #fdfbf7;
   --bg-surface: #f5f3ef;
   --bg-overlay: rgba(253, 251, 247, 0.95);
   --text-main: #2a2a2a;
@@ -42,16 +42,13 @@ body.a11y-light-mode {
   --btn-text: #2a2a2a;
 }
 
-/* Opções de Aumento de Fonte */
 body.a11y-text-lg {
   font-size: 115%;
 }
-
 body.a11y-text-xl {
   font-size: 130%;
 }
 
-/* Alto Contraste (Preto e Branco puros) */
 body.a11y-high-contrast {
   --bg-base: #000000;
   --bg-surface: #000000;
@@ -60,17 +57,14 @@ body.a11y-high-contrast {
   --border-color: #ffffff;
 }
 
-/* Daltonismo (Filtro de Escala de Cinza e Contraste nas Imagens) */
 body.a11y-colorblind img {
   filter: grayscale(100%) contrast(120%);
 }
 
-/* Aumento de Fonte Geral */
 body.a11y-large-text {
   font-size: 115%;
 }
 
-/* Foco visível para navegação por teclado */
 *:focus-visible {
   outline: var(--focus-outline);
   outline-offset: 4px;
@@ -101,8 +95,9 @@ body {
 }
 
 /* ------------------------------------------
-   4. HEADER MOBILE E BARRA LATERAL (SIDEBAR)
+   4. HEADERS E BARRA LATERAL (SIDEBAR)
 ------------------------------------------ */
+/* Header Exclusivo para telas Mobile (Usado na Index) */
 .mobile-header {
   display: flex;
   justify-content: space-between;
@@ -122,6 +117,31 @@ body {
   cursor: pointer;
 }
 
+/* Header Fixo Minimalista (Usado nas Páginas Internas) */
+.fixed-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--header-height);
+  background: var(--bg-base);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.3s;
+}
+
+.fixed-header a {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--text-main);
+  text-decoration: none;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
 .icon-btn {
   font-size: 1.5rem;
   color: var(--text-main);
@@ -130,6 +150,7 @@ body {
   cursor: pointer;
 }
 
+/* Sidebar (Usada apenas na Index) */
 .sidebar {
   background-color: var(--bg-base);
   border-right: 1px solid var(--border-color);
@@ -155,7 +176,6 @@ body {
   flex-direction: column;
   gap: 10px;
 }
-
 .nav-bottom-section {
   margin-top: auto;
   display: flex;
@@ -200,7 +220,6 @@ body {
   margin-top: 15px;
 }
 
-/* Animação do ícone de áudio tocando */
 .audio-playing-icon {
   color: #d4af37;
   animation: pulse 2s infinite;
@@ -227,13 +246,12 @@ body {
   position: relative;
 }
 
-/* View Section (Páginas) */
 .view-section {
   display: none;
   height: 100%;
   flex-direction: column;
   padding: 40px;
-  animation: fadeIn 0.4s ease forwards;
+  animation: fadeIn 0.15s ease-out forwards;
 }
 
 .view-section.active {
@@ -241,7 +259,7 @@ body {
 }
 
 #view-home {
-  padding: 0; /* Home não tem padding para o carrossel ocupar tudo */
+  padding: 0;
 }
 
 @keyframes fadeIn {
@@ -255,7 +273,6 @@ body {
   }
 }
 
-/* Cabeçalhos de Seção */
 .section-header {
   margin-bottom: 25px;
   border-bottom: 1px solid var(--border-color);
@@ -276,7 +293,7 @@ body {
 }
 
 /* ------------------------------------------
-   6. CARROSSEL DA HOME (Atualizado para 8 imagens)
+   6. CARROSSEL DA HOME
 ------------------------------------------ */
 #view-home {
   position: relative;
@@ -302,11 +319,13 @@ body {
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  /* Duração total: 6 imagens * 8s = 48s */
-  animation: kenburns-6-bw 48s infinite linear;
+  animation: kenburns-8-bw 48s infinite linear;
+
+  /* ADICIONE ESTAS DUAS LINHAS: */
+  will-change: transform, opacity;
+  transform: translateZ(0); /* Força o uso da placa de vídeo */
 }
 
-/* Fila de entrada exata para as 6 fotos */
 .hypnotic-img:nth-child(1) {
   animation-delay: 0s;
 }
@@ -326,23 +345,19 @@ body {
   animation-delay: 40s;
 }
 
-/* Nova matemática de fade para 48 segundos totais */
-@keyframes kenburns-6-bw {
+@keyframes kenburns-8-bw {
   0% {
     opacity: 0;
     transform: scale(1.03) translate(0, 0);
   }
   4% {
-    /* Fade-in (aprox. 1.9s) */
     opacity: 1;
   }
   16% {
-    /* Início do Fade-out (aprox. 7.6s) */
     opacity: 1;
     transform: scale(1.13) translate(-1%, -1%);
   }
   20% {
-    /* Fim do Fade-out completo (aprox. 9.6s) */
     opacity: 0;
     transform: scale(1.15);
   }
@@ -352,92 +367,76 @@ body {
 }
 
 /* ------------------------------------------
-   7. GALERIA DE FOTOS (GRID) E LIGHTBOX
+   7. GALERIA MASONRY E LIGHTBOX
 ------------------------------------------ */
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 15px;
+.gallery-page {
+  padding-top: var(--header-height);
 }
 
-.gallery-item {
+.gallery-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.masonry-grid {
+  column-count: 3;
+  column-gap: 20px;
+}
+
+.masonry-item {
   width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
+  margin-bottom: 20px;
+  display: block;
   border: 1px solid var(--border-color);
-  cursor: pointer;
-  transition: opacity 0.3s;
+  cursor: zoom-in;
+  transition: filter 0.3s;
 }
 
-.gallery-item:hover {
-  opacity: 0.8;
+.masonry-item:hover {
+  filter: brightness(0.7);
 }
 
-/* Lightbox (Visualizador 80%) */
-#lightbox {
+.lightbox-overlay {
   display: none;
   position: fixed;
   inset: 0;
-  background: var(--bg-overlay);
-  z-index: 3000;
+  background-color: rgba(0, 0, 0, 0.95);
+  z-index: 9999;
   justify-content: center;
   align-items: center;
-  backdrop-filter: blur(5px);
-}
-
-.lightbox-content {
-  position: relative;
-  max-width: 80%;
-  max-height: 80vh;
-  display: flex;
   flex-direction: column;
-  align-items: center;
+  cursor: zoom-out;
 }
 
-.lightbox-img {
-  max-width: 100%;
-  max-height: 80vh;
+.lightbox-overlay img {
+  max-width: 90vw;
+  max-height: 85vh;
   object-fit: contain;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.8);
   border: 1px solid var(--border-color);
 }
 
-.lightbox-caption {
-  color: var(--text-main);
-  margin-top: 15px;
-  font-size: 1rem;
-  text-align: center;
-  font-family: var(--font-ui);
-}
-
-.lightbox-btn {
+.lightbox-close {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: transparent;
-  border: none;
-  color: var(--text-main);
-  font-size: 2.5rem;
+  top: 25px;
+  right: 35px;
+  font-size: 45px;
+  color: #fff;
   cursor: pointer;
-  padding: 20px;
-  opacity: 0.7;
   transition: opacity 0.2s;
 }
 
-.lightbox-btn:hover {
-  opacity: 1;
+.lightbox-close:hover {
+  opacity: 0.7;
 }
-#lb-prev {
-  left: -80px;
-}
-#lb-next {
-  right: -80px;
-}
-#lb-close {
-  position: absolute;
-  top: -50px;
-  right: -50px;
-  font-size: 2rem;
+
+#lightbox-caption {
+  color: var(--text-main);
+  margin-top: 15px;
+  font-size: 1.1rem;
+  font-family: var(--font-ui);
+  font-style: italic;
 }
 
 /* ------------------------------------------
@@ -492,55 +491,40 @@ body {
 /* ------------------------------------------
    9. PÁGINAS SOBRE E CONTATO
 ------------------------------------------ */
-/* Layout da página Sobre para colocar texto ao lado da foto */
 .about-container {
   display: flex;
-  flex-direction: row; /* Alinha lado a lado no desktop */
+  flex-direction: row;
   align-items: flex-start;
   gap: 40px;
   max-width: 1000px;
+  margin: 0 auto;
 }
 
 .about-image {
   width: 100%;
-  max-width: 280px; /* Reduzido em 30% (era 400px) */
+  max-width: 280px;
   aspect-ratio: 3/4;
   object-fit: cover;
   border: 1px solid var(--border-color);
   background-color: var(--border-color);
-  flex-shrink: 0; /* Evita que a imagem seja esmagada pelo texto */
-  image-rendering: -webkit-optimize-contrast; /* Para navegadores baseados em Webkit */
-  image-rendering: high-quality; /* Sugestão padrão de alta qualidade */
-  object-fit: cover; /* Garante que preencha o espaço sem deformar */
+  flex-shrink: 0;
 }
 
 .about-text {
-  /* Define uma largura máxima ideal para leitura (cerca de 65-75 caracteres) */
-  max-width: 67ch;
-  margin: 0 auto; /* Centraliza o bloco, se necessário */
+  max-width: 70ch;
+  width: 100%;
 }
 
 .about-text p {
-  /* Espaçamento responsivo baseado no tamanho da fonte da raiz */
   margin-top: 0;
   margin-bottom: 1.5rem;
-
-  /* Alinhamento */
   text-align: justify;
-
-  /* Melhora a hifenização para evitar buracos no texto justificado */
   hyphens: auto;
-
-  /* Garante uma leitura confortável */
   line-height: 1.6;
 }
 
-/* Ajuste para telas muito pequenas onde o 'justify' pode ficar feio */
-@media (max-width: 480px) {
-  .about-text p {
-    text-align: left; /* Opcional: volta para a esquerda em telas muito estreitas */
-    hyphens: none;
-  }
+.about-text p:last-child {
+  margin-bottom: 0;
 }
 
 .contact-container {
@@ -548,6 +532,7 @@ body {
   flex-direction: column;
   gap: 40px;
   max-width: 800px;
+  margin: 0 auto;
 }
 
 .social-links {
@@ -555,7 +540,6 @@ body {
   gap: 20px;
   flex-wrap: wrap;
 }
-
 .social-links a {
   display: flex;
   align-items: center;
@@ -568,7 +552,6 @@ body {
   border-radius: 4px;
   transition: background 0.2s;
 }
-
 .social-links a:hover {
   background: var(--bg-surface);
 }
@@ -580,18 +563,15 @@ body {
   width: 100%;
   max-width: 500px;
 }
-
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-
 .form-group label {
   font-weight: 600;
   font-size: 0.95rem;
 }
-
 .form-group input,
 .form-group textarea {
   width: 100%;
@@ -602,7 +582,6 @@ body {
   font-family: var(--font-ui);
   font-size: 1rem;
 }
-
 .form-group textarea {
   resize: vertical;
   min-height: 120px;
@@ -620,13 +599,12 @@ body {
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-
 .btn-submit:hover {
   opacity: 0.9;
 }
 
 /* ------------------------------------------
-   10. MODAIS GERAIS (Avisos, Senhas e A11y)
+   10. MODAIS GERAIS E PAINÉIS FLUTUANTES
 ------------------------------------------ */
 .modal-overlay {
   display: none;
@@ -636,7 +614,6 @@ body {
   z-index: 2000;
   justify-content: center;
   align-items: center;
-  backdrop-filter: blur(5px);
 }
 
 .modal-content {
@@ -666,28 +643,16 @@ body {
   border: 1px solid var(--border-color);
   transition: opacity 0.2s;
 }
-
 .btn-primary {
   background: var(--text-main);
   color: var(--bg-base);
   font-weight: 600;
 }
-
 .btn-secondary {
   background: var(--bg-base);
   color: var(--text-main);
 }
 
-.form-input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
-  background: var(--bg-base);
-  color: var(--text-main);
-  border: 1px solid var(--border-color);
-}
-
-/* Painel de Acessibilidade Flutuante */
 #a11y-panel {
   display: none;
   position: fixed;
@@ -701,18 +666,38 @@ body {
 }
 
 /* ==========================================
-   11. MEDIA QUERIES (Ajustes Mobile)
+   11. MEDIA QUERIES E LÓGICA DE LAYOUT
 ========================================== */
 
-/* Telas Grandes (Desktop) */
+/* Lógica: Páginas SEM Sidebar (Sobre, Contato, Galerias) */
+.app-wrapper.no-sidebar {
+  display: block; /* Remove o flex row */
+}
+
+.app-wrapper.no-sidebar .main-content {
+  margin-left: 0;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: var(--header-height); /* Espaço para o header fixo */
+}
+
+.app-wrapper.no-sidebar .mobile-header,
+.app-wrapper.no-sidebar .sidebar {
+  display: none !important; /* Esconde elementos de navegação antigos nestas páginas */
+}
+
+/* Telas Grandes (Desktop) - Comportamento padrão para Index */
 @media (min-width: 768px) {
   .mobile-header {
     display: none;
   }
-  .app-wrapper {
+
+  .app-wrapper:not(.no-sidebar) {
     flex-direction: row;
   }
-  .sidebar {
+
+  .app-wrapper:not(.no-sidebar) .sidebar {
     width: var(--sidebar-width);
     position: fixed;
     top: 0;
@@ -721,7 +706,8 @@ body {
     z-index: 100;
     justify-content: space-between;
   }
-  .main-content {
+
+  .app-wrapper:not(.no-sidebar) .main-content {
     margin-left: var(--sidebar-width);
   }
 }
@@ -732,29 +718,17 @@ body {
     flex-direction: column;
     align-items: center;
   }
-  /* 1. Ajuste de Espaçamento da Página */
   .view-section {
-    padding: 25px 20px; /* Reduzido de 40px para não esmagar o conteúdo */
+    padding: 25px 20px;
   }
 
-  /* 2. Escala de Fontes (O ponto principal) */
-  .section-header h2 {
-    font-size: 1.6rem; /* Título menor e mais direto */
-    line-height: 1.2;
+  .about-text p {
+    text-align: left; /* Desliga o Justify em telas muito estreitas para evitar rios brancos */
+    hyphens: none;
   }
 
-  .category-description {
-    font-size: 0.95rem; /* Descrição mais legível para leitura em mãos */
-    margin-top: 8px;
-  }
-
-  .section-header {
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-  }
-
-  /* 3. Sidebar Mobile (Gaveta) */
-  .sidebar {
+  /* Comportamento da Index no Mobile */
+  .app-wrapper:not(.no-sidebar) .sidebar {
     position: fixed;
     top: 61px;
     left: 0;
@@ -767,88 +741,26 @@ body {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    padding: 30px 20px; /* Padding interno da sidebar mobile */
+    padding: 30px 20px;
   }
-
-  .sidebar.open { transform: translateX(0); }
-  .nav-link { padding: 12px 0; font-size: 1.1rem; }
-  .nav-group-title { margin-top: 20px; }
-  .main-content { margin-left: 0; width: 100%; min-height: calc(100vh - 61px); }
+  .app-wrapper:not(.no-sidebar) .sidebar.open {
+    transform: translateX(0);
+  }
+  .app-wrapper:not(.no-sidebar) .main-content {
+    margin-left: 0;
+    width: 100%;
+    min-height: calc(100vh - 61px);
+  }
 }
 
-/* ==========================================
-   12. LAYOUT DE GALERIA (MASONRY & MINIMALISTA)
-   (Garante que funcione em Desktop e Mobile)
-========================================== */
-
-/* Header Fixo Minimalista */
-.minimal-header {
-  position: fixed;
-  top: 0; left: 0; width: 100%;
-  padding: 20px;
-  background-color: var(--bg-base);
-  border-bottom: 1px solid var(--border-color);
-  z-index: 1000;
-  text-align: center;
-  transition: background-color 0.3s;
+/* Responsividade Exclusiva do Grid Masonry */
+@media (max-width: 1024px) {
+  .masonry-grid {
+    column-count: 2;
+  }
 }
-
-.minimal-header a {
-  font-family: var(--font-display);
-  font-size: 1.8rem;
-  color: var(--text-main);
-  text-decoration: none;
-  letter-spacing: 1px;
-}
-
-/* Container da Galeria */
-.gallery-page { padding-top: 90px; }
-.gallery-container { max-width: 1400px; margin: 0 auto; padding: 20px; }
-
-/* Grid Masonry (Alvenaria para fotos irregulares) */
-.masonry-grid { column-count: 3; column-gap: 20px; }
-
-.masonry-item {
-  width: 100%; margin-bottom: 20px; display: block;
-  border: 1px solid var(--border-color);
-  cursor: zoom-in; transition: filter 0.3s;
-}
-
-.masonry-item:hover { filter: brightness(0.7); }
-
-/* Responsividade do Grid (Estas media queries são exclusivas do grid) */
-@media (max-width: 1024px) { .masonry-grid { column-count: 2; } }
-@media (max-width: 600px) { .masonry-grid { column-count: 1; } }
-
-/* Visualizador Tela Cheia (Lightbox) */
-.lightbox-overlay {
-  display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background-color: rgba(0, 0, 0, 0.95); z-index: 9999;
-  justify-content: center; align-items: center; flex-direction: column;
-  cursor: zoom-out; backdrop-filter: blur(5px);
-}
-
-.lightbox-overlay img {
-  max-width: 90vw; max-height: 85vh; object-fit: contain;
-  box-shadow: 0 5px 30px rgba(0,0,0,0.8); border: 1px solid var(--border-color);
-}
-
-.lightbox-close {
-  position: absolute; top: 25px; right: 35px;
-  font-size: 45px; color: #fff; cursor: pointer; transition: opacity 0.2s;
-}
-
-.lightbox-close:hover { opacity: 0.7; }
-
-/* Legenda do Lightbox */
-#lightbox-caption {
-  color: #f0f0f0; 
-  margin-top: 20px;
-  max-width: 80%;
-  text-align: center;
-  font-family: var(--font-ui);
-  font-size: 1rem;
-  line-height: 1.4;
-  font-style: italic;
-  animation: fadeIn 0.5s ease;
+@media (max-width: 600px) {
+  .masonry-grid {
+    column-count: 1;
+  }
 }
