@@ -302,11 +302,11 @@ body {
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  /* Duração total: 8 imagens * 8s = 48s */
-  animation: kenburns-8-bw 48s infinite linear;
+  /* Duração total: 6 imagens * 8s = 48s */
+  animation: kenburns-6-bw 48s infinite linear;
 }
 
-/* Fila de entrada exata para as 8 fotos */
+/* Fila de entrada exata para as 6 fotos */
 .hypnotic-img:nth-child(1) {
   animation-delay: 0s;
 }
