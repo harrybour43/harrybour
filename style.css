@@ -747,25 +747,85 @@ body {
     padding: 30px 20px; /* Padding interno da sidebar mobile */
   }
 
-  .sidebar.open {
-    transform: translateX(0);
-  }
+  .sidebar.open { transform: translateX(0); }
+  .nav-link { padding: 12px 0; font-size: 1.1rem; }
+  .nav-group-title { margin-top: 20px; }
+  .main-content { margin-left: 0; width: 100%; min-height: calc(100vh - 61px); }
+}
 
-  /* 4. Ajuste dos Links para toque */
-  .nav-link {
-    padding: 12px 0;
-    font-size: 1.1rem;
-  }
+/* ==========================================
+   12. LAYOUT DE GALERIA (MASONRY & MINIMALISTA)
+   (Garante que funcione em Desktop e Mobile)
+========================================== */
 
-  .nav-group-title {
-    margin-top: 20px;
-  }
+/* Header Fixo Minimalista */
+.minimal-header {
+  position: fixed;
+  top: 0; left: 0; width: 100%;
+  padding: 20px;
+  background-color: var(--bg-base);
+  border-bottom: 1px solid var(--border-color);
+  z-index: 1000;
+  text-align: center;
+  transition: background-color 0.3s;
+}
 
-  /* 5. Main Content no Mobile */
-  .main-content {
-    margin-left: 0;
-    width: 100%;
-    /* O desconto de 61px é para o header HB. não cobrir o topo da página */
-    min-height: calc(100vh - 61px);
-  }
+.minimal-header a {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  color: var(--text-main);
+  text-decoration: none;
+  letter-spacing: 1px;
+}
+
+/* Container da Galeria */
+.gallery-page { padding-top: 90px; }
+.gallery-container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+/* Grid Masonry (Alvenaria para fotos irregulares) */
+.masonry-grid { column-count: 3; column-gap: 20px; }
+
+.masonry-item {
+  width: 100%; margin-bottom: 20px; display: block;
+  border: 1px solid var(--border-color);
+  cursor: zoom-in; transition: filter 0.3s;
+}
+
+.masonry-item:hover { filter: brightness(0.7); }
+
+/* Responsividade do Grid (Estas media queries são exclusivas do grid) */
+@media (max-width: 1024px) { .masonry-grid { column-count: 2; } }
+@media (max-width: 600px) { .masonry-grid { column-count: 1; } }
+
+/* Visualizador Tela Cheia (Lightbox) */
+.lightbox-overlay {
+  display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.95); z-index: 9999;
+  justify-content: center; align-items: center; flex-direction: column;
+  cursor: zoom-out; backdrop-filter: blur(5px);
+}
+
+.lightbox-overlay img {
+  max-width: 90vw; max-height: 85vh; object-fit: contain;
+  box-shadow: 0 5px 30px rgba(0,0,0,0.8); border: 1px solid var(--border-color);
+}
+
+.lightbox-close {
+  position: absolute; top: 25px; right: 35px;
+  font-size: 45px; color: #fff; cursor: pointer; transition: opacity 0.2s;
+}
+
+.lightbox-close:hover { opacity: 0.7; }
+
+/* Legenda do Lightbox */
+#lightbox-caption {
+  color: #f0f0f0; 
+  margin-top: 20px;
+  max-width: 80%;
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  line-height: 1.4;
+  font-style: italic;
+  animation: fadeIn 0.5s ease;
 }
