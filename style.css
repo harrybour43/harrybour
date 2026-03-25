@@ -514,14 +514,33 @@ body {
   object-fit: cover; /* Garante que preencha o espaço sem deformar */
 }
 
-.about-text p {
-    margin-bottom: 1.5rem; /* Ajuste o valor conforme desejar o espaçamento */
-    line-height: 1.6;      /* Melhora a legibilidade do texto */
+.about-text {
+  /* Define uma largura máxima ideal para leitura (cerca de 65-75 caracteres) */
+  max-width: 67ch;
+  margin: 0 auto; /* Centraliza o bloco, se necessário */
 }
 
-/* Remove a margem do último parágrafo para não quebrar o layout do container */
-.about-text p:last-child {
-    margin-bottom: 0;
+.about-text p {
+  /* Espaçamento responsivo baseado no tamanho da fonte da raiz */
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+
+  /* Alinhamento */
+  text-align: justify;
+
+  /* Melhora a hifenização para evitar buracos no texto justificado */
+  hyphens: auto;
+
+  /* Garante uma leitura confortável */
+  line-height: 1.6;
+}
+
+/* Ajuste para telas muito pequenas onde o 'justify' pode ficar feio */
+@media (max-width: 480px) {
+  .about-text p {
+    text-align: left; /* Opcional: volta para a esquerda em telas muito estreitas */
+    hyphens: none;
+  }
 }
 
 .contact-container {
