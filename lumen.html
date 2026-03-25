@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Projeto Lumen (+18) | Harry Bour</title>
+    <meta
+      name="description"
+      content="Projeto Lumen por Harry Bour. Fotografia autoral e estudos de bodyscape em low-key. Conteúdo sensível e artístico."
+    />
+
+    <meta name="rating" content="adult" />
+    <meta name="RATING" content="RTA-5042-1996-1400-1577-RTA" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body data-page="lumen">
+    <audio id="bg-audio" loop preload="auto"></audio>
+
+    <div class="app-wrapper">
+      <header class="mobile-header">
+        <h1 onclick="window.location.href='index.html'">HB.</h1>
+        <button class="icon-btn" onclick="toggleMobileMenu()">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </header>
+
+      <aside class="sidebar" id="sidebar">
+        <div>
+          <a href="index.html" class="sidebar-brand">HB.</a>
+
+          <nav class="nav-menu">
+            <div class="nav-group-title">Portfólio</div>
+            <a href="voz-do-povo.html" class="nav-link">Voz do Povo</a>
+            <a href="retratos.html" class="nav-link">Retratos</a>
+            <a href="publicidade.html" class="nav-link">Publicidade</a>
+            <a href="espetaculos.html" class="nav-link">Espetáculos</a>
+            <a href="processos-historicos.html" class="nav-link"
+              >Processos Históricos</a
+            >
+            <a href="restauracao.html" class="nav-link">Restauração</a>
+
+            <a href="audiovisual.html" class="nav-link">
+              <i class="fa-solid fa-video" style="font-size: 0.8em"></i>
+              Audiovisual
+            </a>
+
+            <button
+              class="nav-link"
+              style="color: #d16b6b"
+              onclick="openAgeGateModal()"
+            >
+              <i class="fa-solid fa-lock" style="font-size: 0.8em"></i> Lumen
+              (+18)
+            </button>
+
+            <div class="nav-group-title" style="margin-top: 25px">
+              Acervo Privado
+            </div>
+
+            <a href="espaco-do-cliente.html" class="nav-link">
+              <i class="fa-solid fa-folder-open" style="font-size: 0.8em"></i>
+              Espaço do Cliente
+            </a>
+          </nav>
+        </div>
+
+        <div class="nav-bottom-section">
+          <nav class="nav-menu">
+            <div class="nav-group-title">Informações</div>
+            <a href="about.html" class="nav-link">Sobre Harry Bour</a>
+            <a href="contato.html" class="nav-link">Contato</a>
+          </nav>
+
+          <div class="a11y-tools">
+            <button class="nav-link" onclick="toggleA11yPanel()">
+              <i class="fa-solid fa-universal-access"></i> Acessibilidade
+            </button>
+            <button
+              class="nav-link"
+              id="audio-toggle"
+              onclick="toggleAudioMute()"
+            >
+              <i class="fa-solid fa-volume-xmark" id="audio-icon"></i>
+              <span id="audio-text">Áudio: Mudo</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <div id="age-gate-modal" class="modal-overlay">
+        <div class="modal-content">
+          <h3>Aviso de Conteúdo Sensível</h3>
+          <p>
+            O Projeto Lumen contém nudez artística. Para prosseguir, por favor,
+            confirme sua data de nascimento.
+          </p>
+
+          <div
+            style="
+              display: flex;
+              gap: 10px;
+              margin: 20px 0;
+              justify-content: center;
+            "
+          >
+            <input
+              type="number"
+              id="age-day"
+              placeholder="DD"
+              min="1"
+              max="31"
+              style="
+                width: 70px;
+                padding: 12px;
+                text-align: center;
+                background: var(--bg-base);
+                color: var(--text-main);
+                border: 1px solid var(--border-color);
+                font-family: var(--font-ui);
+              "
+            />
+            <input
+              type="number"
+              id="age-month"
+              placeholder="MM"
+              min="1"
+              max="12"
+              style="
+                width: 70px;
+                padding: 12px;
+                text-align: center;
+                background: var(--bg-base);
+                color: var(--text-main);
+                border: 1px solid var(--border-color);
+                font-family: var(--font-ui);
+              "
+            />
+            <input
+              type="number"
+              id="age-year"
+              placeholder="AAAA"
+              min="1900"
+              max="2026"
+              style="
+                width: 90px;
+                padding: 12px;
+                text-align: center;
+                background: var(--bg-base);
+                color: var(--text-main);
+                border: 1px solid var(--border-color);
+                font-family: var(--font-ui);
+              "
+            />
+          </div>
+
+          <p
+            id="age-error-msg"
+            style="
+              color: #d16b6b;
+              font-size: 0.9rem;
+              display: none;
+              margin-bottom: 10px;
+            "
+          >
+            Por favor, insira uma data válida.
+          </p>
+
+          <p
+            style="
+              font-size: 0.8rem;
+              color: var(--text-muted);
+              margin-bottom: 20px;
+              line-height: 1.4;
+            "
+          >
+            Este site utiliza verificação de idade para cumprir com as
+            diretrizes do ECA e garantir que o conteúdo artístico restrito não
+            seja acessado por menores. Nenhum dado pessoal é armazenado
+            (Minimização de Dados).
+          </p>
+
+          <button class="btn-primary" onclick="verifyAgeWithFriction()">
+            Acessar Portfólio
+          </button>
+          <button class="btn-secondary" onclick="rejectAgeRedirect()">
+            Sair / Sou Menor
+          </button>
+        </div>
+      </div>
+
+      <main class="main-content">
+        <section class="view-section active">
+          <div class="section-header">
+            <h2>Projeto Lumen (+18)</h2>
+            <p class="category-description">
+              "É na ausência da luz que revelamos as formas mais sinceras da
+              intimidade e do corpo."
+            </p>
+          </div>
+
+          <div id="gallery-grid" class="gallery-grid"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

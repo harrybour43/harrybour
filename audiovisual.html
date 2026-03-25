@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Harry Bour | Portfólio</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body data-page="eventos">
+    <div class="app-wrapper">
+      <header class="mobile-header">
+        <h1 onclick="window.location.href='index.html'">HB.</h1>
+        <button class="icon-btn" onclick="toggleMobileMenu()">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </header>
+
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-top">
+          <a href="index.html" class="sidebar-brand">HB.</a>
+          <nav class="nav-menu">
+            <a href="index.html" class="nav-link"
+              ><i class="fa-solid fa-house"></i> Início</a
+            >
+          </nav>
+        </div>
+        <div class="nav-bottom-section">
+          <nav class="nav-menu">
+            <a href="about.html" class="nav-link">Sobre</a>
+            <a href="contato.html" class="nav-link">Contato</a>
+          </nav>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <section class="view-section active">
+          <div class="section-header">
+            <h2>Audiovisual</h2>
+            <p class="category-description">
+              "A captura do momento efêmero antes que se torne memória."
+            </p>
+          </div>
+          <div id="gallery-grid" class="gallery-grid"></div>
+        </section>
+      </main>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
