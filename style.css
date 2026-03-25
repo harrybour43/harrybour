@@ -514,10 +514,14 @@ body {
   object-fit: cover; /* Garante que preencha o espaço sem deformar */
 }
 
-.about-text {
-  color: var(--text-main);
-  font-size: 1.1rem;
-  flex-grow: 1;
+.about-text p {
+    margin-bottom: 1.5rem; /* Ajuste o valor conforme desejar o espaçamento */
+    line-height: 1.6;      /* Melhora a legibilidade do texto */
+}
+
+/* Remove a margem do último parágrafo para não quebrar o layout do container */
+.about-text p:last-child {
+    margin-bottom: 0;
 }
 
 .contact-container {
