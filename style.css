@@ -1,1 +1,771 @@
+/* ==========================================
+   HARRY BOUR - PORTFÓLIO FOTOGRÁFICO
+   Arquivo de Estilos (style.css)
+========================================== */
 
+/* ------------------------------------------
+   1. VARIÁVEIS E TEMAS (Cores e Fontes)
+------------------------------------------ */
+:root {
+  /* Paleta Padrão (Dark Mode Acessível) */
+  --bg-base: #121212;
+  --bg-surface: #1e1e1e;
+  --bg-overlay: rgba(18, 18, 18, 0.95);
+  --text-main: #f0f0f0;
+  --text-muted: #b3b3b3;
+  --border-color: #333333;
+  --focus-outline: 3px solid #f0f0f0;
+  --btn-bg: #2a2a2a;
+  --btn-text: #f0f0f0;
+
+  /* Tipografia */
+  --font-display: "Playfair Display", serif;
+  --font-ui: "Inter", sans-serif;
+
+  /* Layout */
+  --sidebar-width: 280px;
+}
+
+/* ------------------------------------------
+   2. ACESSIBILIDADE (WCAG)
+------------------------------------------ */
+/* Modo Claro Acessível (Offwhite Crema) */
+body.a11y-light-mode {
+  --bg-base: #fdfbf7; /* Offwhite crema */
+  --bg-surface: #f5f3ef;
+  --bg-overlay: rgba(253, 251, 247, 0.95);
+  --text-main: #2a2a2a;
+  --text-muted: #5c5c5c;
+  --border-color: #d1cdb8;
+  --focus-outline: 3px solid #2a2a2a;
+  --btn-bg: #e8e4d9;
+  --btn-text: #2a2a2a;
+}
+
+/* Opções de Aumento de Fonte */
+body.a11y-text-lg {
+  font-size: 115%;
+}
+
+body.a11y-text-xl {
+  font-size: 130%;
+}
+
+/* Alto Contraste (Preto e Branco puros) */
+body.a11y-high-contrast {
+  --bg-base: #000000;
+  --bg-surface: #000000;
+  --text-main: #ffffff;
+  --text-muted: #ffffff;
+  --border-color: #ffffff;
+}
+
+/* Daltonismo (Filtro de Escala de Cinza e Contraste nas Imagens) */
+body.a11y-colorblind img {
+  filter: grayscale(100%) contrast(120%);
+}
+
+/* Aumento de Fonte Geral */
+body.a11y-large-text {
+  font-size: 115%;
+}
+
+/* Foco visível para navegação por teclado */
+*:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: 4px;
+}
+
+/* ------------------------------------------
+   3. RESET E CONFIGURAÇÕES GERAIS
+------------------------------------------ */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-main);
+  font-family: var(--font-ui);
+  line-height: 1.6;
+  overflow-x: hidden;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.app-wrapper {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+/* ------------------------------------------
+   4. HEADER MOBILE E BARRA LATERAL (SIDEBAR)
+------------------------------------------ */
+.mobile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: var(--bg-base);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.mobile-header h1 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.icon-btn {
+  font-size: 1.5rem;
+  color: var(--text-main);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.sidebar {
+  background-color: var(--bg-base);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  padding: 40px 30px;
+  transition: transform 0.3s ease;
+}
+
+.sidebar-brand {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 400;
+  text-decoration: none;
+  color: var(--text-main);
+  margin-bottom: 40px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.nav-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nav-bottom-section {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nav-group-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  margin-top: 15px;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.nav-link {
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  color: var(--text-main);
+  text-decoration: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  padding: 5px 0;
+  transition: color 0.2s;
+}
+
+.nav-link:hover {
+  color: var(--text-muted);
+  text-decoration: underline;
+}
+
+.a11y-tools {
+  border-top: 1px solid var(--border-color);
+  padding-top: 15px;
+  margin-top: 15px;
+}
+
+/* Animação do ícone de áudio tocando */
+.audio-playing-icon {
+  color: #d4af37;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+/* ------------------------------------------
+   5. ÁREA DE CONTEÚDO PRINCIPAL (VIEWS)
+------------------------------------------ */
+.main-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* View Section (Páginas) */
+.view-section {
+  display: none;
+  height: 100%;
+  flex-direction: column;
+  padding: 40px;
+  animation: fadeIn 0.4s ease forwards;
+}
+
+.view-section.active {
+  display: flex;
+}
+
+#view-home {
+  padding: 0; /* Home não tem padding para o carrossel ocupar tudo */
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Cabeçalhos de Seção */
+.section-header {
+  margin-bottom: 25px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 15px;
+}
+
+.section-header h2 {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 400;
+}
+
+.category-description {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 1.1rem;
+  margin-top: 10px;
+}
+
+/* ------------------------------------------
+   6. CARROSSEL DA HOME (Atualizado para 8 imagens)
+------------------------------------------ */
+#view-home {
+  position: relative;
+  overflow: hidden;
+  height: 100vh;
+  width: 100%;
+  background-color: var(--bg-base);
+}
+
+.carousel-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #000;
+}
+
+.hypnotic-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  /* Duração total: 8 imagens * 8s = 48s */
+  animation: kenburns-8-bw 48s infinite linear;
+}
+
+/* Fila de entrada exata para as 8 fotos */
+.hypnotic-img:nth-child(1) {
+  animation-delay: 0s;
+}
+.hypnotic-img:nth-child(2) {
+  animation-delay: 8s;
+}
+.hypnotic-img:nth-child(3) {
+  animation-delay: 16s;
+}
+.hypnotic-img:nth-child(4) {
+  animation-delay: 24s;
+}
+.hypnotic-img:nth-child(5) {
+  animation-delay: 32s;
+}
+.hypnotic-img:nth-child(6) {
+  animation-delay: 40s;
+}
+
+/* Nova matemática de fade para 48 segundos totais */
+@keyframes kenburns-6-bw {
+  0% {
+    opacity: 0;
+    transform: scale(1.03) translate(0, 0);
+  }
+  4% {
+    /* Fade-in (aprox. 1.9s) */
+    opacity: 1;
+  }
+  16% {
+    /* Início do Fade-out (aprox. 7.6s) */
+    opacity: 1;
+    transform: scale(1.13) translate(-1%, -1%);
+  }
+  20% {
+    /* Fim do Fade-out completo (aprox. 9.6s) */
+    opacity: 0;
+    transform: scale(1.15);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ------------------------------------------
+   7. GALERIA DE FOTOS (GRID) E LIGHTBOX
+------------------------------------------ */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.gallery-item {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.gallery-item:hover {
+  opacity: 0.8;
+}
+
+/* Lightbox (Visualizador 80%) */
+#lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--bg-overlay);
+  z-index: 3000;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+
+.lightbox-content {
+  position: relative;
+  max-width: 80%;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lightbox-img {
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border-color);
+}
+
+.lightbox-caption {
+  color: var(--text-main);
+  margin-top: 15px;
+  font-size: 1rem;
+  text-align: center;
+  font-family: var(--font-ui);
+}
+
+.lightbox-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-size: 2.5rem;
+  cursor: pointer;
+  padding: 20px;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.lightbox-btn:hover {
+  opacity: 1;
+}
+#lb-prev {
+  left: -80px;
+}
+#lb-next {
+  right: -80px;
+}
+#lb-close {
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  font-size: 2rem;
+}
+
+/* ------------------------------------------
+   8. ESPAÇO DO CLIENTE (BUSCA)
+------------------------------------------ */
+.search-container {
+  margin-bottom: 20px;
+  position: relative;
+  max-width: 500px;
+}
+
+.search-container input {
+  width: 100%;
+  padding: 12px 15px 12px 40px;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  font-family: var(--font-ui);
+  font-size: 1rem;
+}
+
+.search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+}
+
+.folder-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 500px;
+}
+
+.folder-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  padding: 15px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transition: background 0.2s;
+}
+
+.folder-card:hover {
+  background: var(--btn-bg);
+}
+
+/* ------------------------------------------
+   9. PÁGINAS SOBRE E CONTATO
+------------------------------------------ */
+/* Layout da página Sobre para colocar texto ao lado da foto */
+.about-container {
+  display: flex;
+  flex-direction: row; /* Alinha lado a lado no desktop */
+  align-items: flex-start;
+  gap: 40px;
+  max-width: 1000px;
+}
+
+.about-image {
+  width: 100%;
+  max-width: 280px; /* Reduzido em 30% (era 400px) */
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+  background-color: var(--border-color);
+  flex-shrink: 0; /* Evita que a imagem seja esmagada pelo texto */
+  image-rendering: -webkit-optimize-contrast; /* Para navegadores baseados em Webkit */
+  image-rendering: high-quality; /* Sugestão padrão de alta qualidade */
+  object-fit: cover; /* Garante que preencha o espaço sem deformar */
+}
+
+.about-text {
+  color: var(--text-main);
+  font-size: 1.1rem;
+  flex-grow: 1;
+}
+
+.contact-container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  max-width: 800px;
+}
+
+.social-links {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.social-links a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-main);
+  text-decoration: none;
+  font-size: 1.1rem;
+  border: 1px solid var(--border-color);
+  padding: 10px 20px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.social-links a:hover {
+  background: var(--bg-surface);
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  font-family: var(--font-ui);
+  font-size: 1rem;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.btn-submit {
+  background: var(--text-main);
+  color: var(--bg-base);
+  border: none;
+  padding: 15px;
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-submit:hover {
+  opacity: 0.9;
+}
+
+/* ------------------------------------------
+   10. MODAIS GERAIS (Avisos, Senhas e A11y)
+------------------------------------------ */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background: var(--bg-surface);
+  padding: 30px;
+  border: 1px solid var(--border-color);
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.modal-content h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+.btn-primary,
+.btn-secondary {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  transition: opacity 0.2s;
+}
+
+.btn-primary {
+  background: var(--text-main);
+  color: var(--bg-base);
+  font-weight: 600;
+}
+
+.btn-secondary {
+  background: var(--bg-base);
+  color: var(--text-main);
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  background: var(--bg-base);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+}
+
+/* Painel de Acessibilidade Flutuante */
+#a11y-panel {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  padding: 20px;
+  z-index: 2000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* ==========================================
+   11. MEDIA QUERIES (Ajustes Mobile)
+========================================== */
+
+/* Telas Grandes (Desktop) */
+@media (min-width: 768px) {
+  .mobile-header {
+    display: none;
+  }
+  .app-wrapper {
+    flex-direction: row;
+  }
+  .sidebar {
+    width: var(--sidebar-width);
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    justify-content: space-between;
+  }
+  .main-content {
+    margin-left: var(--sidebar-width);
+  }
+}
+
+/* Telas Pequenas (Mobile) */
+@media (max-width: 767px) {
+  .about-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  /* 1. Ajuste de Espaçamento da Página */
+  .view-section {
+    padding: 25px 20px; /* Reduzido de 40px para não esmagar o conteúdo */
+  }
+
+  /* 2. Escala de Fontes (O ponto principal) */
+  .section-header h2 {
+    font-size: 1.6rem; /* Título menor e mais direto */
+    line-height: 1.2;
+  }
+
+  .category-description {
+    font-size: 0.95rem; /* Descrição mais legível para leitura em mãos */
+    margin-top: 8px;
+  }
+
+  .section-header {
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+  }
+
+  /* 3. Sidebar Mobile (Gaveta) */
+  .sidebar {
+    position: fixed;
+    top: 61px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 61px);
+    background-color: var(--bg-base);
+    transform: translateX(-100%);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 999;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 20px; /* Padding interno da sidebar mobile */
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  /* 4. Ajuste dos Links para toque */
+  .nav-link {
+    padding: 12px 0;
+    font-size: 1.1rem;
+  }
+
+  .nav-group-title {
+    margin-top: 20px;
+  }
+
+  /* 5. Main Content no Mobile */
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    /* O desconto de 61px é para o header HB. não cobrir o topo da página */
+    min-height: calc(100vh - 61px);
+  }
+}
