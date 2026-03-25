@@ -3,51 +3,82 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Harry Bour | Portfólio</title>
+    <title>Voz do Povo | Harry Bour</title>
+    <meta name="description" content="Cotidiano e Resistência em São Paulo." />
+
     <link rel="stylesheet" href="style.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
   </head>
-  <body data-page="eventos">
-    <div class="app-wrapper">
-      <header class="mobile-header">
-        <h1 onclick="window.location.href='index.html'">HB.</h1>
-        <button class="icon-btn" onclick="toggleMobileMenu()">
-          <i class="fa-solid fa-bars"></i>
-        </button>
-      </header>
 
-      <aside class="sidebar" id="sidebar">
-        <div class="sidebar-top">
-          <a href="index.html" class="sidebar-brand">HB.</a>
-          <nav class="nav-menu">
-            <a href="index.html" class="nav-link"
-              ><i class="fa-solid fa-house"></i> Início</a
-            >
-          </nav>
-        </div>
-        <div class="nav-bottom-section">
-          <nav class="nav-menu">
-            <a href="about.html" class="nav-link">Sobre</a>
-            <a href="contato.html" class="nav-link">Contato</a>
-          </nav>
-        </div>
-      </aside>
+  <body class="gallery-page">
+    <header class="minimal-header">
+      <a href="index.html">Harry Bour</a>
+    </header>
 
-      <main class="main-content">
-        <section class="view-section active">
-          <div class="section-header">
-            <h2>Audiovisual</h2>
-            <p class="category-description">
-              "A captura do momento efêmero antes que se torne memória."
-            </p>
-          </div>
-          <div id="gallery-grid" class="gallery-grid"></div>
-        </section>
-      </main>
+    <main class="gallery-container">
+      <div
+        class="section-header"
+        style="border-bottom: none; text-align: center; margin-bottom: 40px"
+      >
+        <h2>Voz do Povo</h2>
+        <p class="category-description">
+          Cotidiano e resistência em São Paulo.
+        </p>
+      </div>
+
+      <div class="masonry-grid">
+        <img
+          src="assets/img/voz-do-povo/doc-manifestacao-chacina--outubro-2025-001.jpg"
+          alt="Concentração para Protesto sob o vão livre do MASP. Coletivos se unem. Polícia Militar faz a contenção do perímetro."
+          class="masonry-item"
+          onclick="openLightbox(this.src, this.alt)"
+        />
+
+        <img
+          src="assets/img/voz-do-povo/doc-manifestacao-chacina-penha-31-outubro-2025-001.jpg"
+          alt="Manifestantes levantam placas com frases contrárias ao governador do Rio de Janeiro"
+          class="masonry-item"
+          onclick="openLightbox(this.src, this.alt)"
+        />
+
+        <img
+          src="assets/img/voz-do-povo/doc-manifestacao-chacina-penha-31-outubro-2025-002.jpg"
+          alt="Multidão em protesto na Avenida Paulista em 31 de outubro de 2025"
+          class="masonry-item"
+          onclick="openLightbox(this.src, this.alt)"
+        />
+         <img
+          src="assets/img/voz-do-povo/doc-manifestacao-chacina-penha-31-outubro-2025-003.jpg"
+          alt="Polícia Militar se prepara para dispersar manifestantes na Avenida Paulista em 31 de outubro de 2025"
+          class="masonry-item"
+          onclick="openLightbox(this.src, this.alt)"
+        />
+         <img
+          src="assets/img/voz-do-povo/doc-manifestacao-pandemia-29-maio-2021-001.jpg"
+          alt="Manifestantes contra o governo federal durante a pandemia - 29 de maio de 2021"
+          class="masonry-item"
+          onclick="openLightbox(this.src, this.alt)"
+        />
+        <img
+          src="assets/img/voz-do-povo/doc-manifestacao-pandemia-29-maio-2021-002.jpg"
+          alt="Manifestantes contra o governo federal durante a pandemia - 29 de maio de 2021"
+          class="masonry-item"
+          onclick="openLightbox(this.src, this.alt)"
+        />
+
+        
+      </div>
+    </main>
+
+    <div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()">
+      <span class="lightbox-close">&times;</span>
+      <img id="lightbox-img" src="" alt="" />
+      <div id="lightbox-caption"></div>
     </div>
+
     <script src="app.js"></script>
   </body>
 </html>
