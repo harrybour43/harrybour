@@ -13,12 +13,15 @@
     />
   </head>
 
-  <body class="gallery-page">
-    <header class="minimal-header">
-      <a href="index.html">Harry Bour</a>
-    </header>
+ <body data-page="voz-do-povo">
+    <div class="app-wrapper no-sidebar">
+      <header class="fixed-header">
+        <a href="index.html">Harry Bour</a>
+      </header>
 
-    <main class="gallery-container">
+      <main class="main-content full-width">
+        <section class="gallery-page active">
+          <div class="gallery-container">
       <div
         class="section-header"
         style="border-bottom: none; text-align: center; margin-bottom: 40px"
@@ -71,7 +74,10 @@
 
         
       </div>
-    </main>
+   </div>
+        </section>
+      </main>
+    </div>
 
     <div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()">
       <span class="lightbox-close">&times;</span>
