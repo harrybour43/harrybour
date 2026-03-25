@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Espaço do Cliente | Harry Bour</title>
+    <meta
+      name="description"
+      content="Área restrita para clientes de Harry Bour. Acesse seus ensaios, coberturas e projetos finalizados com segurança."
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body data-page="espaco-do-cliente">
+    <audio id="bg-audio" loop preload="auto"></audio>
+
+    <div class="app-wrapper">
+      <header class="mobile-header">
+        <h1 onclick="window.location.href='index.html'">HB.</h1>
+        <button class="icon-btn" onclick="toggleMobileMenu()">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </header>
+
+      <aside class="sidebar" id="sidebar">
+        <div>
+          <a href="index.html" class="sidebar-brand">HB.</a>
+
+          <nav class="nav-menu">
+            <div class="nav-group-title">Portfólio</div>
+            <a href="eventos.html" class="nav-link">Eventos</a>
+            <a href="rua.html" class="nav-link">Rua</a>
+            <a href="autoral.html" class="nav-link">Autoral</a>
+            <a href="audiovisual.html" class="nav-link">
+              <i class="fa-solid fa-video" style="font-size: 0.8em"></i>
+              Audiovisual
+            </a>
+
+            <button
+              class="nav-link"
+              style="color: #d16b6b"
+              onclick="openAgeGateModal()"
+            >
+              <i class="fa-solid fa-lock" style="font-size: 0.8em"></i> Lumen
+              (+18)
+            </button>
+
+            <div class="nav-group-title" style="margin-top: 25px">
+              Acervo Privado
+            </div>
+            <a
+              href="espaco-do-cliente.html"
+              class="nav-link"
+              style="text-decoration: underline"
+            >
+              <i class="fa-solid fa-folder-open" style="font-size: 0.8em"></i>
+              Espaço do Cliente
+            </a>
+          </nav>
+        </div>
+
+        <div class="nav-bottom-section">
+          <nav class="nav-menu">
+            <div class="nav-group-title">Informações</div>
+            <a href="about.html" class="nav-link">Sobre Harry Bour</a>
+            <a href="contato.html" class="nav-link">Contato</a>
+          </nav>
+
+          <div class="a11y-tools">
+            <button class="nav-link" onclick="toggleA11yPanel()">
+              <i class="fa-solid fa-universal-access"></i> Acessibilidade
+            </button>
+            <button
+              class="nav-link"
+              id="audio-toggle"
+              onclick="toggleAudioMute()"
+            >
+              <i class="fa-solid fa-volume-xmark" id="audio-icon"></i>
+              <span id="audio-text">Áudio: Mudo</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <div id="a11y-panel">
+        <button class="btn-secondary" onclick="toggleA11y('a11y-large-text')">
+          Aumentar Fonte (A+)
+        </button>
+        <button class="btn-secondary" onclick="toggleA11y('a11y-light-mode')">
+          Modo Claro (Leitura Suave)
+        </button>
+        <button
+          class="btn-secondary"
+          onclick="toggleA11y('a11y-high-contrast')"
+        >
+          Alto Contraste P&B
+        </button>
+        <button class="btn-secondary" onclick="toggleA11y('a11y-colorblind')">
+          Modo Daltonismo
+        </button>
+        <button
+          class="btn-primary"
+          onclick="toggleA11yPanel()"
+          style="margin-top: 10px"
+        >
+          Fechar
+        </button>
+      </div>
+
+      <div id="age-gate-modal" class="modal-overlay">
+        <div class="modal-content">
+          <h3>Aviso de Conteúdo Sensível</h3>
+          <p>
+            O Projeto Lumen contém nudez artística e conteúdo destinado
+            estritamente a maiores de 18 anos. Em conformidade com a legislação
+            vigente, você confirma ser maior de idade para prosseguir?
+          </p>
+          <button class="btn-primary" onclick="confirmAge()">
+            Sim, sou maior de 18 anos
+          </button>
+          <button class="btn-secondary" onclick="closeModal('age-gate-modal')">
+            Não, voltar
+          </button>
+        </div>
+      </div>
+
+      <div id="client-auth-modal" class="modal-overlay">
+        <div class="modal-content">
+          <h3 id="client-folder-name">Nome da Pasta</h3>
+          <p>
+            Insira a chave de acesso fornecida para visualizar e baixar este
+            ensaio.
+          </p>
+          <p
+            id="client-auth-error"
+            style="color: #d16b6b; font-size: 0.85rem; margin-bottom: 10px"
+          ></p>
+          <input
+            type="password"
+            id="client-password"
+            class="form-input"
+            placeholder="Senha de Acesso"
+          />
+          <button class="btn-primary" onclick="submitClientAuth()">
+            Acessar Acervo
+          </button>
+          <button
+            class="btn-secondary"
+            onclick="closeModal('client-auth-modal')"
+          >
+            Cancelar
+          </button>
+        </div>
+      </div>
+
+      <main class="main-content">
+        <section class="view-section active">
+          <div class="section-header">
+            <h2>Espaço do Cliente</h2>
+            <p class="category-description">
+              Busque seu ensaio e utilize a senha fornecida para acessar o
+              material finalizado no Google Drive.
+            </p>
+          </div>
+
+          <div class="search-container">
+            <input
+              type="text"
+              id="folder-search"
+              placeholder="Buscar pelo nome do ensaio..."
+              oninput="filterFolders()"
+            />
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          </div>
+
+          <div id="folder-list" class="folder-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
