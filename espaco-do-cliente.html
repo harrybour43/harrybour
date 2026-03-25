@@ -23,10 +23,15 @@
     <link rel="stylesheet" href="style.css" />
   </head>
 
-  <body class="gallery-page">
-    <header class="minimal-header">
-      <a href="index.html">Harry Bour</a>
-    </header>
+  <body data-page="espaco-do-cliente">
+    <div class="app-wrapper no-sidebar">
+      <header class="fixed-header">
+        <a href="index.html">Harry Bour</a>
+      </header>
+
+      <main class="main-content full-width">
+        <section class="gallery-page active">
+          <div class="gallery-container">
 
     <div id="client-auth-modal" class="modal-overlay">
       <div class="modal-content">
@@ -189,9 +194,9 @@
             <i class="fa-solid fa-border-all"></i>
             <span id="text-toggle-view">Ver Mosaico</span>
           </button>
-        </div>
-      </section>
-    </main>
+        </div> </section>
+      </main>
+    </div> <div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()">
 
     <script src="app.js"></script>
     <script
