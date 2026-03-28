@@ -205,3 +205,59 @@ document.addEventListener('dragstart', function(event) {
     event.preventDefault();
   }
 });
+/* ==========================================
+   GERADOR DE GALERIA DINÂMICA (GITHUB API)
+========================================== */
+async function loadDynamicGallery() {
+    const gallery = document.getElementById('dynamic-gallery');
+    
+    // Se a página atual não tiver a galeria dinâmica, o script para aqui
+    if (!gallery) return; 
+
+    const folderPath = gallery.getAttribute('data-folder');
+    
+    // Dados do seu repositório
+    const repoOwner = 'harrybour43';
+    const repoName = 'harrybour';
+    
+    // URL da API do GitHub que lê o conteúdo da pasta
+    const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderPath}`;
+
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error('Não foi possível carregar a pasta.');
+        
+        const files = await response.json();
+
+        // Filtra para garantir que só vai pegar arquivos de imagem
+        const images = files.filter(file => file.name.match(/\.(jpg|jpeg|png|webp)$/i));
+
+        // Para cada imagem encontrada, cria a tag <img> no HTML
+        images.forEach(img => {
+            const imgElement = document.createElement('img');
+            
+            // Usa o caminho local para carregar mais rápido
+            imgElement.src = `${folderPath}/${img.name}`; 
+            
+            // Transforma o nome do arquivo na legenda (Alt text)
+            // Ex: "Retrato-Low-Key.jpg" vira "Retrato Low Key"
+            let cleanName = img.name.replace(/\.[^/.]+$/, "").replace(/-/g, " ");
+            imgElement.alt = cleanName;
+            
+            // Aplica as classes e regras do seu CSS
+            imgElement.className = 'masonry-item';
+            imgElement.setAttribute('loading', 'lazy');
+            imgElement.onclick = () => openLightbox(imgElement.src, imgElement.alt);
+
+            // Joga a foto para dentro da tela
+            gallery.appendChild(imgElement);
+        });
+
+    } catch (error) {
+        console.error('Erro na galeria dinâmica:', error);
+        gallery.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Não foi possível carregar as imagens no momento.</p>';
+    }
+}
+
+// Executa a função assim que a página terminar de carregar
+document.addEventListener('DOMContentLoaded', loadDynamicGallery);
