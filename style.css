@@ -779,7 +779,7 @@ body {
 }
 
 /* Container da Galeria */
-.gallery-page { padding-top: 90px; }
+.gallery-page { padding-top: 20px; }
 .gallery-container { max-width: 1400px; margin: 0 auto; padding: 20px; }
 
 /* Grid Masonry (Alvenaria para fotos irregulares) */
