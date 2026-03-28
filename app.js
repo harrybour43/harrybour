@@ -1,263 +1,895 @@
-// ==========================================
-// HARRY BOUR - app.js (Versão Completa e Revisada)
-// ==========================================
-
-const categoryData = {
-  eventos: { title: "Eventos & Coberturas", desc: "", images: [] },
-  rua: { title: "Fotografia de Rua", desc: "", images: [] },
-  autoral: { title: "Trabalho Autoral", desc: "", images: [] },
-  audiovisual: { title: "Audiovisual", desc: "", images: [] },
-  lumen: { title: "Projeto Lumen (+18)", desc: "", images: [] },
-};
-
-document.addEventListener("DOMContentLoaded", () => {
-  const page = document.body.getAttribute("data-page");
-  if (page === "inicio") {
-    initCarousel();
-  } else if (categoryData[page] && typeof loadCategory === 'function') {
-    loadCategory(page);
-  }
-});
-
-// --- CARROSSEL DA HOME ---
-let currentSlide = 0;
-function initCarousel() {
-  const container = document.getElementById("home-carousel");
-  if (!container) return;
-  
-  const slides = document.querySelectorAll(".carousel-slide, .hypnotic-img");
-  if (slides.length < 2) return;
-
-  slides[0].classList.add("active");
-
-  setInterval(() => {
-    slides[currentSlide].classList.remove("active");
-    currentSlide = (currentSlide + 1) % slides.length;
-    slides[currentSlide].classList.add("active");
-  }, 5000);
-}
-
-// --- FUNÇÕES DE MENU E MODAIS ---
-function toggleMobileMenu() {
-  const sidebar = document.getElementById("sidebar");
-  if (sidebar) sidebar.classList.toggle("open");
-}
-
-function closeModal(id) {
-  const modal = document.getElementById(id);
-  if (modal) modal.style.display = "none";
-}
-
-// --- PROJETO LUMEN (GATE DE IDADE) ---
-function openAgeGateModal() {
-  if (sessionStorage.getItem("ageVerified") === "true") {
-    window.location.href = "lumen.html";
-    return;
-  }
-  const modal = document.getElementById("age-gate-modal");
-  if (modal) modal.style.display = "flex";
-}
-
-function verifyAgeWithFriction() {
-  const day = document.getElementById("age-day").value;
-  const month = document.getElementById("age-month").value;
-  const year = document.getElementById("age-year").value;
-  const errorMsg = document.getElementById("age-error-msg");
-
-  if (!day || !month || !year) {
-    errorMsg.innerText = "Por favor, preencha o dia, mês e ano.";
-    errorMsg.style.display = "block";
-    return;
-  }
-
-  const birthDate = new Date(year, month - 1, day);
-  const today = new Date();
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const m = today.getMonth() - birthDate.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) { age--; }
-
-  if (age >= 18) {
-    errorMsg.style.display = "none";
-    sessionStorage.setItem("ageVerified", "true");
-    document.getElementById("age-gate-modal").style.display = "none";
-    window.location.href = "lumen.html";
-  } else {
-    rejectAgeRedirect();
-  }
-}
-
-function rejectAgeRedirect() {
-  window.location.href = "index.html";
-}
-
-// --- ACESSIBILIDADE ---
-function toggleA11yPanel() {
-  const panel = document.getElementById("a11y-panel");
-  if (panel) panel.style.display = panel.style.display === "block" ? "none" : "block";
-}
-
-function toggleA11y(className) {
-  document.body.classList.toggle(className);
-}
-
-function setA11yTextSize(size) {
-  document.body.classList.remove("a11y-text-lg", "a11y-text-xl");
-  if (size === "lg") document.body.classList.add("a11y-text-lg");
-  else if (size === "xl") document.body.classList.add("a11y-text-xl");
-}
-
-// ==========================================
-// VISUALIZADOR DE IMAGENS TELA CHEIA (LIGHTBOX)
-// ==========================================
-let currentGalleryImages = [];
-let currentImageIndex = 0;
-
-function openLightbox(src, alt) {
-  const lightbox = document.getElementById("lightbox");
-  const lightboxImg = document.getElementById("lightbox-img");
-  const caption = document.getElementById("lightbox-caption");
-
-  if (lightbox && lightboxImg) {
-    currentGalleryImages = Array.from(document.querySelectorAll('.masonry-item'));
-    currentImageIndex = currentGalleryImages.findIndex(img => img.src === src);
-    lightboxImg.src = src; 
-    lightboxImg.alt = alt;
-    if(caption) caption.innerText = alt; 
-    lightbox.style.display = "flex";
-    document.body.style.overflow = "hidden"; 
-  }
-}
-
-function closeLightbox() {
-  const lightbox = document.getElementById("lightbox");
-  if (lightbox) {
-    lightbox.style.display = "none";
-    document.body.style.overflow = "auto"; 
-  }
-}
-
-function navigateLightbox(direction) {
-  if (currentGalleryImages.length <= 1) return; 
-  
-  if (direction === 'next') {
-    currentImageIndex = (currentImageIndex + 1) % currentGalleryImages.length;
-  } else if (direction === 'prev') {
-    currentImageIndex = (currentImageIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
-  }
-  
-  const nextImg = currentGalleryImages[currentImageIndex];
-  const lightboxImg = document.getElementById("lightbox-img");
-  const caption = document.getElementById("lightbox-caption");
-  
-  lightboxImg.src = nextImg.src;
-  lightboxImg.alt = nextImg.alt;
-  if(caption) caption.innerText = nextImg.alt;
-}
-
-document.addEventListener('keydown', function(event) {
-  const lightbox = document.getElementById("lightbox");
-  if (lightbox && lightbox.style.display === "flex") {
-    if (event.key === "ArrowRight") {
-      navigateLightbox('next');
-    } else if (event.key === "ArrowLeft") {
-      navigateLightbox('prev');
-    } else if (event.key === "Escape") {
-      closeLightbox();
-    }
-  }
-});
-// ==========================================
-// PROTEÇÃO BÁSICA DE CONTEÚDO
-// ==========================================
-
-// 1. Bloqueia o clique com o botão direito (Menu de contexto)
-document.addEventListener('contextmenu', function(event) {
-  event.preventDefault();
-});
-
-// 2. Bloqueia atalhos de teclado para Inspecionar Elemento e Código Fonte
-document.addEventListener('keydown', function(event) {
-  // Bloqueia a tecla F12
-  if (event.key === 'F12') {
-    event.preventDefault();
-  }
-  
-  // Bloqueia Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+Shift+C / Ctrl+U (Windows/Linux)
-  if (event.ctrlKey && (
-      event.key === 'u' || event.key === 'U' || 
-      (event.shiftKey && ['i', 'I', 'j', 'J', 'c', 'C'].includes(event.key))
-  )) {
-    event.preventDefault();
-  }
-
-  // Bloqueia Cmd+Option+I / Cmd+Option+J / Cmd+Option+C / Cmd+U (Mac)
-  if (event.metaKey && (
-      event.key === 'u' || event.key === 'U' || 
-      (event.altKey && ['i', 'I', 'j', 'J', 'c', 'C'].includes(event.key))
-  )) {
-    event.preventDefault();
-  }
-});
-
-// 3. Impede que o usuário "arraste e solte" a foto para fora do navegador
-document.addEventListener('dragstart', function(event) {
-  if (event.target.tagName === 'IMG') {
-    event.preventDefault();
-  }
-});
 /* ==========================================
-   GERADOR DE GALERIA DINÂMICA (GITHUB API)
+   HARRY BOUR - PORTFÓLIO FOTOGRÁFICO
+   Arquivo de Estilos (style.css)
 ========================================== */
-async function loadDynamicGallery() {
-    const gallery = document.getElementById('dynamic-gallery');
-    
-    // Se a página atual não tiver a galeria dinâmica, o script para aqui
-    if (!gallery) return; 
 
-    const folderPath = gallery.getAttribute('data-folder');
-    
-    // Dados do seu repositório
-    const repoOwner = 'harrybour43';
-    const repoName = 'harrybour';
-    
-    // URL da API do GitHub que lê o conteúdo da pasta
-    const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderPath}`;
+/* ------------------------------------------
+   1. VARIÁVEIS E TEMAS (Cores e Fontes)
+------------------------------------------ */
+:root {
+  /* Paleta Padrão (Dark Mode Acessível) */
+  --bg-base: #121212;
+  --bg-surface: #1e1e1e;
+  --bg-overlay: rgba(18, 18, 18, 0.95);
+  --text-main: #f0f0f0;
+  --text-muted: #b3b3b3;
+  --border-color: #333333;
+  --focus-outline: 3px solid #f0f0f0;
+  --btn-bg: #2a2a2a;
+  --btn-text: #f0f0f0;
 
-    try {
-        const response = await fetch(apiUrl);
-        if (!response.ok) throw new Error('Não foi possível carregar a pasta.');
-        
-        const files = await response.json();
+  /* Tipografia */
+  --font-display: "Playfair Display", serif;
+  --font-ui: "Inter", sans-serif;
 
-        // Filtra para garantir que só vai pegar arquivos de imagem
-        const images = files.filter(file => file.name.match(/\.(jpg|jpeg|png|webp)$/i));
-
-        // Para cada imagem encontrada, cria a tag <img> no HTML
-        images.forEach(img => {
-            const imgElement = document.createElement('img');
-            
-            // Usa o caminho local para carregar mais rápido
-            imgElement.src = `${folderPath}/${img.name}`; 
-            
-            // Transforma o nome do arquivo na legenda (Alt text)
-            // Ex: "Retrato-Low-Key.jpg" vira "Retrato Low Key"
-            let cleanName = img.name.replace(/\.[^/.]+$/, "").replace(/-/g, " ");
-            imgElement.alt = cleanName;
-            
-            // Aplica as classes e regras do seu CSS
-            imgElement.className = 'masonry-item';
-            imgElement.setAttribute('loading', 'lazy');
-            imgElement.onclick = () => openLightbox(imgElement.src, imgElement.alt);
-
-            // Joga a foto para dentro da tela
-            gallery.appendChild(imgElement);
-        });
-
-    } catch (error) {
-        console.error('Erro na galeria dinâmica:', error);
-        gallery.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Não foi possível carregar as imagens no momento.</p>';
-    }
+  /* Layout */
+  --sidebar-width: 280px;
+  --header-height: 70px;
 }
 
-// Executa a função assim que a página terminar de carregar
-document.addEventListener('DOMContentLoaded', loadDynamicGallery);
+/* ------------------------------------------
+   2. ACESSIBILIDADE (WCAG)
+------------------------------------------ */
+body.a11y-light-mode {
+  --bg-base: #fdfbf7;
+  --bg-surface: #f5f3ef;
+  --bg-overlay: rgba(253, 251, 247, 0.95);
+  --text-main: #2a2a2a;
+  --text-muted: #5c5c5c;
+  --border-color: #d1cdb8;
+  --focus-outline: 3px solid #2a2a2a;
+  --btn-bg: #e8e4d9;
+  --btn-text: #2a2a2a;
+}
+
+body.a11y-text-lg {
+  font-size: 115%;
+}
+body.a11y-text-xl {
+  font-size: 130%;
+}
+
+body.a11y-high-contrast {
+  --bg-base: #000000;
+  --bg-surface: #000000;
+  --text-main: #ffffff;
+  --text-muted: #ffffff;
+  --border-color: #ffffff;
+}
+
+body.a11y-colorblind img {
+  filter: grayscale(100%) contrast(120%);
+}
+
+body.a11y-large-text {
+  font-size: 115%;
+}
+
+*:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: 4px;
+}
+
+/* ------------------------------------------
+   3. RESET E CONFIGURAÇÕES GERAIS
+------------------------------------------ */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-main);
+  font-family: var(--font-ui);
+  line-height: 1.6;
+  overflow-x: hidden;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.app-wrapper {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+/* ------------------------------------------
+   4. HEADERS E BARRA LATERAL (SIDEBAR)
+------------------------------------------ */
+/* Header Exclusivo para telas Mobile (Usado na Index) */
+.mobile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: var(--bg-base);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.mobile-header h1 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+/* Header Fixo Minimalista (Usado nas Páginas Internas) */
+.fixed-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--header-height);
+  background: var(--bg-base);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.3s;
+}
+
+.fixed-header a {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--text-main);
+  text-decoration: none;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.icon-btn {
+  font-size: 1.5rem;
+  color: var(--text-main);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Sidebar (Usada apenas na Index) */
+.sidebar {
+  background-color: var(--bg-base);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  padding: 30px 25px;
+  transition: transform 0.3s ease;
+
+  /* --- ADICIONADO: Força altura e permite rolagem --- */
+  height: 100vh;
+  overflow-y: auto;
+}
+
+/* --- ADICIONADO: Deixa a barra de rolagem da sidebar elegante (Padrão Dark/Minimal) --- */
+.sidebar::-webkit-scrollbar {
+  width: 4px; /* Bem fininha */
+}
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 10px;
+}
+.sidebar-brand {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 400;
+  text-decoration: none;
+  color: var(--text-main);
+  margin-bottom: 25px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.nav-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.nav-bottom-section {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nav-group-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  margin-top: 10px; /* Reduzi um pouco aqui, pois a classe de baixo controla melhor */
+  margin-bottom: 5px; /* Mais espaço entre o título e o primeiro link */
+  font-weight: 600;
+}
+
+/* Nova classe para separar os grupos de forma mais elegante */
+.spacing-top {
+  margin-top: 35px;
+}
+
+.nav-link {
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  color: var(--text-main);
+  text-decoration: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  /* Aumentei o padding vertical de 5px para 8px para deixar a área de clique maior (melhor p/ mobile) */
+  padding: 4px 0;
+  transition: color 0.2s;
+}
+
+.nav-link:hover {
+  color: var(--text-muted);
+  text-decoration: underline;
+}
+
+.a11y-tools {
+  border-top: 1px solid var(--border-color);
+  padding-top: 15px;
+  margin-top: 15px;
+}
+
+.audio-playing-icon {
+  color: #d4af37;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+/* ------------------------------------------
+   5. ÁREA DE CONTEÚDO PRINCIPAL (VIEWS)
+------------------------------------------ */
+.main-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.view-section {
+  display: none;
+  height: 100%;
+  flex-direction: column;
+  padding: 40px;
+  animation: fadeIn 0.15s ease-out forwards;
+}
+
+.view-section.active {
+  display: flex;
+}
+
+#view-home {
+  padding: 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.section-header {
+  margin-bottom: 25px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 15px;
+}
+
+.section-header h2 {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 400;
+}
+
+.category-description {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 1.1rem;
+  margin-top: 10px;
+}
+
+/* ------------------------------------------
+   6. CARROSSEL DA HOME
+------------------------------------------ */
+#view-home {
+  position: relative;
+  overflow: hidden;
+  height: 100vh;
+  width: 100%;
+  background-color: var(--bg-base);
+}
+
+.carousel-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #000;
+}
+
+.hypnotic-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  animation: kenburns-8-bw 48s infinite linear;
+
+  /* ADICIONE ESTAS DUAS LINHAS: */
+  will-change: transform, opacity;
+  transform: translateZ(0); /* Força o uso da placa de vídeo */
+}
+
+.hypnotic-img:nth-child(1) {
+  animation-delay: 0s;
+}
+.hypnotic-img:nth-child(2) {
+  animation-delay: 8s;
+}
+.hypnotic-img:nth-child(3) {
+  animation-delay: 16s;
+}
+.hypnotic-img:nth-child(4) {
+  animation-delay: 24s;
+}
+.hypnotic-img:nth-child(5) {
+  animation-delay: 32s;
+}
+.hypnotic-img:nth-child(6) {
+  animation-delay: 40s;
+}
+
+@keyframes kenburns-8-bw {
+  0% {
+    opacity: 0;
+    transform: scale(1.03) translate(0, 0);
+  }
+  4% {
+    opacity: 1;
+  }
+  16% {
+    opacity: 1;
+    transform: scale(1.13) translate(-1%, -1%);
+  }
+  20% {
+    opacity: 0;
+    transform: scale(1.15);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ------------------------------------------
+   7. GALERIA MASONRY E LIGHTBOX
+------------------------------------------ */
+.gallery-page {
+  padding-top: 20px; 
+}
+
+.gallery-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.masonry-grid {
+  column-count: 3;
+  column-gap: 20px;
+}
+
+.masonry-item {
+  width: 100%;
+  margin-bottom: 20px;
+  display: block;
+  border: 1px solid var(--border-color);
+  cursor: zoom-in;
+  transition: filter 0.3s;
+}
+
+.masonry-item:hover {
+  filter: brightness(0.7);
+}
+
+.lightbox-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.95);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  cursor: zoom-out;
+}
+
+.lightbox-overlay img {
+  max-width: 90vw;
+  max-height: 85vh;
+  object-fit: contain;
+  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.8);
+  border: 1px solid var(--border-color);
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 25px;
+  right: 35px;
+  font-size: 45px;
+  color: #fff;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.lightbox-close:hover {
+  opacity: 0.7;
+}
+
+#lightbox-caption {
+  color: var(--text-main);
+  margin-top: 15px;
+  font-size: 1.1rem;
+  font-family: var(--font-ui);
+  font-style: italic;
+}
+
+/* ------------------------------------------
+   8. ESPAÇO DO CLIENTE (BUSCA)
+------------------------------------------ */
+.search-container {
+  margin-bottom: 20px;
+  position: relative;
+  max-width: 500px;
+}
+
+.search-container input {
+  width: 100%;
+  padding: 12px 15px 12px 40px;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  font-family: var(--font-ui);
+  font-size: 1rem;
+}
+
+.search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+}
+
+.folder-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 500px;
+}
+
+.folder-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  padding: 15px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transition: background 0.2s;
+}
+
+.folder-card:hover {
+  background: var(--btn-bg);
+}
+
+/* ------------------------------------------
+   9. PÁGINAS SOBRE E CONTATO
+------------------------------------------ */
+.about-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 40px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.about-image {
+  width: 100%;
+  max-width: 280px;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+  background-color: var(--border-color);
+  flex-shrink: 0;
+}
+
+.about-text {
+  max-width: 70ch;
+  width: 100%;
+}
+
+.about-text p {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  text-align: justify;
+  hyphens: auto;
+  line-height: 1.6;
+}
+
+.about-text p:last-child {
+  margin-bottom: 0;
+}
+
+.contact-container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.social-links {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.social-links a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-main);
+  text-decoration: none;
+  font-size: 1.1rem;
+  border: 1px solid var(--border-color);
+  padding: 10px 20px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+.social-links a:hover {
+  background: var(--bg-surface);
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 500px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.form-group label {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  font-family: var(--font-ui);
+  font-size: 1rem;
+}
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.btn-submit {
+  background: var(--text-main);
+  color: var(--bg-base);
+  border: none;
+  padding: 15px;
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.btn-submit:hover {
+  opacity: 0.9;
+}
+
+/* ------------------------------------------
+   10. MODAIS GERAIS E PAINÉIS FLUTUANTES
+------------------------------------------ */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: var(--bg-surface);
+  padding: 30px;
+  border: 1px solid var(--border-color);
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.modal-content h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+.btn-primary,
+.btn-secondary {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  transition: opacity 0.2s;
+}
+.btn-primary {
+  background: var(--text-main);
+  color: var(--bg-base);
+  font-weight: 600;
+}
+.btn-secondary {
+  background: var(--bg-base);
+  color: var(--text-main);
+}
+
+#a11y-panel {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  padding: 20px;
+  z-index: 2000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* ==========================================
+   11. MEDIA QUERIES E LÓGICA DE LAYOUT
+========================================== */
+
+/* Lógica: Páginas SEM Sidebar (Sobre, Contato, Galerias) */
+.app-wrapper.no-sidebar {
+  display: block; /* Remove o flex row */
+}
+
+.app-wrapper.no-sidebar .main-content {
+  margin-left: 0;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: var(--header-height); /* Espaço para o header fixo */
+}
+
+.app-wrapper.no-sidebar .mobile-header,
+.app-wrapper.no-sidebar .sidebar {
+  display: none !important; /* Esconde elementos de navegação antigos nestas páginas */
+}
+
+/* Telas Grandes (Desktop) - Comportamento padrão para Index */
+@media (min-width: 768px) {
+  .mobile-header {
+    display: none;
+  }
+
+  .app-wrapper:not(.no-sidebar) {
+    flex-direction: row;
+  }
+
+  .app-wrapper:not(.no-sidebar) .sidebar {
+    width: var(--sidebar-width);
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    /*justify-content: space-between;*/
+  }
+
+  .app-wrapper:not(.no-sidebar) .main-content {
+    margin-left: var(--sidebar-width);
+  }
+}
+
+/* Telas Pequenas (Mobile) */
+@media (max-width: 767px) {
+  /* 1. Esconde o "Harry Bour" repetido apenas no menu do celular */
+  .sidebar-brand {
+    display: none;
+  }
+
+  /* 2. Garante o espaçamento igual ao das outras seções (35px) para o rodapé do menu */
+  .nav-bottom-section {
+    margin-top: auto;
+    padding-top: 35px;
+  }
+  .about-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  .view-section {
+    padding: 25px 20px;
+  }
+
+  .about-text p {
+    text-align: left; /* Desliga o Justify em telas muito estreitas para evitar rios brancos */
+    hyphens: none;
+  }
+
+  /* Comportamento da Index no Mobile */
+  .app-wrapper:not(.no-sidebar) .sidebar {
+    position: fixed;
+    top: 61px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 61px);
+    background-color: var(--bg-base);
+    transform: translateX(-100%);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 999;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 20px;
+  }
+  .app-wrapper:not(.no-sidebar) .sidebar.open {
+    transform: translateX(0);
+  }
+  .app-wrapper:not(.no-sidebar) .main-content {
+    margin-left: 0;
+    width: 100%;
+    min-height: calc(100vh - 61px);
+  }
+}
+
+/* Responsividade Exclusiva do Grid Masonry */
+@media (max-width: 1024px) {
+  .masonry-grid {
+    column-count: 2;
+  }
+}
+@media (max-width: 600px) {
+  .masonry-grid {
+    column-count: 1;
+  }
+} /* <- ESSA CHAVE FECHA O MOBILE. O CÓDIGO ABAIXO FICA DE FORA */
+
+/* --- AVISO LEGAL NA BARRA LATERAL (GLOBAL) --- */
+.sidebar-legal {
+  margin-top: 35px; /* Afasta do link Acessibilidade */
+  padding-top: 20px; /* Espaço interno para a linha */
+  border-top: 1px solid rgba(255, 255, 255, 0.05); /* Linha divisória super discreta */
+  padding-right: 15px;
+  font-size: 0.7rem; /* Tamanho legível, mas ainda pequeno */
+  color: var(--text-muted);
+  opacity: 0.5; /* Deixa o texto com aspecto de "marca d'água" */
+  line-height: 1.5;
+  font-family: var(--font-ui);
+}
+
+.sidebar-legal p {
+  margin: 0 0 8px 0;
+}
+
+.sidebar-legal p:last-child {
+  margin-bottom: 0;
+}
+/* ==========================================
+   SLIDER ANTES/DEPOIS (LIGHTBOX)
+========================================== */
+.slider-container {
+  position: relative;
+  width: 90vw;
+  max-width: 1200px;
+  height: 85vh; /* Ocupa bem a tela mantendo a proporção */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.slider-container img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Mostra a foto inteira sem cortar */
+  pointer-events: none;
+}
+
+.img-antes {
+  clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
+}
+
+.slider-input {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  z-index: 10;
+  cursor: ew-resize;
+  margin: 0;
+}
+
+/* Deixa o thumb invisível mas com uma boa área de "pegada" */
+.slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 40px; 
+  height: 100%;
+  background: transparent;
+}
+
+.slider-line {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height: 100%;
+  background: white;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 5;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slider-button {
+  width: 40px;
+  height: 40px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #121212; /* Cor escura do seu tema para o ícone */
+  font-size: 14px;
+}
