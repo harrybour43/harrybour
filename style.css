@@ -376,7 +376,7 @@ body {
    7. GALERIA MASONRY E LIGHTBOX
 ------------------------------------------ */
 .gallery-page {
-  padding-top: var(--header-height);
+padding-top: 20px;
 }
 
 .gallery-container {
