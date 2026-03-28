@@ -205,15 +205,112 @@ document.addEventListener('dragstart', function(event) {
     event.preventDefault();
   }
 });
+/* ==========================================
+   GERADOR DE GALERIA DINÂMICA (GITHUB API)
+========================================== */
+async function loadDynamicGallery() {
+  const gallery = document.getElementById('dynamic-gallery');
+  if (!gallery) return; 
+
+  const folderPath = gallery.getAttribute('data-folder');
+  const repoOwner = 'harrybour43';
+  const repoName = 'harrybour';
+  const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderPath}`;
+  
+  // Verifica se estamos na página de tratamento
+  const isTratamento = folderPath.includes('tratamento');
+
+  try {
+      const response = await fetch(apiUrl);
+      if (!response.ok) throw new Error('Não foi possível carregar a pasta.');
+      const files = await response.json();
+
+      // 1. Pega apenas os arquivos de imagem
+      const images = files.filter(file => file.name.match(/\.(jpg|jpeg|png|webp)$/i));
+
+      if (isTratamento) {
+          // 2. Filtra para exibir NA GALERIA apenas as imagens com "-depois" no nome
+          const imagensDepois = images.filter(file => file.name.toLowerCase().includes('-depois'));
+          
+          imagensDepois.forEach(img => {
+              const imgElement = document.createElement('img');
+              imgElement.src = `${folderPath}/${img.name}`; 
+              
+              // Limpa o nome para a legenda
+              let cleanName = img.name.replace(/\.[^/.]+$/, "").replace(/-/g, " ").replace(/ depois/i, "");
+              imgElement.alt = cleanName;
+              imgElement.className = 'masonry-item';
+              imgElement.setAttribute('loading', 'lazy');
+              imgElement.style.cursor = 'pointer'; // Garante o cursor de mãozinha
+
+              // 3. O Evento de Clique para abrir o Slider
+              imgElement.addEventListener('click', () => {
+                  // Calcula a URL da foto "-antes" trocando a palavra na URL
+                  const urlAntes = imgElement.src.replace(/-depois/i, '-antes');
+                  openSliderLightbox(urlAntes, imgElement.src, cleanName);
+              });
+
+              gallery.appendChild(imgElement);
+          });
+      } else {
+          // 4. Lógica padrão para as outras galerias (rua, eventos, etc)
+          images.forEach(img => {
+              const imgElement = document.createElement('img');
+              imgElement.src = `${folderPath}/${img.name}`; 
+              let cleanName = img.name.replace(/\.[^/.]+$/, "").replace(/-/g, " ");
+              imgElement.alt = cleanName;
+              imgElement.className = 'masonry-item';
+              imgElement.setAttribute('loading', 'lazy');
+
+              imgElement.addEventListener('click', () => {
+                  openLightbox(imgElement.src, imgElement.alt);
+              });
+
+              gallery.appendChild(imgElement);
+          });
+      }
+  } catch (error) {
+      console.error('Erro na galeria dinâmica:', error);
+      gallery.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Não foi possível carregar as imagens no momento.</p>';
+  }
+}
+
+// Lógica de Abertura do Lightbox com Slider
+function openSliderLightbox(srcAntes, srcDepois, alt) {
+  const lightbox = document.getElementById("lightbox");
+  const imgAntes = document.getElementById("slider-img-antes");
+  const imgDepois = document.getElementById("slider-img-depois");
+  const caption = document.getElementById("lightbox-caption");
+  const slider = document.getElementById("slider");
+  const sliderLine = document.getElementById("slider-line");
+
+  if (lightbox && imgAntes && imgDepois) {
+      imgAntes.src = srcAntes;
+      imgDepois.src = srcDepois;
+      if (caption) caption.innerText = alt;
+      
+      // Reseta o slider exatamente para 50% toda vez que abre uma foto nova
+      if (slider && sliderLine) {
+          slider.value = 50;
+          imgAntes.style.clipPath = `polygon(0 0, 50% 0, 50% 100%, 0 100%)`;
+          sliderLine.style.left = `50%`;
+      }
+
+      lightbox.style.display = "flex";
+      document.body.style.overflow = "hidden";
+  } else {
+      console.error("Erro: Elementos do lightbox de tratamento não encontrados no HTML.");
+  }
+}
+
 // ==========================================
-// INICIALIZAÇÃO E EVENTOS DO SLIDER
+// INICIALIZAÇÃO E EVENTOS GERAIS
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-  
-  // 1. Carrega a galeria (se existir na página)
-  loadDynamicGallery(); 
+  // Inicializa a galeria
+  loadDynamicGallery();
 
-  // 2. Prepara o escutador do Slider de Tratamento (se existir na página)
+  // Prepara o movimento do Slider (se existir na página)
   const slider = document.getElementById('slider');
   if (slider) {
       slider.addEventListener('input', (event) => {
