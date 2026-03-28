@@ -2,54 +2,59 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://harrybour43.github.io/harrybour/index.html</loc>
+    <loc>https://harrybour.com.br/index.html</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
   <url>
-    <loc>https://harrybour43.github.io/harrybour/about.html</loc>
+    <loc>https://harrybour.com.br/about.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://harrybour43.github.io/harrybour/contato.html</loc>
+    <loc>https://harrybour.com.br/contato.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
 
   <url>
-    <loc>https://harrybour43.github.io/harrybour/voz-do-povo.html</loc>
+    <loc>https://harrybour.com.br/voz-do-povo.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://harrybour43.github.io/harrybour/retratos.html</loc>
+    <loc>https://harrybour.com.br/retratos.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://harrybour43.github.io/harrybour/publicidade.html</loc>
+    <loc>https://harrybour.com.br/publicidade.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://harrybour43.github.io/harrybour/espetaculos.html</loc>
+    <loc>https://harrybour.com.br/espetaculos.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://harrybour43.github.io/harrybour/processos-historicos.html</loc>
+    <loc>https://harrybour.com.br/processos-historicos.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://harrybour43.github.io/harrybour/restauracao.html</loc>
+    <loc>https://harrybour.com.br/restauracao.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://harrybour43.github.io/harrybour/audiovisual.html</loc>
+    <loc>https://harrybour.com.br/tratamento.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://harrybour.com.br/audiovisual.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
