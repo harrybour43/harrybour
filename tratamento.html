@@ -40,17 +40,24 @@
               </p>
             </div>
 
-            <div class="masonry-grid"></div>
-          </div>
-        </section>
-      </main>
+<div id="dynamic-gallery" class="masonry-grid" data-folder="assets/img/tratamento"></div>
+<div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()">
+  <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+  
+  <div class="slider-container" onclick="event.stopPropagation()">
+    <img id="slider-img-depois" class="img-depois" src="" alt="">
+    
+    <img id="slider-img-antes" class="img-antes" src="" alt="">
+    
+    <input type="range" min="0" max="100" value="50" id="slider" class="slider-input">
+    
+    <div class="slider-line" id="slider-line">
+      <div class="slider-button"><i class="fa-solid fa-arrows-left-right"></i></div>
     </div>
+  </div>
 
-    <div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()">
-      <span class="lightbox-close">&times;</span>
-      <img id="lightbox-img" src="" alt="" />
-      <div id="lightbox-caption"></div>
-    </div>
+  <div id="lightbox-caption"></div>
+</div>
 
     <script src="app.js"></script>
   </body>
