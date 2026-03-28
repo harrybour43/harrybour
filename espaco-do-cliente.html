@@ -170,20 +170,38 @@
         }
 
         async function listPhotos() {
-            const loader = document.getElementById("photo-loader");
-            try {
-                let resp = await fetch(APPS_SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "getPhotos", folderId: targetFolderId }) });
-                let res = await resp.json();
-                if (res.success) {
-                    imagesData = res.images;
-                    loader.style.display = "none";
-                    document.getElementById("btn-toggle-view").style.display = "inline-flex";
-                    renderCarousel();
-                    renderGridGallery();
-                    setupSwipe();
-                }
-            } catch (e) { loader.innerText = "Erro ao carregar fotos."; }
+    const loader = document.getElementById("photo-loader");
+    loader.innerText = "Buscando imagens seguras...";
+    loader.style.display = "block";
+    document.getElementById("btn-toggle-view").style.display = "none";
+    document.getElementById("track").innerHTML = "";
+
+    try {
+        let response = await fetch(APPS_SCRIPT_URL, { 
+            method: "POST", 
+            body: JSON.stringify({ action: "getPhotos", folderId: targetFolderId }) 
+        });
+        let result = await response.json();
+
+        if (result.success && result.images && result.images.length > 0) {
+            imagesData = result.images;
+            loader.style.display = "none";
+            document.getElementById("btn-toggle-view").style.display = "inline-flex";
+
+            // A MÁGICA AQUI: O botão agora aponta para a pasta DIGITAL retornada pelo script
+            document.getElementById("drive-link-btn").href = `https://drive.google.com/drive/folders/${result.digitalFolderId}`;
+
+            currentIndex = 0;
+            renderCarousel();
+            renderGridGallery();
+            setupSwipe();
+        } else {
+            loader.innerText = result.error || "Nenhuma imagem encontrada na pasta DIGITAL.";
         }
+    } catch (err) {
+        loader.innerText = "Erro ao carregar fotos.";
+    }
+}
 
         function renderCarousel() {
             const track = document.getElementById("track");
