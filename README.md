@@ -1,7 +1,6 @@
 Harry Bour - Portfólio Fotográfico & Processos Visuais
 Este é o repositório oficial do portfólio digital de Harry Bour. Um espaço desenvolvido para exibir narrativas visuais, fotojornalismo e trabalhos autorais, focado no realismo hostil, na crueza do cotidiano de São Paulo e na exploração da luz e sombra (Low-key e Bodyscapes).
 
-🌍 Site ao vivo: 
 🌍 **Site ao vivo:** [https://harrybour.com.br/](https://harrybour.com.br/)
 
 🚀 Funcionalidades e UX/UI
