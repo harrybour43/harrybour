@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audiovisual | Harry Bour</title>
+    <meta name="description" content="Cotidiano e Resistência em São Paulo." />
+
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+
+  <body data-page="voz-do-povo">
+    <div class="app-wrapper no-sidebar">
+      <header class="fixed-header">
+        <a href="index.html">Harry Bour</a>
+      </header>
+
+      <main class="main-content full-width">
+        <section class="gallery-page active">
+          <div class="gallery-container">
+            <div
+              class="section-header"
+              style="
+                text-align: center;
+                border-bottom: none;
+                margin-bottom: 40px;
+              "
+            >
+              <h2>Audiovisual</h2>
+              <p class="category-description">
+                Narrativas em movimento e experimentações em vídeo. A extensão
+                do olhar para a linguagem do tempo.
+              </p>
+            </div>
+
+            <div class="video-grid">
+              <div class="video-wrapper">
+                <iframe
+                  src="https://player.vimeo.com/video/1163445313?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
+                  title="O Bilhete"
+                  frameborder="0"
+                  allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+                  referrerpolicy="strict-origin-when-cross-origin"
+                  allowfullscreen
+                >
+                </iframe>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()">
+      <span class="lightbox-close">&times;</span>
+      <img id="lightbox-img" src="" alt="" />
+      <div id="lightbox-caption"></div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
