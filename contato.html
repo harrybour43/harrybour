@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Contato | Harry Bour</title>
+    <meta
+      name="description"
+      content="Vamos conversar sobre o seu próximo projeto em São Paulo?"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+ <body data-page="voz-do-povo">
+    <div class="app-wrapper no-sidebar">
+      <header class="fixed-header">
+        <a href="index.html">Harry Bour</a>
+      </header>
+
+      <main class="main-content full-width">
+        <section class="gallery-page active">
+          <div class="gallery-container">
+      <div
+        class="section-header"
+        style="border-bottom: none; text-align: center; margin-bottom: 40px"
+      >
+        <h2>Contato</h2>
+        <p class="category-description">
+          Orçamento e Propostas.
+        </p>
+      </div>
+
+      <div class="contact-container" style="margin: 0 auto">
+        <div
+          class="social-links"
+          aria-label="Redes Sociais e Contato Direto"
+          style="justify-content: center; margin-bottom: 40px"
+        >
+          <a
+            href="https://wa.me/5511987741066"
+            target="_blank"
+            rel="noopener noreferrer"
+            ><i class="fa-brands fa-whatsapp"></i> WhatsApp</a
+          >
+          <a
+            href="https://www.instagram.com/harrybour_fotografia/"
+            target="_blank"
+            ><i class="fa-brands fa-instagram"></i> Instagram</a
+          >
+          <a href="https://vimeo.com/harrywoodstudios" target="_blank"
+            ><i class="fa-brands fa-vimeo-v"></i> Vimeo</a
+          >
+          <a
+            href="https://www.linkedin.com/in/harrybourfotografia"
+            target="_blank"
+            ><i class="fa-brands fa-linkedin-in"></i> LinkedIn</a
+          >
+        </div>
+
+        <form
+          class="contact-form"
+          action="https://formsubmit.co/harrybour.foto@gmail.com"
+          method="POST"
+          style="margin: 0 auto"
+        >
+          <input type="hidden" name="_captcha" value="false" />
+          <input
+            type="hidden"
+            name="_subject"
+            value="Novo Contato via Portfólio!"
+          />
+          <input
+            type="hidden"
+            name="_next"
+            value="https://harrybour.com.br/contato.html"
+          />
+
+          <div class="form-group">
+            <label for="nome">Nome</label>
+            <input type="text" id="nome" name="Nome" required />
+          </div>
+          <div class="form-group">
+            <label for="whatsapp">Whatsapp</label>
+            <input
+              type="tel"
+              id="whatsapp"
+              name="Whatsapp"
+              placeholder="(11) 000-000-000"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="Email"
+              placeholder="nome@exemplo.com"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="assunto">Assunto</label>
+            <input type="text" id="assunto" name="Assunto" required />
+          </div>
+
+          <div class="form-group">
+            <label for="mensagem">Mensagem</label>
+            <textarea id="mensagem" name="Mensagem" required></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit">Enviar Proposta</button>
+        </form>
+      </div>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
