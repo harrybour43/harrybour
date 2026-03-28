@@ -166,3 +166,42 @@ document.addEventListener('keydown', function(event) {
     }
   }
 });
+// ==========================================
+// PROTEÇÃO BÁSICA DE CONTEÚDO
+// ==========================================
+
+// 1. Bloqueia o clique com o botão direito (Menu de contexto)
+document.addEventListener('contextmenu', function(event) {
+  event.preventDefault();
+});
+
+// 2. Bloqueia atalhos de teclado para Inspecionar Elemento e Código Fonte
+document.addEventListener('keydown', function(event) {
+  // Bloqueia a tecla F12
+  if (event.key === 'F12') {
+    event.preventDefault();
+  }
+  
+  // Bloqueia Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+Shift+C / Ctrl+U (Windows/Linux)
+  if (event.ctrlKey && (
+      event.key === 'u' || event.key === 'U' || 
+      (event.shiftKey && ['i', 'I', 'j', 'J', 'c', 'C'].includes(event.key))
+  )) {
+    event.preventDefault();
+  }
+
+  // Bloqueia Cmd+Option+I / Cmd+Option+J / Cmd+Option+C / Cmd+U (Mac)
+  if (event.metaKey && (
+      event.key === 'u' || event.key === 'U' || 
+      (event.altKey && ['i', 'I', 'j', 'J', 'c', 'C'].includes(event.key))
+  )) {
+    event.preventDefault();
+  }
+});
+
+// 3. Impede que o usuário "arraste e solte" a foto para fora do navegador
+document.addEventListener('dragstart', function(event) {
+  if (event.target.tagName === 'IMG') {
+    event.preventDefault();
+  }
+});
