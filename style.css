@@ -720,6 +720,16 @@ body {
 
 /* Telas Pequenas (Mobile) */
 @media (max-width: 767px) {
+   /* 1. Esconde o "Harry Bour" repetido apenas no menu do celular */
+  .sidebar-brand {
+    display: none;
+  }
+
+  /* 2. Garante o espaçamento igual ao das outras seções (35px) para o rodapé do menu */
+  .nav-bottom-section {
+    margin-top: auto;
+    padding-top: 35px; 
+  }
   .about-container {
     flex-direction: column;
     align-items: center;
