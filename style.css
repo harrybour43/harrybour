@@ -158,8 +158,23 @@ body {
   flex-direction: column;
   padding: 30px 25px;
   transition: transform 0.3s ease;
+
+  /* --- ADICIONADO: Força altura e permite rolagem --- */
+  height: 100vh;
+  overflow-y: auto;
 }
 
+/* --- ADICIONADO: Deixa a barra de rolagem da sidebar elegante (Padrão Dark/Minimal) --- */
+.sidebar::-webkit-scrollbar {
+  width: 4px; /* Bem fininha */
+}
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 10px;
+}
 .sidebar-brand {
   font-family: var(--font-display);
   font-size: 2rem;
@@ -376,7 +391,7 @@ body {
    7. GALERIA MASONRY E LIGHTBOX
 ------------------------------------------ */
 .gallery-page {
-padding-top: 20px;
+  padding-top: var(--header-height);
 }
 
 .gallery-container {
@@ -710,7 +725,7 @@ padding-top: 20px;
     bottom: 0;
     left: 0;
     z-index: 100;
-    justify-content: space-between;
+    /*justify-content: space-between;*/
   }
 
   .app-wrapper:not(.no-sidebar) .main-content {
@@ -720,7 +735,7 @@ padding-top: 20px;
 
 /* Telas Pequenas (Mobile) */
 @media (max-width: 767px) {
-   /* 1. Esconde o "Harry Bour" repetido apenas no menu do celular */
+  /* 1. Esconde o "Harry Bour" repetido apenas no menu do celular */
   .sidebar-brand {
     display: none;
   }
@@ -728,7 +743,7 @@ padding-top: 20px;
   /* 2. Garante o espaçamento igual ao das outras seções (35px) para o rodapé do menu */
   .nav-bottom-section {
     margin-top: auto;
-    padding-top: 35px; 
+    padding-top: 35px;
   }
   .about-container {
     flex-direction: column;
@@ -779,4 +794,25 @@ padding-top: 20px;
   .masonry-grid {
     column-count: 1;
   }
+} /* <- ESSA CHAVE FECHA O MOBILE. O CÓDIGO ABAIXO FICA DE FORA */
+
+/* --- AVISO LEGAL NA BARRA LATERAL (GLOBAL) --- */
+.sidebar-legal {
+  margin-top: 35px; /* Afasta do link Acessibilidade */
+  padding-top: 20px; /* Espaço interno para a linha */
+  border-top: 1px solid rgba(255, 255, 255, 0.05); /* Linha divisória super discreta */
+  padding-right: 15px;
+  font-size: 0.7rem; /* Tamanho legível, mas ainda pequeno */
+  color: var(--text-muted);
+  opacity: 0.5; /* Deixa o texto com aspecto de "marca d'água" */
+  line-height: 1.5;
+  font-family: var(--font-ui);
+}
+
+.sidebar-legal p {
+  margin: 0 0 8px 0;
+}
+
+.sidebar-legal p:last-child {
+  margin-bottom: 0;
 }
