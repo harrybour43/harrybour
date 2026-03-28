@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
-Disallow: /harrybour/lumen.html
-Disallow: /harrybour/espaco-do-cliente.html
+Disallow: /lumen.html
+Disallow: /espaco-do-cliente.html
 
-Sitemap: https://harrybour43.github.io/harrybour/sitemap.xml
+Sitemap: https://harrybour.com.br/sitemap.xml

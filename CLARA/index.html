@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <link rel="manifest" href="manifest.json" />
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>CLARA</title>
+
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="theme-color" content="#0c0c0c" />
+    <meta name="apple-mobile-web-app-title" content="C.L.A.R.A." />
+
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f4f4f5'%3E%3Cpath d='M4 6C2.9 6 2 6.9 2 8V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V8C22 6.9 21.1 6 20 6H16.83L15 4H9L7.17 6H4ZM12 17C9.24 17 7 14.76 7 12C7 9.24 9.24 7 12 7C14.76 7 17 9.24 17 12C17 14.76 14.76 17 12 17ZM12 9C10.34 9 9 10.34 9 12C9 13.66 10.34 15 12 15C13.66 15 15 13.66 15 12C15 10.34 13.66 9 12 9Z'/%3E%3C/svg%3E"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f4f4f5'%3E%3Cpath d='M4 6C2.9 6 2 6.9 2 8V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V8C22 6.9 21.1 6 20 6H16.83L15 4H9L7.17 6H4ZM12 17C9.24 17 7 14.76 7 12C7 9.24 9.24 7 12 7C14.76 7 17 9.24 17 12C17 14.76 14.76 17 12 17ZM12 9C10.34 9 9 10.34 9 12C9 13.66 10.34 15 12 15C13.66 15 15 13.66 15 12C15 10.34 13.66 9 12 9Z'/%3E%3C/svg%3E"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/suncalc/1.9.0/suncalc.min.js"></script>
+  </head>
+  <body>
+    <div id="splash-screen">
+      <div class="app-icon-container">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path
+            d="M4 6C2.9 6 2 6.9 2 8V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V8C22 6.9 21.1 6 20 6H16.83L15 4H9L7.17 6H4ZM12 17C9.24 17 7 14.76 7 12C7 9.24 9.24 7 12 7C14.76 7 17 9.24 17 12C17 14.76 14.76 17 12 17ZM12 9C10.34 9 9 10.34 9 12C9 13.66 10.34 15 12 15C13.66 15 15 13.66 15 12C15 10.34 13.66 9 12 9Z"
+          />
+        </svg>
+      </div>
+      <div
+        class="brand-font"
+        style="font-size: 3rem; margin-bottom: 8px; color: #fff"
+      >
+        C.L.A.R.A.
+      </div>
+      <div
+        style="
+          color: var(--accent-snc);
+          font-weight: 800;
+          font-size: 0.85rem;
+          letter-spacing: 2px;
+          text-align: center;
+          padding-inline: 20px;
+        "
+      >
+        Central de Luz e Apoio ao Repertório de Artistas do Audiovisual
+      </div>
+      <div
+        id="loading-text"
+        style="color: var(--text-muted); font-size: 0.85rem; margin-top: 32px"
+      >
+        Sincronizando bancos de dados...
+      </div>
+
+      <button
+        id="btn-entrar"
+        class="btn btn-primary hidden"
+        style="
+          margin-top: 32px;
+          width: auto;
+          padding: 16px 40px;
+          border-radius: 99px;
+          box-shadow: 0 4px 20px rgba(255, 123, 0, 0.3);
+        "
+        onclick="dismissSplash()"
+      >
+        ENTRAR NO APP
+      </button>
+      <div
+        id="version-display"
+        style="
+          position: absolute;
+          bottom: 40px;
+          font-size: 0.7rem;
+          color: #555;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          font-weight: 700;
+        "
+      ></div>
+    </div>
+
+    <header class="app-header">
+      <div class="header-title" style="gap: 10px">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="26"
+          height="26"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path
+            d="M4 6C2.9 6 2 6.9 2 8V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V8C22 6.9 21.1 6 20 6H16.83L15 4H9L7.17 6H4ZM12 17C9.24 17 7 14.76 7 12C7 9.24 9.24 7 12 7C14.76 7 17 9.24 17 12C17 14.76 14.76 17 12 17ZM12 9C10.34 9 9 10.34 9 12C9 13.66 10.34 15 12 15C13.66 15 15 13.66 15 12C15 10.34 13.66 9 12 9Z"
+          />
+        </svg>
+        <span class="brand-font" style="font-size: 1.6rem; letter-spacing: 1px"
+          >CLARA</span
+        >
+      </div>
+      <button
+        class="sync-btn"
+        onclick="toggleMenu()"
+        style="border: none; background: transparent; font-size: 1.6rem"
+      >
+        ☰
+      </button>
+    </header>
+
+    <nav id="side-menu" class="side-menu">
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 30px;
+        "
+      >
+        <span class="brand-font" style="font-size: 1.8rem; color: #fff"
+          >Menu</span
+        >
+        <button
+          onclick="toggleMenu()"
+          style="
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            cursor: pointer;
+          "
+        >
+          ✕
+        </button>
+      </div>
+
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 12px">
+        <button
+          id="btn-sync-menu"
+          class="btn btn-primary"
+          onclick="forceSync();"
+          style="
+            background: var(--bg-elevated);
+            color: #fff;
+            justify-content: flex-start;
+          "
+        >
+          🔄 Sincronizar Dados
+        </button>
+        <button
+          class="btn btn-primary"
+          onclick="toggleMenu(); openPush('push-settings');"
+          style="
+            background: var(--bg-elevated);
+            color: #fff;
+            justify-content: flex-start;
+          "
+        >
+          ⚙️ Notificações
+        </button>
+      </div>
+
+      <div
+        id="pwa-install-footer"
+        style="
+          padding-top: 20px;
+          border-top: 1px solid var(--border-color);
+          text-align: center;
+        "
+      >
+        <button
+          id="btn-install-pwa"
+          class="btn btn-outline"
+          style="
+            font-size: 0.8rem;
+            border-color: var(--accent-snc);
+            color: var(--accent-snc);
+          "
+        >
+          📥 Baixar Aplicativo CLARA
+        </button>
+        <p
+          id="pwa-installed-msg"
+          class="hidden"
+          style="
+            font-size: 0.7rem;
+            color: var(--accent-aulas);
+            font-weight: 700;
+          "
+        >
+          ✅ App instalado e pronto para uso offline.
+        </p>
+      </div>
+    </nav>
+
+    <main class="app-viewport">
+      <section id="view-datas" class="view-tab active">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+          "
+        >
+          <h1
+            class="page-title"
+            style="
+              color: var(--accent-datas);
+              margin-bottom: 0;
+              padding-bottom: 0;
+            "
+          >
+            Radar Cultural
+          </h1>
+          <button
+            class="btn-add-inline"
+            onclick="openPush('push-contribuir')"
+            title="Sugerir Evento"
+          >
+            +
+          </button>
+        </div>
+
+        <div
+          id="painel-filtros-container"
+          class="card"
+          style="
+            padding: 0;
+            overflow: hidden;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            margin-bottom: 16px;
+          "
+        >
+          <div class="filter-header" onclick="toggleFiltros()">
+            <span
+              style="
+                font-weight: 700;
+                font-size: 0.9rem;
+                letter-spacing: 0.5px;
+                color: var(--text-main);
+              "
+              >🔍 FILTROS</span
+            >
+            <span
+              id="filter-chevron"
+              style="color: var(--text-muted); font-size: 0.8rem"
+              >▼</span
+            >
+          </div>
+          <div id="filter-body" class="filter-body">
+            <div
+              class="filter-container"
+              id="painel-filtros"
+              style="
+                display: none;
+                border: none;
+                margin-bottom: 0;
+                padding: 0 16px 16px 16px;
+                background: transparent;
+              "
+            >
+              <span class="filter-title">Categorias</span>
+              <div class="filter-row" id="filtros-categoria"></div>
+
+              <span class="filter-title" style="margin-top: 16px"
+                >Estado (UF)</span
+              >
+              <div class="filter-row" id="filtros-uf"></div>
+
+              <span
+                class="filter-title"
+                id="titulo-filtro-urgencia"
+                style="
+                  margin-top: 16px;
+                  display: none;
+                  color: var(--accent-warning);
+                "
+                >STATUS</span
+              >
+              <div
+                class="filter-row"
+                id="filtros-urgencia"
+                style="display: none"
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="lista-datas">
+          <p style="text-align: center; color: var(--text-muted)">
+            Nenhuma data carregada. Aguarde.
+          </p>
+        </div>
+      </section>
+
+      <section id="view-dicio" class="view-tab">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 24px;
+          "
+        >
+          <h1
+            class="page-title"
+            style="
+              color: var(--accent-dicio);
+              margin-bottom: 0;
+              padding-bottom: 0;
+            "
+          >
+            Enciclopédia
+          </h1>
+          <button
+            id="btn-toggle-dicio"
+            onclick="toggleDicioMode()"
+            style="
+              background: transparent;
+              color: var(--accent-dicio);
+              border: 1px solid var(--accent-dicio);
+              padding: 6px 12px;
+              border-radius: 8px;
+              font-weight: 700;
+              font-size: 0.8rem;
+              cursor: pointer;
+            "
+          >
+            Índice A-Z
+          </button>
+        </div>
+
+        <div
+          id="dicio-search-area"
+          style="
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+          "
+        >
+          <input
+            type="text"
+            id="buscaDicio"
+            class="input-box"
+            placeholder="Buscar termo ou palavra-chave..."
+            onkeyup="filtrarDicio()"
+          />
+          <select
+            id="filtroCategoriaDicio"
+            class="input-box"
+            onchange="filtrarDicio()"
+          >
+            <option value="">Todas as Categorias</option>
+          </select>
+        </div>
+
+        <div
+          id="dicio-alpha-area"
+          class="hidden"
+          style="
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 24px;
+          "
+        ></div>
+
+        <div id="lista-dicio" class="dicio-grid">
+          <p
+            style="
+              text-align: center;
+              color: var(--text-muted);
+              grid-column: 1/-1;
+            "
+          >
+            Nenhum dado vinculado ainda.
+          </p>
+        </div>
+      </section>
+
+      <section id="view-suncalc" class="view-tab">
+        <h1 class="page-title" style="color: var(--accent-sun)">Luz Natural</h1>
+
+        <div
+          id="sun-filters-container"
+          class="card"
+          style="
+            padding: 0;
+            overflow: hidden;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            margin-bottom: 16px;
+          "
+        >
+          <div class="filter-header" onclick="toggleFiltrosLocal()">
+            <span
+              style="
+                font-weight: 700;
+                font-size: 0.9rem;
+                letter-spacing: 0.5px;
+                color: var(--text-main);
+              "
+              >📍 LOCAL E DATA</span
+            >
+            <span
+              id="sun-filter-chevron"
+              style="color: var(--text-muted); font-size: 0.8rem"
+              >▼</span
+            >
+          </div>
+          <div id="sun-filter-body" class="filter-body">
+            <div
+              class="card"
+              style="
+                border-top-color: var(--accent-sun);
+                border-top-width: 4px;
+                margin-top: 12px;
+              "
+            >
+              <label
+                style="
+                  display: block;
+                  font-size: 0.8rem;
+                  font-weight: 700;
+                  color: var(--text-muted);
+                  margin-bottom: 8px;
+                "
+                >LOCALIDADE DO ENSAIO</label
+              >
+              <div style="display: flex; gap: 8px; margin-bottom: 16px">
+                <input
+                  type="text"
+                  id="buscaLocalSunCalc"
+                  class="input-box"
+                  placeholder="Ex: Ubatuba, SP..."
+                />
+                <button
+                  id="btn-buscar-local"
+                  class="btn btn-primary"
+                  style="
+                    width: auto;
+                    background: var(--accent-sun);
+                    color: #000;
+                  "
+                  onclick="buscarLocalidadeSunCalc()"
+                >
+                  Buscar
+                </button>
+              </div>
+              <button
+                id="btn-gps"
+                class="btn btn-outline"
+                style="
+                  border-color: var(--accent-sun);
+                  color: var(--accent-sun);
+                  margin-bottom: 20px;
+                "
+                onclick="getMyLocation()"
+              >
+                📍 Usar meu GPS atual
+              </button>
+
+              <label
+                style="
+                  display: block;
+                  font-size: 0.8rem;
+                  font-weight: 700;
+                  color: var(--text-muted);
+                  margin-bottom: 8px;
+                "
+                >DATA DO ENSAIO</label
+              >
+              <input
+                type="date"
+                id="dataSunCalc"
+                class="input-box"
+                onchange="atualizarDataSunCalc()"
+                style="color-scheme: dark"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div
+          id="local-ref-title"
+          style="
+            margin-bottom: 16px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          "
+        ></div>
+        <div
+          id="weather-results"
+          class="card hidden"
+          style="
+            border-top-color: var(--accent-datas);
+            border-top-width: 4px;
+            background: rgba(6, 182, 212, 0.05);
+          "
+        ></div>
+
+        <div class="segmented-control">
+          <div
+            id="btn-tab-diurna"
+            class="segmented-btn active"
+            onclick="switchLuzTab('diurna')"
+          >
+            ☀️ LUZ DIURNA
+          </div>
+          <div
+            id="btn-tab-noturna"
+            class="segmented-btn"
+            onclick="switchLuzTab('noturna')"
+          >
+            🌌 ASTROS E LUA
+          </div>
+        </div>
+
+        <div id="sun-data-container">
+          <div id="suncalc-results"></div>
+        </div>
+
+        <div id="astro-data-container" class="hidden">
+          <div id="moon-results"></div>
+          <div id="meteor-results"></div>
+        </div>
+      </section>
+
+      <section id="view-zonas" class="view-tab">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 24px;
+          "
+        >
+          <h1
+            class="page-title"
+            style="
+              color: var(--accent-zonas);
+              margin-bottom: 0;
+              padding-bottom: 0;
+            "
+          >
+            Sistema de Zonas
+          </h1>
+          <button
+            onclick="abrirGuiaZonas()"
+            style="
+              background: transparent;
+              color: var(--accent-zonas);
+              border: 2px solid var(--accent-zonas);
+              border-radius: 50%;
+              width: 30px;
+              height: 30px;
+              font-weight: 800;
+              font-family: 'Cormorant Garamond', serif;
+              cursor: pointer;
+            "
+          >
+            ?
+          </button>
+        </div>
+
+        <div class="checklist">
+          <strong>Checklist para Arquitetura e Paisagem:</strong>
+          <ul>
+            <li>
+              Utilize o <strong>ISO nativo mais baixo</strong> (ex: ISO 100).
+            </li>
+            <li>
+              Fotometria:
+              <strong>Pontual (ou Preponderância de Centro)</strong>.
+            </li>
+            <li>Foco: <strong>Manual (MF)</strong>.</li>
+            <li>Evite aberturas acima de f/16 para prevenir difração.</li>
+          </ul>
+        </div>
+
+        <div
+          class="card"
+          style="padding: 0; overflow: hidden; margin-bottom: 16px"
+        >
+          <div
+            class="filter-header"
+            onclick="toggleZonasBox('box1-zonas', 'chev1-zonas')"
+          >
+            <h2
+              style="
+                font-size: 1rem;
+                color: var(--text-muted);
+                font-weight: 700;
+                margin: 0;
+              "
+            >
+              1. Sensor e Distância Focal
+            </h2>
+            <span
+              id="chev1-zonas"
+              style="color: var(--text-muted); font-size: 0.8rem"
+              >▼</span
+            >
+          </div>
+          <div id="box1-zonas" class="filter-body">
+            <div style="padding: 16px">
+              <div
+                style="
+                  display: flex;
+                  gap: 10px;
+                  margin-bottom: 10px;
+                  align-items: center;
+                "
+              >
+                <label style="flex: 1; font-size: 0.9rem">Sensor:</label>
+                <select
+                  id="sensor-coc"
+                  class="input-box"
+                  style="flex: 2; padding: 10px"
+                >
+                  <option value="0.030">Full Frame (0.030mm)</option>
+                  <option value="0.019">APS-C Canon (0.019mm)</option>
+                  <option value="0.020">APS-C Nikon/Sony (0.020mm)</option>
+                </select>
+              </div>
+              <div
+                style="
+                  display: flex;
+                  gap: 10px;
+                  margin-bottom: 10px;
+                  align-items: center;
+                "
+              >
+                <label style="flex: 1; font-size: 0.9rem"
+                  >Dist. Focal (mm):</label
+                >
+                <input
+                  type="number"
+                  id="focal-length"
+                  class="input-box"
+                  style="flex: 2; padding: 10px"
+                  placeholder="Ex: 24"
+                  value="24"
+                />
+              </div>
+              <div
+                id="hyperfocal-result"
+                style="
+                  margin-top: 10px;
+                  font-size: 0.85rem;
+                  color: #aaa;
+                  line-height: 1.5;
+                "
+              >
+                <em>Insira a focal para calcular.</em>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="card"
+          style="padding: 0; overflow: hidden; margin-bottom: 16px"
+        >
+          <div
+            class="filter-header"
+            onclick="toggleZonasBox('box2-zonas', 'chev2-zonas')"
+          >
+            <h2
+              style="
+                font-size: 1rem;
+                color: var(--text-muted);
+                font-weight: 700;
+                margin: 0;
+              "
+            >
+              2. Filtros (ND)
+            </h2>
+            <span
+              id="chev2-zonas"
+              style="color: var(--text-muted); font-size: 0.8rem"
+              >▼</span
+            >
+          </div>
+          <div id="box2-zonas" class="filter-body">
+            <div style="padding: 16px">
+              <select
+                id="nd-filter-select"
+                class="input-box"
+                style="padding: 10px; margin-bottom: 12px"
+              >
+                <option value="0">Sem Filtro ND</option>
+                <option value="1">ND2 (Corta 1 Stop)</option>
+                <option value="2">ND4 (Corta 2 Stops)</option>
+                <option value="3">ND8 (Corta 3 Stops)</option>
+                <option value="4">ND16 (Corta 4 Stops)</option>
+                <option value="5">ND32 (Corta 5 Stops)</option>
+                <option value="6">ND64 (Corta 6 Stops)</option>
+                <option value="7">ND128 (Corta 7 Stops)</option>
+                <option value="8">ND256 (Corta 8 Stops)</option>
+                <option value="9">ND512 (Corta 9 Stops)</option>
+                <option value="10">ND1000 (Corta 10 Stops)</option>
+              </select>
+              <div
+                style="
+                  font-size: 0.8rem;
+                  color: var(--text-muted);
+                  line-height: 1.4;
+                "
+              >
+                💡 <strong>Dica:</strong> Se empilhar filtros, some os stops
+                (Ex: ND8 [3] + ND64 [6] = 9 Stops). Não multiplique os nomes.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2
+            style="
+              font-size: 1rem;
+              color: var(--text-muted);
+              margin-bottom: 15px;
+              font-weight: 700;
+            "
+          >
+            3. Leituras do Fotômetro
+          </h2>
+          <div
+            id="zonas-inputs-container"
+            style="display: flex; flex-direction: column; gap: 10px"
+          >
+            <div style="display: flex; gap: 10px">
+              <input
+                type="text"
+                class="input-box input-name-zona"
+                placeholder="Luz Alta (Ex: Janela)"
+              /><input
+                type="text"
+                class="input-box input-speed-zona"
+                placeholder="1/250"
+                style="width: 90px; text-align: center"
+              />
+            </div>
+            <div style="display: flex; gap: 10px">
+              <input
+                type="text"
+                class="input-box input-name-zona"
+                placeholder="Meio-tom Claro"
+              /><input
+                type="text"
+                class="input-box input-speed-zona"
+                placeholder="1/100"
+                style="width: 90px; text-align: center"
+              />
+            </div>
+            <div style="display: flex; gap: 10px">
+              <input
+                type="text"
+                class="input-box input-name-zona"
+                placeholder="Cinza 18% (Parede)"
+              /><input
+                type="text"
+                class="input-box input-speed-zona"
+                placeholder="1/10"
+                style="width: 90px; text-align: center"
+              />
+            </div>
+            <div style="display: flex; gap: 10px">
+              <input
+                type="text"
+                class="input-box input-name-zona"
+                placeholder="Meio-tom Escuro"
+              /><input
+                type="text"
+                class="input-box input-speed-zona"
+                placeholder="0.4"
+                style="width: 90px; text-align: center"
+              />
+            </div>
+            <div style="display: flex; gap: 10px">
+              <input
+                type="text"
+                class="input-box input-name-zona"
+                placeholder="Sombra Profunda"
+              /><input
+                type="text"
+                class="input-box input-speed-zona"
+                placeholder="2s"
+                style="width: 90px; text-align: center"
+              />
+            </div>
+          </div>
+
+          <button
+            id="btn-add-zona"
+            class="btn btn-outline"
+            style="
+              margin-top: 10px;
+              padding: 10px;
+              border-style: dashed;
+              color: var(--accent-zonas);
+              border-color: var(--accent-zonas);
+            "
+            onclick="addZonaRow()"
+          >
+            + Adicionar Medição
+          </button>
+
+          <button
+            class="btn btn-primary"
+            style="background: var(--accent-zonas); margin-top: 16px"
+            onclick="calculateZonasExposure()"
+          >
+            Calcular Ponto Zero (0 EV)
+          </button>
+
+          <div
+            class="result-box"
+            id="zonas-exposure-result"
+            style="display: none; text-align: center; margin-top: 24px"
+          >
+            <p style="color: var(--text-muted); font-size: 0.9rem">
+              Velocidade para zerar o fotômetro:
+            </p>
+            <div
+              class="base-speed"
+              id="zonas-base-speed-val"
+              style="
+                font-size: 2.5rem;
+                font-weight: bold;
+                color: var(--accent-zonas);
+                margin: 10px 0 40px 0;
+              "
+            >
+              1/30
+            </div>
+
+            <div class="meter-container">
+              <div class="meter-line"></div>
+              <div
+                class="meter-ticks"
+                style="
+                  display: block;
+                  position: absolute;
+                  width: calc(100% - 20px);
+                  left: 10px;
+                  top: 40px;
+                  padding: 0;
+                "
+              >
+                <div
+                  class="tick"
+                  style="
+                    position: absolute;
+                    left: 0%;
+                    transform: translateX(-50%);
+                  "
+                >
+                  <div class="tick-mark"></div>
+                  <div class="tick-label">-3</div>
+                </div>
+                <div
+                  class="tick"
+                  style="
+                    position: absolute;
+                    left: 16.666%;
+                    transform: translateX(-50%);
+                  "
+                >
+                  <div class="tick-mark"></div>
+                  <div class="tick-label">-2</div>
+                </div>
+                <div
+                  class="tick"
+                  style="
+                    position: absolute;
+                    left: 33.333%;
+                    transform: translateX(-50%);
+                  "
+                >
+                  <div class="tick-mark"></div>
+                  <div class="tick-label">-1</div>
+                </div>
+                <div
+                  class="tick zero"
+                  style="
+                    position: absolute;
+                    left: 50%;
+                    transform: translateX(-50%);
+                  "
+                >
+                  <div class="tick-mark"></div>
+                  <div class="tick-label">0</div>
+                </div>
+                <div
+                  class="tick"
+                  style="
+                    position: absolute;
+                    left: 66.666%;
+                    transform: translateX(-50%);
+                  "
+                >
+                  <div class="tick-mark"></div>
+                  <div class="tick-label">+1</div>
+                </div>
+                <div
+                  class="tick"
+                  style="
+                    position: absolute;
+                    left: 83.333%;
+                    transform: translateX(-50%);
+                  "
+                >
+                  <div class="tick-mark"></div>
+                  <div class="tick-label">+2</div>
+                </div>
+                <div
+                  class="tick"
+                  style="
+                    position: absolute;
+                    left: 100%;
+                    transform: translateX(-50%);
+                  "
+                >
+                  <div class="tick-mark"></div>
+                  <div class="tick-label">+3</div>
+                </div>
+              </div>
+              <div id="zonas-meter-points-layer"></div>
+            </div>
+
+            <div
+              id="zonas-verdict-box"
+              class="verdict"
+              style="margin-top: 20px"
+            ></div>
+          </div>
+        </div>
+
+        <h2
+          style="
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-top: 24px;
+            margin-bottom: 12px;
+            font-weight: 700;
+          "
+        >
+          Tabela de Velocidades
+        </h2>
+        <div style="overflow-x: auto; padding-bottom: 10px">
+          <table class="speed-table">
+            <tbody>
+              <tr>
+                <td>
+                  <div class="full-stop">30s</div>
+                  <div class="third-stop">25s<br />20s</div>
+                </td>
+                <td>
+                  <div class="full-stop">15s</div>
+                  <div class="third-stop">13s<br />10s</div>
+                </td>
+                <td>
+                  <div class="full-stop">8s</div>
+                  <div class="third-stop">6s<br />5s</div>
+                </td>
+                <td>
+                  <div class="full-stop">4s</div>
+                  <div class="third-stop">3.2s<br />2.5s</div>
+                </td>
+                <td>
+                  <div class="full-stop">2s</div>
+                  <div class="third-stop">1.6s<br />1.3s</div>
+                </td>
+                <td>
+                  <div class="full-stop">1s</div>
+                  <div class="third-stop">0.8s<br />0.6s</div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="full-stop">1/2</div>
+                  <div class="third-stop">0.4s<br />0.3s</div>
+                </td>
+                <td>
+                  <div class="full-stop">1/4</div>
+                  <div class="third-stop">1/5<br />1/6</div>
+                </td>
+                <td>
+                  <div class="full-stop">1/8</div>
+                  <div class="third-stop">1/10<br />1/13</div>
+                </td>
+                <td>
+                  <div class="full-stop">1/15</div>
+                  <div class="third-stop">1/20<br />1/25</div>
+                </td>
+                <td>
+                  <div class="full-stop">1/30</div>
+                  <div class="third-stop">1/40<br />1/50</div>
+                </td>
+                <td>
+                  <div class="full-stop">1/60</div>
+                  <div class="third-stop">1/80<br />1/100</div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="full-stop">1/125</div>
+                  <div class="third-stop">1/160<br />1/200</div>
+                </td>
+                <td>
+                  <div class="full-stop">1/250</div>
+                  <div class="third-stop">1/320<br />1/400</div>
+                </td>
+                <td>
+                  <div class="full-stop">1/500</div>
+                  <div class="third-stop">1/640<br />1/800</div>
+                </td>
+                <td>
+                  <div class="full-stop">1/1000</div>
+                  <div class="third-stop">1/1250<br />1/1600</div>
+                </td>
+                <td>
+                  <div class="full-stop">1/2000</div>
+                  <div class="third-stop">1/2500<br />1/3200</div>
+                </td>
+                <td>
+                  <div class="full-stop">1/4000</div>
+                  <div class="third-stop">1/5000<br />1/6400</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="view-calc" class="view-tab">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 24px;
+          "
+        >
+          <h1
+            class="page-title"
+            style="
+              color: var(--accent-calc);
+              margin-bottom: 0;
+              padding-bottom: 0;
+            "
+          >
+            Luz de Estúdio
+          </h1>
+          <button
+            onclick="abrirGuiaLuz()"
+            style="
+              background: transparent;
+              color: var(--accent-calc);
+              border: 2px solid var(--accent-calc);
+              border-radius: 50%;
+              width: 30px;
+              height: 30px;
+              font-weight: 800;
+              font-family: 'Cormorant Garamond', serif;
+              cursor: pointer;
+            "
+          >
+            ?
+          </button>
+        </div>
+
+        <div class="card" style="margin-bottom: 24px">
+          <label
+            style="
+              display: block;
+              font-size: 0.8rem;
+              font-weight: 700;
+              color: var(--text-muted);
+              margin-bottom: 8px;
+            "
+            >CENÁRIO DE FUNDO</label
+          >
+          <select id="cenarioFundo" class="input-box" onchange="renderLights()">
+            <option value="livre">Livre (Ajuste Manual)</option>
+            <option value="branco">Fundo Branco</option>
+            <option value="cinza">Fundo Cinza</option>
+          </select>
+        </div>
+
+        <button
+          class="btn btn-primary"
+          style="
+            background: var(--accent-calc);
+            margin-bottom: 24px;
+            padding: 16px;
+          "
+          onclick="addLight()"
+        >
+          + Adicionar Tocha Secundária
+        </button>
+        <div id="lightsContainer"></div>
+      </section>
+
+      <section id="view-turma-menu" class="view-tab">
+        <h1 class="page-title" style="color: var(--accent-snc)">
+          Turma SCI-TPF43M
+        </h1>
+        <div
+          class="disclaimer-box"
+          style="
+            border-left-color: var(--accent-snc);
+            background: rgba(244, 121, 32, 0.1);
+          "
+        >
+          <strong style="color: var(--accent-snc)">Acesso Exclusivo:</strong>
+          Ferramentas de organização interna dos alunos.
+        </div>
+
+        <div
+          style="
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 24px;
+          "
+        >
+          <button
+            class="card btn"
+            style="
+              justify-content: flex-start;
+              font-size: 1.1rem;
+              border-top-width: 4px;
+              border-top-color: var(--accent-aulas);
+              color: #fff;
+              padding: 24px;
+            "
+            onclick="openPush('push-aulas')"
+          >
+            <span style="font-size: 1.8rem; margin-right: 12px">📅</span>
+            Cronograma de Aulas
+          </button>
+          <button
+            class="card btn"
+            style="
+              justify-content: flex-start;
+              font-size: 1.1rem;
+              border-top-width: 4px;
+              border-top-color: var(--accent-eventos);
+              color: #fff;
+              padding: 24px;
+            "
+            onclick="openPush('push-eventos')"
+          >
+            <span style="font-size: 1.8rem; margin-right: 12px">📷</span>
+            Eventos da Turma
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <nav class="tab-bar">
+      <div class="tab-item active" onclick="switchTab('view-datas', this)">
+        <span class="tab-icon">📡</span><span>Radar</span>
+      </div>
+      <div class="tab-item" onclick="switchTab('view-dicio', this)">
+        <span class="tab-icon">📖</span><span>Dicionário</span>
+      </div>
+      <div class="tab-item" onclick="switchTab('view-suncalc', this)">
+        <span class="tab-icon">☀️</span><span>Sol/Lua</span>
+      </div>
+      <div class="tab-item" onclick="switchTab('view-zonas', this)">
+        <span class="tab-icon">⚖️</span><span>Sistema de Zonas</span>
+      </div>
+      <div class="tab-item" onclick="switchTab('view-calc', this)">
+        <span class="tab-icon">💡</span><span>Estúdio</span>
+      </div>
+      <div class="tab-item" onclick="requireAuth(this)">
+        <span class="tab-icon">🎓</span><span>Turma</span>
+      </div>
+    </nav>
+
+    <aside id="push-auth" class="push-screen">
+      <header class="push-header">
+        <button class="btn-back" onclick="closePush('push-auth')">
+          ‹ Voltar
+        </button>
+        <div class="push-title">Área Restrita</div>
+      </header>
+      <div
+        class="push-content"
+        style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        "
+      >
+        <div style="font-size: 4rem; margin-bottom: 24px">🔒</div>
+        <h2 class="brand-font" style="margin-bottom: 8px; font-size: 2.2rem">
+          Acesso Turma 43M
+        </h2>
+        <p
+          style="
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            text-align: center;
+          "
+        >
+          Digite a senha fornecida para desbloquear.
+        </p>
+        <input
+          type="password"
+          id="input-senha"
+          class="input-box"
+          style="
+            text-align: center;
+            font-size: 1.5rem;
+            letter-spacing: 4px;
+            margin-bottom: 16px;
+          "
+          placeholder="••••••"
+        />
+        <button class="btn btn-primary" onclick="validarSenha()">
+          DESBLOQUEAR MÓDULO
+        </button>
+        <div
+          id="auth-error"
+          style="
+            color: var(--accent-danger);
+            margin-top: 16px;
+            font-weight: 700;
+            display: none;
+          "
+        >
+          ❌ Senha incorreta.
+        </div>
+      </div>
+    </aside>
+
+    <aside id="push-contribuir" class="push-screen">
+      <header class="push-header">
+        <button class="btn-back" onclick="closePush('push-contribuir')">
+          ‹ Cancelar
+        </button>
+        <div class="push-title" style="color: var(--accent-datas)">
+          Sugerir Evento
+        </div>
+      </header>
+      <div class="push-content" style="padding: 0; background: #fff">
+        <iframe
+          src="https://docs.google.com/forms/d/e/1FAIpQLSeJIJG-CJE4uulWWJPDnExFqLrt1fl-5FAxh2DWfcizv2bb8A/viewform?embedded=true"
+          width="100%"
+          height="100%"
+          frameborder="0"
+          >Carregando...</iframe
+        >
+      </div>
+    </aside>
+
+    <aside id="push-aulas" class="push-screen">
+      <header class="push-header">
+        <button class="btn-back" onclick="closePush('push-aulas')">
+          ‹ Turma
+        </button>
+        <div class="push-title" style="color: var(--accent-aulas)">
+          Crono de Aulas
+        </div>
+      </header>
+      <div
+        class="push-content"
+        style="display: flex; flex-direction: column; padding: 20px"
+      >
+        <div
+          class="card"
+          style="
+            border-top-color: var(--accent-aulas);
+            border-top-width: 4px;
+            margin-bottom: 16px;
+          "
+        >
+          <label
+            style="
+              display: block;
+              font-size: 0.8rem;
+              font-weight: 700;
+              color: var(--text-muted);
+              margin-bottom: 8px;
+            "
+            >FILTRAR POR UC</label
+          >
+          <select id="filtroUC" class="input-box">
+            <option value="">-- Todas as datas --</option>
+          </select>
+        </div>
+
+        <div
+          id="painel-aulas"
+          style="
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            flex: 1;
+            width: 100%;
+          "
+        ></div>
+        <div
+          id="resultado-pesquisa"
+          style="
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+            flex: 1;
+            width: 100%;
+          "
+        ></div>
+
+        <div style="display: flex; gap: 8px; margin-top: 16px">
+          <button
+            class="btn btn-outline"
+            style="padding: 12px 8px; font-size: 0.85rem"
+            id="btn-passada"
+            onclick="mudarSemana(-1)"
+          >
+            Semana Passada
+          </button>
+          <button
+            class="btn btn-outline"
+            style="padding: 12px 8px; font-size: 0.85rem"
+            id="btn-atual"
+            onclick="mudarSemana(0)"
+          >
+            Esta Semana
+          </button>
+          <button
+            class="btn btn-outline"
+            style="padding: 12px 8px; font-size: 0.85rem"
+            id="btn-que-vem"
+            onclick="mudarSemana(1)"
+          >
+            Próxima
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <aside id="push-eventos" class="push-screen">
+      <header class="push-header">
+        <button class="btn-back" onclick="closePush('push-eventos')">
+          ‹ Turma
+        </button>
+        <div class="push-title" style="color: var(--accent-eventos)">
+          Eventos Internos
+        </div>
+      </header>
+      <div class="push-content">
+        <div id="lista-eventos"></div>
+      </div>
+    </aside>
+
+    <aside id="push-settings" class="push-screen">
+      <header class="push-header">
+        <button class="btn-back" onclick="closePush('push-settings')">
+          ‹ Voltar
+        </button>
+        <div class="push-title">Configurações</div>
+      </header>
+      <div class="push-content">
+        <h3
+          class="brand-font"
+          style="font-size: 1.8rem; margin-bottom: 20px; color: #fff"
+        >
+          Notificações
+        </h3>
+
+        <div
+          class="card"
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 16px;
+          "
+        >
+          <div>
+            <div style="font-weight: 700; color: #fff">Alertas do Radar</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted)">
+              Eventos em 'Últimos Dias'
+            </div>
+          </div>
+          <input
+            type="checkbox"
+            id="notify-radar"
+            style="width: 24px; height: 24px; accent-color: var(--accent-snc)"
+          />
+        </div>
+
+        <div
+          class="card"
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+          "
+        >
+          <div>
+            <div style="font-weight: 700; color: #fff">Ciclo Solar</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted)">
+              Início da Hora Dourada
+            </div>
+          </div>
+          <input
+            type="checkbox"
+            id="notify-sun"
+            style="width: 24px; height: 24px; accent-color: var(--accent-snc)"
+          />
+        </div>
+
+        <button
+          class="btn btn-primary"
+          onclick="solicitarPermissaoNotificacao()"
+          style="margin-top: 20px"
+        >
+          ATIVAR NOTIFICAÇÕES (PWA)
+        </button>
+
+        <p
+          style="
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 24px;
+            text-align: center;
+            line-height: 1.5;
+          "
+        >
+          Nota: O envio de notificações requer que o app esteja instalado na
+          tela inicial do seu dispositivo.
+        </p>
+      </div>
+    </aside>
+
+    <div
+      class="bottom-sheet-backdrop"
+      id="sheet-backdrop"
+      onclick="closeBottomSheet()"
+    ></div>
+    <div class="bottom-sheet" id="bottom-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-content">
+        <div class="sheet-kicker" id="sheet-kicker"></div>
+        <h2 class="sheet-title" id="sheet-title"></h2>
+        <div class="sheet-subtitle" id="sheet-subtitle"></div>
+        <div class="sheet-body" id="sheet-body"></div>
+      </div>
+    </div>
+
+    <template id="guia-luz-content">
+      <p>
+        Esta ferramenta não é apenas uma calculadora, mas um assistente para
+        garantir que sua intenção criativa seja traduzida em números exatos. No
+        estúdio, não "achamos" a luz; nós a construímos com precisão técnica.
+      </p>
+
+      <p>
+        <strong style="color: var(--accent-calc)"
+          >1. A Base: Configuração da Câmera</strong
+        ><br />
+        Antes de medir as luzes, sua câmera deve estar "cega" para a luz
+        ambiente do estúdio. Queremos registrar apenas o pulso das tochas:<br />
+        • <strong>ISO 100 (ou o menor nativo):</strong> Buscamos a máxima
+        nitidez e o menor ruído. Como temos controle total sobre a potência dos
+        flashes, não há motivo para forçar o sensor.<br />
+        • <strong>Velocidade 1/125s:</strong> É a velocidade de sincronia
+        padrão. Rápida o suficiente para anular a luz das lâmpadas comuns da
+        sala e lenta o suficiente para captar toda a explosão do flash com
+        segurança.<br />
+        • <strong>Abertura (f/):</strong> Esta é sua variável criativa. Ela será
+        determinada pela potência da sua <strong>Luz Principal</strong>.
+      </p>
+
+      <p>
+        <strong style="color: var(--accent-calc)"
+          >2. O Equipamento Indispensável</strong
+        ><br />
+        • <strong>Tochas/Flashes de Estúdio:</strong> Devem permitir o ajuste
+        fino de potência.<br />
+        • <strong>Fotômetro de Mão:</strong> É ele quem diz a verdade técnica.
+        Meça sempre a <strong>luz incidente</strong> (posicione o fotômetro
+        junto ao assunto e aponte a esfera branca para a fonte de luz que deseja
+        ajustar).
+      </p>
+
+      <p>
+        <strong style="color: var(--accent-calc)"
+          >3. A Lógica da CLARA: Ratio (Proporção)</strong
+        ><br />
+        O sistema trabalha comparando todas as luzes com a sua
+        <strong>Âncora</strong>:<br />
+        • <strong>Luz Principal:</strong> É o seu ponto zero. O valor medido
+        nela define a exposição da foto.<br />
+        • <strong>Preenchimento:</strong> Para sombras naturais, a regra é
+        mantê-la <strong>-2.0 stops</strong> (2 pontos inteiros abaixo da
+        principal).<br />
+        • <strong>Recorte/Cabelo:</strong> Para tridimensionalidade, sugerimos
+        <strong>+2.0 stops</strong> (2 pontos inteiros acima da principal).
+      </p>
+
+      <p>
+        <strong style="color: var(--accent-calc)"
+          >4. Estratégia de Ouro: Fotometria de Ponto Inteiro</strong
+        ><br />
+        Focar no ajuste da luz principal para um ponto inteiro é a dica mais
+        valiosa para quem busca agilidade e precisão no estúdio, pois simplifica
+        todo o raciocínio matemático das outras luzes. Não aceite décimos na Luz
+        Principal!<br />
+        • <strong>A Dica:</strong> Se ao medir a luz principal o fotômetro
+        indicar <strong>f/8.4</strong>, não tente calcular as outras luzes com
+        base nesse quebrado. Ajuste a potência da sua tocha (subindo ou descendo
+        alguns "clicks") até que o fotômetro leia
+        <strong>f/8.0</strong> cravado. <br />
+        • <strong>O Motivo:</strong> Ao fixar a principal em um ponto inteiro, o
+        cálculo das outras luzes fica óbvio. Se a principal é
+        <strong>f/8</strong>, o preenchimento (-2 pontos) será
+        <strong>f/4</strong> e o recorte (+2 pontos) será <strong>f/16</strong>.
+        Simples assim.
+      </p>
+
+      <p>
+        <strong style="color: var(--accent-calc)"
+          >5. Segredos da Memorização (F-Stops Inteiros)</strong
+        ><br />
+        Para dominar o estúdio, você precisa conhecer a escada dos pontos
+        inteiros. Decore apenas os dois primeiros: <strong>1.0</strong> e
+        <strong>1.4</strong>. <br />
+        A partir daí, o próximo número é sempre o
+        <strong>dobro do número que veio antes do anterior</strong>:<br />
+        • Depois de <strong>1.4</strong>, vem o dobro de 1.0 =
+        <strong>2.0</strong><br />
+        • Depois de <strong>2.0</strong>, vem o dobro de 1.4 =
+        <strong>2.8</strong><br />
+        • Depois de <strong>2.8</strong>, vem o dobro de 2.0 =
+        <strong>4.0</strong><br />
+        • Depois de <strong>4.0</strong>, vem o dobro de 2.8 =
+        <strong>5.6</strong><br />
+        • <em>E assim por diante: 8, 11 (arredondamento), 16, 22...</em>
+      </p>
+
+      <p>
+        <strong style="color: var(--accent-warning)">Nota Didática:</strong> No
+        Passo 1, a CLARA te ajuda a igualar a potência da tocha secundária com a
+        Principal. Uma vez que as luzes estão niveladas, o Passo 2 te dá o
+        comando final de "clicks" para atingir a intenção artística com
+        perfeição.
+      </p>
+    </template>
+
+    <template id="guia-zonas-content">
+      <p>
+        Esta ferramenta ajuda a encontrar o Ponto Zero (Cinza 18%) de uma cena
+        avaliando o contraste entre as áreas mais claras e mais escuras medidas
+        no seu fotômetro.
+      </p>
+
+      <p>
+        <strong style="color: var(--accent-zonas)"
+          >A Lógica dos Filtros ND (Densidade Neutra)</strong
+        ><br />
+        Os filtros ND funcionam como "óculos escuros" para a sua lente. Eles
+        cortam a entrada de luz para permitir longas exposições (como borrar a
+        água de uma cachoeira) ou grandes aberturas em dias muito ensolarados,
+        sem alterar as cores da cena.
+      </p>
+
+      <p>
+        • <strong>Uso e Efeito (Stops):</strong><br />
+        Cada número do filtro ND representa a quantidade de "stops" (pontos de
+        luz) que ele corta:<br />
+        - <strong>ND2:</strong> Corta 1 stop (Reduz a luz pela metade)<br />
+        - <strong>ND4:</strong> Corta 2 stops<br />
+        - <strong>ND8:</strong> Corta 3 stops<br />
+        - <strong>ND64:</strong> Corta 6 stops<br />
+        - <strong>ND1000:</strong> Corta 10 stops
+      </p>
+
+      <p>
+        • <strong>Soma de Filtros (Empilhamento):</strong><br />
+        Se você rosquear dois filtros na lente, você <strong>não</strong> deve
+        multiplicar os nomes deles, mas sim <strong>somar os stops</strong>.
+        <br />
+        <em>Exemplo:</em> Um filtro ND8 (corta 3 stops) + um filtro ND64 (corta
+        6 stops) = Corte total de <strong>9 stops</strong> (o que seria
+        equivalente a um filtro ND512).
+      </p>
+
+      <p>
+        <strong style="color: var(--accent-warning)"
+          >Como usar a Calculadora:</strong
+        ><br />
+        Faça a medição da luz na cena <strong>SEM</strong> o filtro ND e insira
+        os valores no Box 3. Depois, informe no Box 2 qual filtro você vai
+        rosquear na lente. A calculadora fará a compensação automaticamente e te
+        dará a nova velocidade final do obturador.
+      </p>
+    </template>
+
+    <div
+      id="visitor-counter"
+      style="
+        color: var(--bg-color);
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        max-width: 800px;
+        font-size: 0.1rem;
+        user-select: all;
+        opacity: 0;
+        pointer-events: none;
+      "
+    >
+      0
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
