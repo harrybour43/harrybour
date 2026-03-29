@@ -650,16 +650,6 @@ function openSliderLightbox(srcAntes, srcDepois, alt) {
 
 
 
-// Inicialização ao carregar a página
-
-document.addEventListener('DOMContentLoaded', () => {
-
-    loadDynamicGallery();
-
-});
-
-
-
 // ==========================================
 
 // INICIALIZAÇÃO E EVENTOS GERAIS
