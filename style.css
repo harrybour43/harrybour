@@ -893,3 +893,55 @@ body {
   color: #121212; /* Cor escura do seu tema para o ícone */
   font-size: 14px;
 }
+/* Container do Tooltip */
+[data-tooltip] {
+  position: relative;
+  cursor: help; /* Muda o mouse para um ícone de interrogação/ajuda */
+}
+
+/* O balão de texto em si */
+[data-tooltip]::after {
+  content: attr(data-tooltip); /* Puxa o texto do atributo HTML */
+  position: absolute;
+  bottom: 125%; /* Aparece acima do link */
+  left: 50%;
+  transform: translateX(-50%) scale(0.9);
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-family: var(--font-ui);
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease-in-out;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+/* A setinha embaixo do balão */
+[data-tooltip]::before {
+  content: "";
+  position: absolute;
+  bottom: 110%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: var(--border-color) transparent transparent transparent;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease-in-out;
+  z-index: 1000;
+}
+
+/* Exibição no Hover */
+[data-tooltip]:hover::after,
+[data-tooltip]:hover::before {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) scale(1);
+}
