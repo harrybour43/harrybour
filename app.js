@@ -303,32 +303,50 @@ function openSliderLightbox(srcAntes, srcDepois, alt) {
   }
 }
 async function acessarPasta() {
-  const email = document.getElementById('user-email').value;
+  const emailInput = document.getElementById('user-email').value;
+  const errorMsg = document.getElementById('login-error-msg');
+  const loginSection = document.getElementById('client-login-section');
+  const driveContainer = document.getElementById('drive-container');
+  const btnLogin = document.getElementById('btn-login');
+
+  // URL gerada pelo Google Apps Script
   const scriptURL = 'https://script.google.com/macros/s/AKfycbw2PYgvjFzGRlKEz98UZZhErDsvZIx7NXZt_HWz13qegeTnez4TQlQvB4pP2gG7dbOreQ/exec';
+
+  // Reseta estado do botão e erro
+  errorMsg.style.display = 'none';
+  btnLogin.innerText = 'Verificando...';
+  btnLogin.disabled = true;
 
   try {
     const response = await fetch(scriptURL, {
       method: 'POST',
-      body: JSON.stringify({ email: email })
+      body: JSON.stringify({ email: emailInput })
     });
     
     const resultado = await response.json();
 
     if (resultado.sucesso) {
-      // Opção A: Redirecionar para o Google Drive
-      // window.location.href = `https://drive.google.com/drive/folders/${resultado.folderId}`;
-
-      // Opção B: Exibir em um iframe dentro da sua página Lumen
-      const container = document.getElementById('dynamic-gallery');
-      container.innerHTML = `
+      // Esconde a área de login
+      loginSection.style.display = 'none';
+      
+      // Mostra o container do Drive e injeta o iframe
+      driveContainer.style.display = 'block';
+      driveContainer.innerHTML = `
         <iframe src="https://drive.google.com/embeddedfolderview?id=${resultado.folderId}#grid" 
-                style="width:90%; height:600px; border:0;"></iframe>
+                style="width:100%; height:700px; border:0;"></iframe>
       `;
     } else {
-      alert("E-mail não autorizado ou não encontrado.");
+      // Exibe erro
+      errorMsg.style.display = 'block';
+      btnLogin.innerText = 'Acessar Meu Ensaio';
+      btnLogin.disabled = false;
     }
   } catch (error) {
     console.error("Erro na verificação:", error);
+    errorMsg.innerText = "Erro de conexão. Tente novamente.";
+    errorMsg.style.display = 'block';
+    btnLogin.innerText = 'Acessar Meu Ensaio';
+    btnLogin.disabled = false;
   }
 }
 
