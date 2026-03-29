@@ -295,10 +295,11 @@ async function acessarPasta() {
 
     if (resultado.sucesso) {
       loginSection.style.display = 'none';
-      driveContainer.style.display = 'block';
       driveContainer.innerHTML = `
-        <iframe src="https://drive.google.com/embeddedfolderview?id=${resultado.folderId}#grid" 
-                style="width:100%; height:750px; border:0;"></iframe>
+        <iframe src="https://drive.google.com/embeddedfolderview?id=${resultado.folderId}&rm=minimal#grid" 
+                style="width:100%; height:85vh; border:0; border-radius: 4px;"
+                sandbox="allow-same-origin allow-scripts allow-popups allow-forms">
+        </iframe>
       `;
     } else {
       errorMsg.style.display = 'block';
