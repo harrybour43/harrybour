@@ -535,102 +535,67 @@ async function loadDynamicGallery() {
 
 
 /* ==========================================
-
-   LÓGICA DE ACESSO AO GOOGLE DRIVE
-
+   LÓGICA DE ACESSO AO GOOGLE DRIVE (LINK DIRETO)
 ========================================== */
-
 async function acessarPasta() {
-
   const emailInput = document.getElementById('user-email').value;
-
   const errorMsg = document.getElementById('login-error-msg');
-
   const loginSection = document.getElementById('client-login-section');
-
   const driveContainer = document.getElementById('drive-container');
-
   const btnLogin = document.getElementById('btn-login');
 
-
-
+  // Seu link do Google Script (já está correto)
   const scriptURL = 'https://script.google.com/macros/s/AKfycby2Bei3mDejBjbAcvWS0Wmx_5g25E2QBmMmjA5HMxzwIO1ovbxOhmhyEUnF3rt6-46NpQ/exec';
 
-
-
   errorMsg.style.display = 'none';
-
   btnLogin.innerText = 'Verificando...';
-
   btnLogin.disabled = true;
 
-
-
   try {
-
     const response = await fetch(scriptURL, {
-
       method: 'POST',
-
       headers: { 
-
         "Content-Type": "text/plain;charset=utf-8" 
-
       },
-
       body: JSON.stringify({ email: emailInput })
-
     });
-
     
-
     const resultado = await response.json();
 
-
-
     if (resultado.sucesso) {
-
+      // Esconde o formulário de login
       loginSection.style.display = 'none';
+      
+      // Mostra o painel com o link limpo
       driveContainer.style.display = 'block';
-
-       driveContainer.innerHTML = `
-
-        <iframe src="https://drive.google.com/embeddedfolderview?id=${resultado.folderId}#grid" 
-
-                style="width:100%; height:750px; border:0;"></iframe>
-
+      driveContainer.innerHTML = `
+        <div style="text-align: center; padding: 40px 20px; border: 1px solid var(--border-color); background: var(--bg-base); border-radius: 8px; max-width: 500px; margin: 0 auto;">
+          <h3 style="margin-bottom: 15px; font-family: var(--font-heading); color: var(--text-main);">Acesso Liberado</h3>
+          <p style="color: var(--text-muted); margin-bottom: 30px; line-height: 1.5;">
+            Seu ensaio foi localizado. Clique no botão abaixo para abrir a sua pasta segura diretamente no Google Drive.
+          </p>
+          <a href="https://drive.google.com/drive/folders/${resultado.folderId}?hl=pt-br" 
+             target="_blank" 
+             class="btn-primary" 
+             style="text-decoration: none; display: inline-block;">
+             Ir para a Pasta do Ensaio
+          </a>
+        </div>
       `;
-
     } else {
-
       errorMsg.style.display = 'block';
-
-      errorMsg.innerText = resultado.erro ? `Erro no Google: ${resultado.erro}` : "E-mail não bateu com a linha da planilha.";
-
+      errorMsg.innerText = "E-mail não encontrado ou sem permissão.";
       btnLogin.innerText = 'Acessar Meu Ensaio';
-
       btnLogin.disabled = false;
-
-      console.log("RESPOSTA SECRETA DO GOOGLE:", resultado); 
-
     }
-
   } catch (error) {
-
     console.error("Erro na verificação:", error);
-
-    errorMsg.innerText = "Erro de conexão com o banco de dados. Tente novamente.";
-
+    errorMsg.innerText = "Erro de conexão. Verifique sua internet e tente novamente.";
     errorMsg.style.display = 'block';
-
     btnLogin.innerText = 'Acessar Meu Ensaio';
-
     btnLogin.disabled = false;
-
   }
-
 }
-
 
 
 /* ==========================================
