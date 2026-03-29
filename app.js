@@ -276,18 +276,19 @@ async function acessarPasta() {
   const driveContainer = document.getElementById('drive-container');
   const btnLogin = document.getElementById('btn-login');
 
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbw2PYgvjFzGRlKEz98UZZhErDsvZIx7NXZt_HWz13qegeTnez4TQlQvB4pP2gG7dbOreQ/exec';
+  // SUBSTITUA ESTA LINHA PELO SEU NOVO LINK DO GOOGLE
+  const scriptURL = 'https://script.google.com/macros/s/AKfycby2Bei3mDejBjbAcvWS0Wmx_5g25E2QBmMmjA5HMxzwIO1ovbxOhmhyEUnF3rt6-46NpQ/exec';
 
   errorMsg.style.display = 'none';
   btnLogin.innerText = 'Verificando...';
   btnLogin.disabled = true;
 
   try {
-    // Adicionado o header "text/plain" para evitar erro de CORS no Google
     const response = await fetch(scriptURL, {
       method: 'POST',
-      mode: 'cors', 
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      headers: { 
+        "Content-Type": "text/plain;charset=utf-8" 
+      },
       body: JSON.stringify({ email: emailInput })
     });
     
@@ -302,12 +303,13 @@ async function acessarPasta() {
       `;
     } else {
       errorMsg.style.display = 'block';
+      errorMsg.innerText = "E-mail não autorizado ou não encontrado.";
       btnLogin.innerText = 'Acessar Meu Ensaio';
       btnLogin.disabled = false;
     }
   } catch (error) {
     console.error("Erro na verificação:", error);
-    errorMsg.innerText = "Erro de conexão. Verifique sua rede.";
+    errorMsg.innerText = "Erro de conexão com o banco de dados. Tente novamente.";
     errorMsg.style.display = 'block';
     btnLogin.innerText = 'Acessar Meu Ensaio';
     btnLogin.disabled = false;
