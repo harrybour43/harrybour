@@ -458,6 +458,12 @@ body {
   font-size: 1.1rem;
   font-family: var(--font-ui);
   font-style: italic;
+  /* Novas regras para o respiro */
+  padding: 0 10%;
+  box-sizing: border-box;
+  /* Refinamentos visuais recomendados */
+  text-align: center;
+  line-height: 1.5;
 }
 
 /* ------------------------------------------
