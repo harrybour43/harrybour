@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="style.css" />
   </head>
 
- <body data-page="voz-do-povo">
+  <body data-page="contato">
     <div class="app-wrapper no-sidebar">
       <header class="fixed-header">
         <a href="index.html">Harry Bour</a>
@@ -34,101 +34,158 @@
       <main class="main-content full-width">
         <section class="gallery-page active">
           <div class="gallery-container">
-      <div
-        class="section-header"
-        style="border-bottom: none; text-align: center; margin-bottom: 40px"
-      >
-        <h2>Contato</h2>
-        <p class="category-description">
-          Orçamento e Propostas.
-        </p>
-      </div>
+            <div
+              class="section-header"
+              style="
+                border-bottom: none;
+                text-align: center;
+                margin-bottom: 40px;
+              "
+            >
+              <h2>Contato</h2>
+              <p class="category-description">
+                Orçamentos, propostas e agendamentos.
+              </p>
+            </div>
 
-      <div class="contact-container" style="margin: 0 auto">
-        <div
-          class="social-links"
-          aria-label="Redes Sociais e Contato Direto"
-          style="justify-content: center; margin-bottom: 40px"
-        >
-          <a
-            href="https://wa.me/5511987741066"
-            target="_blank"
-            rel="noopener noreferrer"
-            ><i class="fa-brands fa-whatsapp"></i> WhatsApp</a
-          >
-          <a
-            href="https://www.instagram.com/harrybour_fotografia/"
-            target="_blank"
-            ><i class="fa-brands fa-instagram"></i> Instagram</a
-          >
-          <a href="https://vimeo.com/harrywoodstudios" target="_blank"
-            ><i class="fa-brands fa-vimeo-v"></i> Vimeo</a
-          >
-          <a
-            href="https://www.linkedin.com/in/harrybourfotografia"
-            target="_blank"
-            ><i class="fa-brands fa-linkedin-in"></i> LinkedIn</a
-          >
-        </div>
+            <div class="contact-container" style="margin: 0 auto">
+              <div
+                class="social-links"
+                aria-label="Redes Sociais e Contato Direto"
+                style="justify-content: center; margin-bottom: 40px"
+              >
+                <a
+                  href="https://wa.me/5511987741066"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  ><i class="fa-brands fa-whatsapp"></i> WhatsApp</a
+                >
+                <a
+                  href="https://www.instagram.com/harrybour_fotografia/"
+                  target="_blank"
+                  ><i class="fa-brands fa-instagram"></i> Instagram</a
+                >
+                <a href="https://vimeo.com/harrywoodstudios" target="_blank"
+                  ><i class="fa-brands fa-vimeo-v"></i> Vimeo</a
+                >
+                <a
+                  href="https://www.linkedin.com/in/harrybourfotografia"
+                  target="_blank"
+                  ><i class="fa-brands fa-linkedin-in"></i> LinkedIn</a
+                >
+              </div>
 
-        <form
-          class="contact-form"
-          action="https://formsubmit.co/harrybour.foto@gmail.com"
-          method="POST"
-          style="margin: 0 auto"
-        >
-          <input type="hidden" name="_captcha" value="false" />
-          <input
-            type="hidden"
-            name="_subject"
-            value="Novo Contato via Portfólio!"
-          />
-          <input
-            type="hidden"
-            name="_next"
-            value="https://harrybour.com.br/contato.html"
-          />
+              <form
+                class="contact-form"
+                action="https://formsubmit.co/harrybour.foto@gmail.com"
+                method="POST"
+                style="margin: 0 auto; width: 100%"
+              >
+                <input type="hidden" name="_captcha" value="false" />
+                <input
+                  type="hidden"
+                  name="_subject"
+                  value="Novo Contato via Portfólio!"
+                />
+                <input
+                  type="hidden"
+                  name="_next"
+                  value="https://harrybour.com.br/contato.html"
+                />
 
-          <div class="form-group">
-            <label for="nome">Nome</label>
-            <input type="text" id="nome" name="Nome" required />
+                <div class="form-group">
+                  <label for="nome">Nome</label>
+                  <input type="text" id="nome" name="Nome" required />
+                </div>
+                <div class="form-group">
+                  <label for="whatsapp">Whatsapp</label>
+                  <input
+                    type="tel"
+                    id="whatsapp"
+                    name="Whatsapp"
+                    placeholder="(11) 000-000-000"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="Email"
+                    placeholder="nome@exemplo.com"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="assunto">Assunto</label>
+                  <input type="text" id="assunto" name="Assunto" required />
+                </div>
+
+                <div class="form-group">
+                  <label for="mensagem">Mensagem</label>
+                  <textarea id="mensagem" name="Mensagem" required></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                  Enviar Proposta
+                </button>
+              </form>
+
+              <hr
+                style="
+                  width: 100%;
+                  border: 0;
+                  border-top: 1px solid var(--border-color);
+                  margin: 60px 0 40px 0;
+                "
+              />
+
+              <div
+                class="agenda-container"
+                style="width: 100%; max-width: 800px; margin: 0 auto"
+              >
+                <h3
+                  style="
+                    font-family: var(--font-display);
+                    font-weight: 400;
+                    font-size: 1.8rem;
+                    text-align: center;
+                    margin-bottom: 20px;
+                  "
+                >
+                  Vamos agendar o seu ensaio?
+                </h3>
+                <p
+                  style="
+                    text-align: center;
+                    color: var(--text-muted);
+                    margin-bottom: 30px;
+                  "
+                >
+                  Consulte a minha disponibilidade na agenda abaixo e reserve a
+                  melhor data para o seu projeto.
+                </p>
+
+                <iframe
+                  src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ1PzIci3cViZ9XQ2DB35gFLIl9Yc3oVlSx2js32W0_I9ZzmpfXW5OPBblugGmZSZU80W7sy0F-W?gv=true"
+                  style="
+                    border: 0;
+                    background: var(--bg-surface);
+                    border-radius: 8px;
+                  "
+                  width="100%"
+                  height="600"
+                  frameborder="0"
+                ></iframe>
+              </div>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="whatsapp">Whatsapp</label>
-            <input
-              type="tel"
-              id="whatsapp"
-              name="Whatsapp"
-              placeholder="(11) 000-000-000"
-              required
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="Email"
-              placeholder="nome@exemplo.com"
-              required
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="assunto">Assunto</label>
-            <input type="text" id="assunto" name="Assunto" required />
-          </div>
-
-          <div class="form-group">
-            <label for="mensagem">Mensagem</label>
-            <textarea id="mensagem" name="Mensagem" required></textarea>
-          </div>
-
-          <button type="submit" class="btn-submit">Enviar Proposta</button>
-        </form>
-      </div>
-    </main>
+        </section>
+      </main>
+    </div>
 
     <script src="app.js"></script>
   </body>
