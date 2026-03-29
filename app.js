@@ -301,12 +301,16 @@ async function acessarPasta() {
         <iframe src="https://drive.google.com/embeddedfolderview?id=${resultado.folderId}#grid" 
                 style="width:100%; height:750px; border:0;"></iframe>
       `;
-    } else {
+   } else {
       errorMsg.style.display = 'block';
-      errorMsg.innerText = "E-mail não autorizado ou não encontrado.";
+      // Esta linha nova vai imprimir na tela o erro exato que o Google enviar!
+      errorMsg.innerText = resultado.erro ? `Erro no Google: ${resultado.erro}` : "E-mail não bateu com a linha da planilha.";
       btnLogin.innerText = 'Acessar Meu Ensaio';
       btnLogin.disabled = false;
-    }
+      
+      // Isso imprime no painel F12 para a gente ver tudo
+      console.log("RESPOSTA SECRETA DO GOOGLE:", resultado); 
+    }}
   } catch (error) {
     console.error("Erro na verificação:", error);
     errorMsg.innerText = "Erro de conexão com o banco de dados. Tente novamente.";
