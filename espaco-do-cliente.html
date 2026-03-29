@@ -9,245 +9,64 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="style.css" />
 </head>
 
 <body data-page="espaco-do-cliente">
     <div class="app-wrapper no-sidebar">
+        
         <header class="fixed-header">
             <a href="index.html">Harry Bour</a>
         </header>
 
         <main class="main-content full-width">
-            <section id="view-folders" class="gallery-page active">
-                <div class="section-header" style="text-align: center; margin-bottom: 40px">
-                    <h2>Espaço do Cliente</h2>
-                    <p class="category-description">
-                        Busque seu ensaio e utilize a senha fornecida para acessar o material.
-                    </p>
-                </div>
+            <section class="gallery-page active">
+                <div class="gallery-container">
+                    
+                    <div class="section-header" style="text-align: center; border-bottom: none; margin-bottom: 40px;">
+                        <h2>Espaço do Cliente</h2>
+                        <p class="category-description">
+                            Área segura e restrita para acesso aos seus ensaios fotográficos.
+                        </p>
+                    </div>
 
-                <div class="search-container" style="margin: 0 auto">
-                    <input type="text" id="folder-search" placeholder="Buscar pelo nome do ensaio..." oninput="filterFolders()" />
-                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                </div>
+                    <div id="client-login-section" style="text-align: center; margin: 40px auto; max-width: 400px;">
+                        <p style="color: var(--text-muted); margin-bottom: 25px;">
+                            Insira seu e-mail cadastrado para localizar seu material exclusivo.
+                        </p>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                            <input 
+                                type="email" 
+                                id="user-email" 
+                                placeholder="seu@email.com" 
+                                style="padding: 14px; background: var(--bg-base); color: var(--text-main); border: 1px solid var(--border-color); font-family: var(--font-ui); width: 100%; box-sizing: border-box; text-align: center;" 
+                            />
+                            
+                            <button class="btn-primary" onclick="acessarPasta()" id="btn-login">
+                                Acessar Meu Ensaio
+                            </button>
+                            
+                            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 10px; line-height: 1.4;">
+                                * Você será redirecionado para o ambiente seguro do Google Drive.
+                            </p>
+                        </div>
+                    
+                        <p id="login-error-msg" style="color: #d16b6b; font-size: 0.9rem; display: none; margin-top: 15px;">
+                            E-mail não autorizado ou não encontrado.
+                        </p>
+                    </div>
 
-                <div id="folders-loader" style="display: none; color: var(--text-muted); margin-top: 20px; text-align: center;">
-                    Sincronizando com o acervo...
-                </div>
+                    <div id="drive-container" style="display: none; width: 100%; margin-top: 40px; border-radius: 4px; overflow: hidden;">
+                    </div>
 
-                <div id="folder-list" class="folder-list" style="margin: 20px auto;"></div>
-            </section>
-
-            <section id="view-gallery-content" class="gallery-page" style="display: none;">
-                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h2 id="gallery-title" style="font-size: 1.8rem; margin: 0">Carregando...</h2>
-                    <a href="#" id="drive-link-btn" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="width: auto; padding: 8px 15px; font-size: 0.9rem; text-decoration: none;">
-                        <i class="fa-brands fa-google-drive"></i> Abrir no Drive
-                    </a>
-                </div>
-
-                <div id="view-carousel" class="client-carousel-area">
-                    <div id="photo-loader" style="color: var(--text-muted); position: absolute">Buscando imagens seguras...</div>
-                    <div class="click-area-left" onclick="moveCarousel(-1)"></div>
-                    <div class="client-carousel-track" id="track"></div>
-                    <div class="click-area-right" onclick="moveCarousel(1)"></div>
-                </div>
-
-                <div id="view-grid" class="client-gallery-grid" style="display: none"></div>
-
-                <div style="text-align: center; margin-top: 15px">
-                    <button class="btn-secondary" id="btn-toggle-view" onclick="toggleClientView()" style="width: auto; padding: 10px 30px; display: none; margin: 0 auto;">
-                        <i class="fa-solid fa-border-all"></i> <span id="text-toggle-view">Ver Mosaico</span>
-                    </button>
                 </div>
             </section>
         </main>
     </div>
 
-    <div id="client-auth-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h3 id="client-folder-name" style="font-family: var(--font-display); margin-bottom: 5px">Nome da Pasta</h3>
-            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">
-                Insira os dados fornecidos para visualizar seu ensaio.
-            </p>
-            <p id="client-auth-error" style="color: #d16b6b; font-size: 0.85rem; margin-bottom: 10px"></p>
-
-            <input type="text" id="client-user" class="form-input" placeholder="Usuário" autocomplete="off" />
-            <input type="password" id="client-password" class="form-input" placeholder="Senha de Acesso" />
-
-            <button class="btn-primary" id="btn-submit-auth" onclick="submitClientAuth()">Acessar Acervo</button>
-            <button class="btn-secondary" onclick="closeModal('client-auth-modal')">Cancelar</button>
-        </div>
-    </div>
-
-    <div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()">
-        <img id="lightbox-img" src="" alt="">
-        <div id="lightbox-caption"></div>
-    </div>
-
     <script src="app.js"></script>
-    <script>
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwirf6E0ysPkynlC6M1bLglwy0V0c_TAJjqWGGxHopV5AV3JvuG5fDCwDorIFpuzFKUkw/exec";
-        let imagesData = [], currentIndex = 0, isGalleryView = false, targetFolderId = "", allFolders = [];
-
-        window.onload = () => {
-            fetchFolders();
-            // Adiciona suporte ao "Enter" no campo de senha
-            document.getElementById("client-password").addEventListener("keypress", (e) => {
-                if (e.key === "Enter") submitClientAuth();
-            });
-        };
-
-        async function fetchFolders() {
-            const loader = document.getElementById("folders-loader");
-            const list = document.getElementById("folder-list");
-            loader.style.display = "block";
-            try {
-                let response = await fetch(APPS_SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "getFolders" }) });
-                let result = await response.json();
-                loader.style.display = "none";
-                if (result.success) {
-                    allFolders = result.folders.sort((a, b) => b.name.localeCompare(a.name));
-                    renderFolders(allFolders);
-                }
-            } catch (err) { loader.innerText = "Erro ao conectar com o acervo."; }
-        }
-
-        function renderFolders(folders) {
-            const list = document.getElementById("folder-list");
-            list.innerHTML = folders.length ? "" : "Nenhum ensaio encontrado.";
-            folders.forEach(f => {
-                const card = document.createElement("div");
-                card.className = "folder-card";
-                card.innerHTML = `<i class="fa-solid fa-folder-closed"></i> <span>${f.name}</span>`;
-                card.onclick = () => openAuthModal(f.id, f.name);
-                list.appendChild(card);
-            });
-        }
-
-        function filterFolders() {
-            const term = document.getElementById("folder-search").value.toLowerCase();
-            renderFolders(allFolders.filter(f => f.name.toLowerCase().includes(term)));
-        }
-
-        function openAuthModal(id, name) {
-            targetFolderId = id;
-            document.getElementById("client-folder-name").innerText = name;
-            document.getElementById("client-auth-modal").style.display = "flex";
-            document.getElementById("client-user").focus();
-        }
-
-        async function submitClientAuth() {
-            const user = document.getElementById("client-user").value;
-            const pass = document.getElementById("client-password").value;
-            const btn = document.getElementById("btn-submit-auth");
-            if (!user || !pass) return;
-
-            btn.innerText = "Autenticando...";
-            btn.disabled = true;
-
-            try {
-                let resp = await fetch(APPS_SCRIPT_URL, { 
-                    method: "POST", 
-                    body: JSON.stringify({ action: "auth", user, pass, folderId: targetFolderId }) 
-                });
-                let res = await resp.json();
-                if (res.success) {
-                    document.getElementById("client-auth-modal").style.display = "none";
-                    document.getElementById("view-folders").style.display = "none";
-                    document.getElementById("view-gallery-content").style.display = "block";
-                    document.getElementById("gallery-title").innerText = document.getElementById("client-folder-name").innerText;
-                    document.getElementById("drive-link-btn").href = `https://drive.google.com/drive/folders/${targetFolderId}`;
-                    listPhotos();
-                } else {
-                    document.getElementById("client-auth-error").innerText = "Acesso negado.";
-                }
-            } catch (e) { document.getElementById("client-auth-error").innerText = "Erro no servidor."; }
-            btn.innerText = "Acessar Acervo";
-            btn.disabled = false;
-        }
-
-        async function listPhotos() {
-    const loader = document.getElementById("photo-loader");
-    loader.innerText = "Buscando imagens seguras...";
-    loader.style.display = "block";
-    document.getElementById("btn-toggle-view").style.display = "none";
-    document.getElementById("track").innerHTML = "";
-
-    try {
-        let response = await fetch(APPS_SCRIPT_URL, { 
-            method: "POST", 
-            body: JSON.stringify({ action: "getPhotos", folderId: targetFolderId }) 
-        });
-        let result = await response.json();
-
-        if (result.success && result.images && result.images.length > 0) {
-            imagesData = result.images;
-            loader.style.display = "none";
-            document.getElementById("btn-toggle-view").style.display = "inline-flex";
-
-            // A MÁGICA AQUI: O botão agora aponta para a pasta DIGITAL retornada pelo script
-            document.getElementById("drive-link-btn").href = `https://drive.google.com/drive/folders/${result.digitalFolderId}`;
-
-            currentIndex = 0;
-            renderCarousel();
-            renderGridGallery();
-            setupSwipe();
-        } else {
-            loader.innerText = result.error || "Nenhuma imagem encontrada na pasta DIGITAL.";
-        }
-    } catch (err) {
-        loader.innerText = "Erro ao carregar fotos.";
-    }
-}
-
-        function renderCarousel() {
-            const track = document.getElementById("track");
-            track.innerHTML = "";
-            imagesData.forEach((src, i) => {
-                const img = document.createElement("img");
-                img.src = src;
-                img.className = i === currentIndex ? "client-slide active" : "client-slide";
-                if (i !== currentIndex) img.style.display = "none";
-                track.appendChild(img);
-            });
-        }
-
-        function moveCarousel(dir) {
-            currentIndex = (currentIndex + dir + imagesData.length) % imagesData.length;
-            renderCarousel();
-        }
-
-        function toggleClientView() {
-            isGalleryView = !isGalleryView;
-            document.getElementById("view-carousel").style.display = isGalleryView ? "none" : "flex";
-            document.getElementById("view-grid").style.display = isGalleryView ? "grid" : "none";
-            document.getElementById("text-toggle-view").innerText = isGalleryView ? "Ver Destaque" : "Ver Mosaico";
-        }
-
-        function renderGridGallery() {
-            const grid = document.getElementById("view-grid");
-            grid.innerHTML = "";
-            imagesData.forEach((src, i) => {
-                const img = document.createElement("img");
-                img.src = src;
-                img.className = "gallery-item";
-                img.onclick = () => { currentIndex = i; toggleClientView(); renderCarousel(); };
-                grid.appendChild(img);
-            });
-        }
-
-        function setupSwipe() {
-            let startX = 0;
-            const area = document.getElementById("view-carousel");
-            area.addEventListener("touchstart", e => startX = e.touches[0].clientX);
-            area.addEventListener("touchend", e => {
-                let diff = startX - e.changedTouches[0].clientX;
-                if (Math.abs(diff) > 50) moveCarousel(diff > 0 ? 1 : -1);
-            });
-        }
-    </script>
 </body>
 </html>
