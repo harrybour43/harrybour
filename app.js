@@ -572,7 +572,7 @@ async function acessarPasta() {
         <div style="text-align: center; padding: 40px 20px; border: 1px solid var(--border-color); background: var(--bg-base); border-radius: 8px; max-width: 500px; margin: 0 auto;">
           <h3 style="margin-bottom: 15px; font-family: var(--font-heading); color: var(--text-main);">Acesso Liberado</h3>
           <p style="color: var(--text-muted); margin-bottom: 30px; line-height: 1.5;">
-            Seu ensaio foi localizado. Clique no botão abaixo para abrir a sua pasta segura diretamente no Google Drive.
+            Seu ensaio está finalizado! Clique no botão abaixo para abrir a sua pasta segura diretamente no Google Drive.
           </p>
           <a href="https://drive.google.com/drive/folders/${resultado.folderId}?hl=pt-br" 
              target="_blank" 
