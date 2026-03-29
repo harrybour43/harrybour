@@ -302,6 +302,35 @@ function openSliderLightbox(srcAntes, srcDepois, alt) {
       console.error("Erro: Elementos do lightbox de tratamento não encontrados no HTML.");
   }
 }
+async function acessarPasta() {
+  const email = document.getElementById('user-email').value;
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbw2PYgvjFzGRlKEz98UZZhErDsvZIx7NXZt_HWz13qegeTnez4TQlQvB4pP2gG7dbOreQ/exec';
+
+  try {
+    const response = await fetch(scriptURL, {
+      method: 'POST',
+      body: JSON.stringify({ email: email })
+    });
+    
+    const resultado = await response.json();
+
+    if (resultado.sucesso) {
+      // Opção A: Redirecionar para o Google Drive
+      // window.location.href = `https://drive.google.com/drive/folders/${resultado.folderId}`;
+
+      // Opção B: Exibir em um iframe dentro da sua página Lumen
+      const container = document.getElementById('dynamic-gallery');
+      container.innerHTML = `
+        <iframe src="https://drive.google.com/embeddedfolderview?id=${resultado.folderId}#grid" 
+                style="width:90%; height:600px; border:0;"></iframe>
+      `;
+    } else {
+      alert("E-mail não autorizado ou não encontrado.");
+    }
+  } catch (error) {
+    console.error("Erro na verificação:", error);
+  }
+}
 
 // ==========================================
 // INICIALIZAÇÃO E EVENTOS GERAIS
