@@ -73,29 +73,31 @@
               </p>
             </div>
 
-        <div id="dynamic-gallery" class="masonry-grid" data-folder="assets/img/lumen">
-              <!-- 
-              <img src="assets/img/lumen/lumen-agosto-arantes-001.jpg" alt="Lumen Fine Art - Edição de Agosto/2025- Arantes" class="masonry-item" onclick="openLightbox(this.src, this.alt)" loading="lazy" />
+        <div id="client-login-section" style="text-align: center; margin: 40px auto; max-width: 400px;">
+              <p style="color: var(--text-muted); margin-bottom: 25px;">
+                Insira seu e-mail cadastrado para acessar seu ensaio exclusivo.
+              </p>
               
-              <img src="assets/img/lumen/lumen-agosto-arantes-002.jpg" alt="Lumen Fine Art - Edição de Agosto/2025 - Arantes" class="masonry-item" onclick="openLightbox(this.src, this.alt)" loading="lazy" />
+              <div style="display: flex; flex-direction: column; gap: 15px;">
+                <input 
+                  type="email" 
+                  id="user-email" 
+                  placeholder="seu@email.com" 
+                  style="padding: 14px; background: var(--bg-base); color: var(--text-main); border: 1px solid var(--border-color); font-family: var(--font-ui); width: 100%; box-sizing: border-box; text-align: center;" 
+                />
+                
+                <button class="btn-primary" onclick="acessarPasta()" id="btn-login">
+                  Acessar Meu Ensaio
+                </button>
+              </div>
               
-              <img src="assets/img/lumen/lumen-setembro-forcella-001.jpg" alt="Lumen Fine Art - Edição de Setembro/2025 - Forcella" class="masonry-item" onclick="openLightbox(this.src, this.alt)" loading="lazy" />
-              
-              <img src="assets/img/lumen/lumen-setembro-forcella-002.jpg" alt="Lumen Fine Art - Edição de Setembro/2025 - Forcella" class="masonry-item" onclick="openLightbox(this.src, this.alt)" loading="lazy" />
-              
-              <img src="assets/img/lumen/lumen-novembro-candido-002.jpg" alt="Lumen Fine Art - Edição de Novembro/2025 - Cândido" class="masonry-item" onclick="openLightbox(this.src, this.alt)" loading="lazy" />
-              
-              <img src="assets/img/lumen/lumen-novembro-candido-001.jpg" alt="Lumen Fine Art - Edição de Novembro/2025 - Cândido" class="masonry-item" onclick="openLightbox(this.src, this.alt)" loading="lazy" />
-              
-              <!-- <img src="COLE_AQUI_O_LINK_DA_IMAGEM_7" alt="Escreva a legenda ou título da foto 7 aqui" class="masonry-item" onclick="openLightbox(this.src, this.alt)" loading="lazy" />
-              
-              <img src="COLE_AQUI_O_LINK_DA_IMAGEM_8" alt="Escreva a legenda ou título da foto 8 aqui" class="masonry-item" onclick="openLightbox(this.src, this.alt)" loading="lazy" />
-              
-              <img src="COLE_AQUI_O_LINK_DA_IMAGEM_9" alt="Escreva a legenda ou título da foto 9 aqui" class="masonry-item" onclick="openLightbox(this.src, this.alt)" loading="lazy" />
-              
-              <img src="COLE_AQUI_O_LINK_DA_IMAGEM_10" alt="Escreva a legenda ou título da foto 10 aqui" class="masonry-item" onclick="openLightbox(this.src, this.alt)" loading="lazy" /> -->
-
+              <p id="login-error-msg" style="color: #d16b6b; font-size: 0.9rem; display: none; margin-top: 15px;">
+                E-mail não autorizado ou não encontrado.
+              </p>
             </div>
+
+            <div id="drive-container" style="display: none; width: 100%; margin-top: 40px; border-radius: 4px; overflow: hidden;">
+              </div>
           </div>
         </section>
       </main>
