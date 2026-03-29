@@ -691,6 +691,44 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
   }
+  // --- CONTROLE DE TOQUE (SWIPE) PARA O LIGHTBOX ---
+
+const lightboxElement = document.getElementById('lightbox');
+
+// Variáveis para armazenar a posição inicial e final do toque
+let touchStartX = 0;
+let touchEndX = 0;
+
+// Captura onde o dedo encostou na tela
+lightboxElement.addEventListener('touchstart', function(event) {
+    touchStartX = event.changedTouches[0].screenX;
+}, false);
+
+// Captura onde o dedo saiu da tela e calcula a direção
+lightboxElement.addEventListener('touchend', function(event) {
+    touchEndX = event.changedTouches[0].screenX;
+    handleSwipe();
+}, false);
+
+function handleSwipe() {
+    // Calcula a distância do arrasto
+    const swipeDistance = touchStartX - touchEndX;
+    
+    // Define um limite mínimo para não acionar com toques acidentais (50 pixels)
+    const threshold = 50; 
+
+    if (swipeDistance > threshold) {
+        // Arrastou para a ESQUERDA (Ver próxima foto)
+        // Substitua 'nextImage()' pelo nome real da sua função que avança a foto
+        nextImage(); 
+    } 
+    
+    if (swipeDistance < -threshold) {
+        // Arrastou para a DIREITA (Ver foto anterior)
+        // Substitua 'prevImage()' pelo nome real da sua função que volta a foto
+        prevImage(); 
+    }
+}
 
 });
 
