@@ -591,6 +591,7 @@ async function acessarPasta() {
     if (resultado.sucesso) {
 
       loginSection.style.display = 'none';
+      driveContainer.style.display = 'block';
 
        driveContainer.innerHTML = `
 
