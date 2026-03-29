@@ -276,7 +276,6 @@ async function acessarPasta() {
   const driveContainer = document.getElementById('drive-container');
   const btnLogin = document.getElementById('btn-login');
 
-  // SUBSTITUA ESTA LINHA PELO SEU NOVO LINK DO GOOGLE
   const scriptURL = 'https://script.google.com/macros/s/AKfycby2Bei3mDejBjbAcvWS0Wmx_5g25E2QBmMmjA5HMxzwIO1ovbxOhmhyEUnF3rt6-46NpQ/exec';
 
   errorMsg.style.display = 'none';
@@ -301,16 +300,13 @@ async function acessarPasta() {
         <iframe src="https://drive.google.com/embeddedfolderview?id=${resultado.folderId}#grid" 
                 style="width:100%; height:750px; border:0;"></iframe>
       `;
-   } else {
+    } else {
       errorMsg.style.display = 'block';
-      // Esta linha nova vai imprimir na tela o erro exato que o Google enviar!
       errorMsg.innerText = resultado.erro ? `Erro no Google: ${resultado.erro}` : "E-mail não bateu com a linha da planilha.";
       btnLogin.innerText = 'Acessar Meu Ensaio';
       btnLogin.disabled = false;
-      
-      // Isso imprime no painel F12 para a gente ver tudo
       console.log("RESPOSTA SECRETA DO GOOGLE:", resultado); 
-    }}
+    }
   } catch (error) {
     console.error("Erro na verificação:", error);
     errorMsg.innerText = "Erro de conexão com o banco de dados. Tente novamente.";
