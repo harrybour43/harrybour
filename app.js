@@ -720,13 +720,13 @@ function handleSwipe() {
     if (swipeDistance > threshold) {
         // Arrastou para a ESQUERDA (Ver próxima foto)
         // Substitua 'nextImage()' pelo nome real da sua função que avança a foto
-        nextImage(); 
+navigateLightbox('next');
     } 
     
     if (swipeDistance < -threshold) {
         // Arrastou para a DIREITA (Ver foto anterior)
         // Substitua 'prevImage()' pelo nome real da sua função que volta a foto
-        prevImage(); 
+navigateLightbox('prev');
     }
 }
 
