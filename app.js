@@ -217,7 +217,6 @@ async function loadDynamicGallery() {
   const repoName = 'harrybour';
   const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderPath}`;
   
-  // Verifica se estamos na página de tratamento
   const isTratamento = folderPath.includes('tratamento');
 
   try {
@@ -229,31 +228,24 @@ async function loadDynamicGallery() {
       const images = files.filter(file => file.name.match(/\.(jpg|jpeg|png|webp)$/i));
 
       if (isTratamento) {
-          // 2. Filtra para exibir NA GALERIA apenas as imagens com "-depois" no nome
           const imagensDepois = images.filter(file => file.name.toLowerCase().includes('-depois'));
           
           imagensDepois.forEach(img => {
               const imgElement = document.createElement('img');
               imgElement.src = `${folderPath}/${img.name}`; 
-              
-              // Limpa o nome para a legenda
               let cleanName = img.name.replace(/\.[^/.]+$/, "").replace(/-/g, " ").replace(/ depois/i, "");
               imgElement.alt = cleanName;
               imgElement.className = 'masonry-item';
               imgElement.setAttribute('loading', 'lazy');
-              imgElement.style.cursor = 'pointer'; // Garante o cursor de mãozinha
+              imgElement.style.cursor = 'pointer';
 
-              // 3. O Evento de Clique para abrir o Slider
               imgElement.addEventListener('click', () => {
-                  // Calcula a URL da foto "-antes" trocando a palavra na URL
                   const urlAntes = imgElement.src.replace(/-depois/i, '-antes');
                   openSliderLightbox(urlAntes, imgElement.src, cleanName);
               });
-
               gallery.appendChild(imgElement);
           });
       } else {
-          // 4. Lógica padrão para as outras galerias (rua, eventos, etc)
           images.forEach(img => {
               const imgElement = document.createElement('img');
               imgElement.src = `${folderPath}/${img.name}`; 
@@ -265,7 +257,6 @@ async function loadDynamicGallery() {
               imgElement.addEventListener('click', () => {
                   openLightbox(imgElement.src, imgElement.alt);
               });
-
               gallery.appendChild(imgElement);
           });
       }
@@ -275,7 +266,57 @@ async function loadDynamicGallery() {
   }
 }
 
-// Lógica de Abertura do Lightbox com Slider
+/* ==========================================
+   LÓGICA DE ACESSO AO GOOGLE DRIVE
+========================================== */
+async function acessarPasta() {
+  const emailInput = document.getElementById('user-email').value;
+  const errorMsg = document.getElementById('login-error-msg');
+  const loginSection = document.getElementById('client-login-section');
+  const driveContainer = document.getElementById('drive-container');
+  const btnLogin = document.getElementById('btn-login');
+
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbw2PYgvjFzGRlKEz98UZZhErDsvZIx7NXZt_HWz13qegeTnez4TQlQvB4pP2gG7dbOreQ/exec';
+
+  errorMsg.style.display = 'none';
+  btnLogin.innerText = 'Verificando...';
+  btnLogin.disabled = true;
+
+  try {
+    // Adicionado o header "text/plain" para evitar erro de CORS no Google
+    const response = await fetch(scriptURL, {
+      method: 'POST',
+      mode: 'cors', 
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ email: emailInput })
+    });
+    
+    const resultado = await response.json();
+
+    if (resultado.sucesso) {
+      loginSection.style.display = 'none';
+      driveContainer.style.display = 'block';
+      driveContainer.innerHTML = `
+        <iframe src="https://drive.google.com/embeddedfolderview?id=${resultado.folderId}#grid" 
+                style="width:100%; height:750px; border:0;"></iframe>
+      `;
+    } else {
+      errorMsg.style.display = 'block';
+      btnLogin.innerText = 'Acessar Meu Ensaio';
+      btnLogin.disabled = false;
+    }
+  } catch (error) {
+    console.error("Erro na verificação:", error);
+    errorMsg.innerText = "Erro de conexão. Verifique sua rede.";
+    errorMsg.style.display = 'block';
+    btnLogin.innerText = 'Acessar Meu Ensaio';
+    btnLogin.disabled = false;
+  }
+}
+
+/* ==========================================
+   LIGHTBOX E SLIDER (PARA TRATAMENTO)
+========================================== */
 function openSliderLightbox(srcAntes, srcDepois, alt) {
   const lightbox = document.getElementById("lightbox");
   const imgAntes = document.getElementById("slider-img-antes");
@@ -289,66 +330,20 @@ function openSliderLightbox(srcAntes, srcDepois, alt) {
       imgDepois.src = srcDepois;
       if (caption) caption.innerText = alt;
       
-      // Reseta o slider exatamente para 50% toda vez que abre uma foto nova
       if (slider && sliderLine) {
           slider.value = 50;
           imgAntes.style.clipPath = `polygon(0 0, 50% 0, 50% 100%, 0 100%)`;
           sliderLine.style.left = `50%`;
       }
-
       lightbox.style.display = "flex";
       document.body.style.overflow = "hidden";
-  } else {
-      console.error("Erro: Elementos do lightbox de tratamento não encontrados no HTML.");
   }
 }
-async function acessarPasta() {
-  const emailInput = document.getElementById('user-email').value;
-  const errorMsg = document.getElementById('login-error-msg');
-  const loginSection = document.getElementById('client-login-section');
-  const driveContainer = document.getElementById('drive-container');
-  const btnLogin = document.getElementById('btn-login');
 
-  // URL gerada pelo Google Apps Script
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbw2PYgvjFzGRlKEz98UZZhErDsvZIx7NXZt_HWz13qegeTnez4TQlQvB4pP2gG7dbOreQ/exec';
-
-  // Reseta estado do botão e erro
-  errorMsg.style.display = 'none';
-  btnLogin.innerText = 'Verificando...';
-  btnLogin.disabled = true;
-
-  try {
-    const response = await fetch(scriptURL, {
-      method: 'POST',
-      body: JSON.stringify({ email: emailInput })
-    });
-    
-    const resultado = await response.json();
-
-    if (resultado.sucesso) {
-      // Esconde a área de login
-      loginSection.style.display = 'none';
-      
-      // Mostra o container do Drive e injeta o iframe
-      driveContainer.style.display = 'block';
-      driveContainer.innerHTML = `
-        <iframe src="https://drive.google.com/embeddedfolderview?id=${resultado.folderId}#grid" 
-                style="width:100%; height:700px; border:0;"></iframe>
-      `;
-    } else {
-      // Exibe erro
-      errorMsg.style.display = 'block';
-      btnLogin.innerText = 'Acessar Meu Ensaio';
-      btnLogin.disabled = false;
-    }
-  } catch (error) {
-    console.error("Erro na verificação:", error);
-    errorMsg.innerText = "Erro de conexão. Tente novamente.";
-    errorMsg.style.display = 'block';
-    btnLogin.innerText = 'Acessar Meu Ensaio';
-    btnLogin.disabled = false;
-  }
-}
+// Inicialização ao carregar a página
+document.addEventListener('DOMContentLoaded', () => {
+    loadDynamicGallery();
+});
 
 // ==========================================
 // INICIALIZAÇÃO E EVENTOS GERAIS
