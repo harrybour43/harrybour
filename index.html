@@ -3,290 +3,37 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Harry Bour | Fotografia</title>
+    <title>Harry Bour | Em Manutenção</title>
     <link rel="stylesheet" href="style.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
   </head>
-  <body data-page="inicio">
-    <div class="app-wrapper">
-      <header class="mobile-header">
-        <h1>Harry Bour</h1>
-        <button class="icon-btn" onclick="toggleMobileMenu()">
-          <i class="fa-solid fa-bars"></i>
-        </button>
+  <body data-page="manutencao">
+    <div class="app-wrapper no-sidebar">
+      
+      <header class="fixed-header">
+        <div class="header-spacer"></div>
+        <span class="brand-name">Harry Bour</span>
+        <div class="header-spacer"></div>
       </header>
 
-      <aside class="sidebar" id="sidebar">
-        <div class="sidebar-top">
-          <a href="index.html" class="sidebar-brand">Harry Bour</a>
-
-          <nav class="nav-menu">
-            <div class="nav-group-title">Portfólio</div>
-            <a href="voz-do-povo.html" class="nav-link">Voz do Povo</a>
-            <a href="retratos.html" class="nav-link">Retratos</a>
-            <a href="publicidade-e-moda.html" class="nav-link">Publicidade e Moda</a>
-            <a href="arquitetura-e-natureza.html" class="nav-link">Arquitetura e Natureza</a>
-
-            <a href="espetaculos.html" class="nav-link">Espetáculos</a>
-            <a href="processos-historicos.html" class="nav-link"
-              >Processos Históricos</a
-            >
-            <a href="audiovisual.html" class="nav-link">
-              <i class="fa-solid fa-video" style="font-size: 0.8em"></i>
-              Audiovisual
-            </a>
-            <button
-              class="nav-link"
-              style="color: #d16b6b"
-              onclick="openAgeGateModal()"
-            >
-              <i class="fa-solid fa-lock" style="font-size: 0.8em"></i> Lumen
-              (+18)
-            </button>
-
-            <div class="nav-group-title spacing-top">Serviços</div>
-            <a href="restauracao.html" class="nav-link">Restauração</a>
-            <a href="tratamento.html" class="nav-link">Tratamento</a>
-
-            <div class="nav-group-title spacing-top">Ferramentas</div>
-            <a
-              href="CLARA/index.html"
-              class="nav-link"
-              target="_blank"
-              rel="noopener noreferrer"
-              data-tooltip="Apoio para Fotógrafos"
-              >
-              <i class="fa-solid fa-camera-retro" style="font-size: 0.8em"></i>
-              CLARA
-            </a>
-
-            <div class="nav-group-title spacing-top">Acervo Privado</div>
-            <a href="espaco-do-cliente.html" class="nav-link">
-              <i class="fa-solid fa-folder-open" style="font-size: 0.8em"></i>
-              Espaço do Cliente
-            </a>
-          </nav>
-           <div style="height: 48px" aria-hidden="true"></div>
-
-        </div>
-
-        <div class="nav-bottom-section">
-          <nav class="nav-menu">
-            <a href="about.html" class="nav-link">Sobre</a>
-            <a href="contato.html" class="nav-link">Contato</a>
-            <button class="nav-link" onclick="toggleA11yPanel()">
-              Acessibilidade
-            </button>
-          </nav>
-        </div>
-        <div class="sidebar-legal">
-          <p>&copy; 2026 Harry Bour</p>
-          <p>
-            Todo o conteúdo fotográfico, audiovisual e ferramentas deste site
-            são obras intelectuais protegidas pela Lei de Direitos Autorais (Lei
-            nº 9.610/98).
-          </p>
-        </div>
-      </aside>
-
-      <main class="main-content" style="padding: 0">
-        <div class="carousel-container" id="home-carousel">
-          <img
-            src="assets/img/carousel/harry-bour-parque-ibirapuera-002.jpg"
-            class="hypnotic-img"
-            alt="Parque do Ibirapuera São Paulo"
-          />
-          <img
-            src="assets/img/carousel/harry-bour-grades-low-key.jpg"
-            class="hypnotic-img"
-            alt="Grades de Aço Sobrepostas em Alto Contraste"
-          />
-          <img
-            src="assets/img/carousel/retrato-lumen-nu-artistico-masculino-003.jpg"
-            class="hypnotic-img"
-            alt="Nu Artístico Masculino em Low Key - Pedro Candido"
-          />
-          <img
-            src="assets/img/carousel/autoral-001.jpg"
-            class="hypnotic-img"
-            alt="Parque do Ibirapuera"
-          />
-          <img
-            src="assets/img/carousel/retrato-documental-estudio-formosa-ladyletal-002.jpg"
-            class="hypnotic-img"
-            alt="Luccas Morais @ladyletal - Estúdio Formosa"
-          />
-          <img
-            src="assets/img/carousel/espetaculo-estado-de-sitio-senac-lapa-scipiao-001.jpg"
-            class="hypnotic-img"
-            alt="Espetáculo Estado de Sítio - Senac Lapa Scipião"
-          />
-        </div>
+      <main 
+        class="main-content full-width" 
+        style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; text-align: center; padding: 20px; margin-top: -35px;"
+      >
+        <i class="fa-solid fa-camera-retro" style="font-size: 2.5rem; color: var(--text-muted); margin-bottom: 25px; opacity: 0.5;"></i>
+        
+        <h2 style="font-family: var(--font-display); font-size: 2.2rem; font-weight: 400; margin-bottom: 15px; color: var(--text-main);">
+          Site em Manutenção
+        </h2>
+        
+        <p style="font-family: var(--font-ui); color: var(--text-muted); font-size: 1.1rem; max-width: 500px; line-height: 1.6;">
+          Meu portfólio está passando por atualizações estruturais no momento. Em breve, estarei de volta com novos projetos visuais e um acervo renovado.
+        </p>
       </main>
+
     </div>
-
-    <div id="age-gate-modal" class="modal-overlay">
-      <div class="modal-content">
-        <h3>Aviso de Conteúdo Sensível</h3>
-        <p>
-          O Projeto Lumen contém nudez artística. Para prosseguir, por favor,
-          confirme sua data de nascimento.
-        </p>
-
-        <div
-          style="
-            display: flex;
-            gap: 10px;
-            margin: 20px 0;
-            justify-content: center;
-          "
-        >
-          <input
-            type="number"
-            id="age-day"
-            placeholder="DD"
-            min="1"
-            max="31"
-            style="
-              width: 70px;
-              padding: 12px;
-              text-align: center;
-              background: var(--bg-base);
-              color: var(--text-main);
-              border: 1px solid var(--border-color);
-              font-family: var(--font-ui);
-            "
-          />
-          <input
-            type="number"
-            id="age-month"
-            placeholder="MM"
-            min="1"
-            max="12"
-            style="
-              width: 70px;
-              padding: 12px;
-              text-align: center;
-              background: var(--bg-base);
-              color: var(--text-main);
-              border: 1px solid var(--border-color);
-              font-family: var(--font-ui);
-            "
-          />
-          <input
-            type="number"
-            id="age-year"
-            placeholder="AAAA"
-            min="1900"
-            max="2026"
-            style="
-              width: 90px;
-              padding: 12px;
-              text-align: center;
-              background: var(--bg-base);
-              color: var(--text-main);
-              border: 1px solid var(--border-color);
-              font-family: var(--font-ui);
-            "
-          />
-        </div>
-
-        <p
-          id="age-error-msg"
-          style="
-            color: #d16b6b;
-            font-size: 0.9rem;
-            display: none;
-            margin-bottom: 10px;
-          "
-        >
-          Por favor, insira uma data válida.
-        </p>
-        <p
-          style="
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-bottom: 20px;
-            line-height: 1.4;
-          "
-        >
-          Este site utiliza verificação de idade para cumprir com as diretrizes
-          do ECA e garantir que o conteúdo artístico restrito não seja acessado
-          por menores. Nenhum dado pessoal é armazenado.
-        </p>
-
-        <button class="btn-primary" onclick="verifyAgeWithFriction()">
-          Acessar Portfólio
-        </button>
-        <button class="btn-secondary" onclick="rejectAgeRedirect()">
-          Sair / Sou Menor
-        </button>
-      </div>
-    </div>
-
-    <div
-      id="a11y-panel"
-      class="modal-content"
-      style="
-        display: none;
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        z-index: 2000;
-        text-align: left;
-      "
-    >
-      <h4
-        style="
-          margin-bottom: 15px;
-          font-family: var(--font-display);
-          font-weight: 400;
-          font-size: 1.2rem;
-        "
-      >
-        Acessibilidade
-      </h4>
-
-      <button class="btn-secondary" onclick="setA11yTextSize('lg')">
-        Fonte: Grande (A+)
-      </button>
-      <button class="btn-secondary" onclick="setA11yTextSize('xl')">
-        Fonte: Extra Grande (A++)
-      </button>
-      <button class="btn-secondary" onclick="setA11yTextSize('normal')">
-        Fonte: Padrão (A)
-      </button>
-
-      <hr
-        style="
-          margin: 15px 0;
-          border: 0;
-          border-top: 1px solid var(--border-color);
-        "
-      />
-
-      <button class="btn-secondary" onclick="toggleA11y('a11y-light-mode')">
-        Modo Claro (Offwhite Crema)
-      </button>
-      <button class="btn-secondary" onclick="toggleA11y('a11y-high-contrast')">
-        Alto Contraste P&B
-      </button>
-      <button class="btn-secondary" onclick="toggleA11y('a11y-colorblind')">
-        Modo Daltonismo
-      </button>
-
-      <button
-        class="btn-primary"
-        onclick="toggleA11yPanel()"
-        style="margin-top: 10px"
-      >
-        Fechar
-      </button>
-    </div>
-
-    <script src="app.js"></script>
   </body>
 </html>
