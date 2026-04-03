@@ -117,7 +117,11 @@ body {
   cursor: pointer;
 }
 
-/* Header Fixo Minimalista (Usado nas Páginas Internas) */
+/* ------------------------------------------
+   4. HEADERS E BARRA LATERAL (SIDEBAR)
+------------------------------------------ */
+
+/* Atualize a classe existente para usar space-between e padding */
 .fixed-header {
   position: fixed;
   top: 0;
@@ -126,20 +130,47 @@ body {
   height: var(--header-height);
   background: var(--bg-base);
   display: flex;
-  justify-content: center;
+  justify-content: space-between; /* Altera de center para space-between */
   align-items: center;
+  padding: 0 30px; /* Adiciona respiro nas laterais */
   z-index: 1000;
   border-bottom: 1px solid var(--border-color);
   transition: background-color 0.3s;
 }
 
-.fixed-header a {
+/* Garante que o texto Harry Bour continue com a tipografia correta */
+.fixed-header .brand-name {
   font-family: var(--font-display);
   font-size: 1.5rem;
   color: var(--text-main);
   text-decoration: none;
   letter-spacing: 2px;
   text-transform: uppercase;
+  margin: 0;
+}
+
+/* Novo botão de voltar minimalista */
+.btn-back {
+  color: var(--text-main);
+  text-decoration: none;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+/* Animação sutil: a seta se move levemente para a esquerda ao passar o mouse */
+.btn-back:hover {
+  color: var(--text-muted);
+  transform: translateX(-4px); 
+}
+
+/* O espaçador invisível tem a mesma largura do botão para manter a simetria do Flexbox */
+.header-spacer {
+  width: 40px;
 }
 
 .icon-btn {
