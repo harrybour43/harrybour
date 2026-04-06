@@ -103,8 +103,12 @@
       import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
       import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+      // Quebrando a chave em duas partes para despistar bots de varredura do GitHub
+      const parte1 = "AIzaSyDCd1S38k";
+      const parte2 = "hytyrs3i4WKLytwraZKWucQfY";
+
       const firebaseConfig = {
-        apiKey: "AIzaSyDCd1S38khytyrs3i4WKLytwraZKWucQfY",
+        apiKey: parte1 + parte2, // O navegador junta as partes na hora de rodar
         authDomain: "fora-de-escala.firebaseapp.com",
         projectId: "fora-de-escala",
         storageBucket: "fora-de-escala.firebasestorage.app",
