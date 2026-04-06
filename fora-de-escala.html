@@ -183,13 +183,34 @@
             const desc = document.getElementById("ponto-desc").value.trim();
             if (!nome) return alert("Dê um nome ao ponto.");
             try {
+              // 1. Salva no Firebase (O que já estava funcionando)
               await addDoc(collection(db, "locais_fora_escala"), {
                 nome, descricao: desc, latitude: lat, longitude: lng,
                 autorId: currentUser.uid, autorNome: currentUser.displayName, data: serverTimestamp(),
               });
+              
               map.removeLayer(tempMarker);
               tempMarker = null;
-            } catch (err) { console.error(err); }
+
+              // 2. NOVO: Dispara o e-mail silenciosamente em segundo plano
+              const webhookUrl = "https://script.google.com/macros/s/AKfycbyZHOAD-N1AZXWolWMlNiBOXG6EMvvBJnphqfBy7faLcUB5zr9k4Jq1Wy0dEJiwhsefqw/exec";
+              
+              fetch(webhookUrl, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                  nome: nome,
+                  descricao: desc,
+                  autorNome: currentUser.displayName,
+                  lat: lat,
+                  lng: lng
+                })
+              }).catch(err => console.log("Aviso de e-mail falhou, mas ponto foi salvo.", err));
+
+            } catch (err) { 
+              console.error(err); 
+              alert("Erro ao salvar o ponto no banco de dados.");
+            }
           });
         }, 100);
       });
