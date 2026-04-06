@@ -14,12 +14,10 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     />
-
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css"
@@ -36,14 +34,12 @@
         >
           <i class="fa-solid fa-arrow-left"></i>
         </a>
-
         <h2
           class="brand-name"
           style="text-transform: none; letter-spacing: 1px"
         >
           foRa dE eScaLa
         </h2>
-
         <div class="auth-area">
           <img id="user-avatar" class="user-avatar" src="" alt="Avatar" />
           <button id="btn-auth" class="btn-login">
@@ -59,6 +55,10 @@
         <div id="map"></div>
       </main>
     </div>
+
+    <button id="btn-gps" class="btn-gps-map" data-tooltip="Minha Localização">
+      <i class="fa-solid fa-location-crosshairs"></i>
+    </button>
 
     <button
       id="btn-info"
@@ -90,7 +90,6 @@
           "
           >&times;</span
         >
-
         <h3
           style="
             text-transform: none;
@@ -110,13 +109,11 @@
         >
           Cartografia da Resistência Urbana
         </p>
-
         <p style="margin-bottom: 15px; line-height: 1.6">
           A cidade de São Paulo não foi desenhada para todos os corpos. O
           <strong>foRa dE eScaLa</strong> é um projeto de mapeamento coletivo
           que visa dar visibilidade aos pontos onde a cidade falha.
         </p>
-
         <h4
           style="
             margin: 20px 0 10px 0;
@@ -134,24 +131,23 @@
             line-height: 1.6;
           "
         >
-          <li style="margin-bottom: 8px">
+          <li>
             <strong>Calçadas Hostis:</strong> Trechos íngremes, esburacados ou
             com raízes.
           </li>
-          <li style="margin-bottom: 8px">
+          <li>
             <strong>Desvios Excludentes:</strong> Trajetos que obrigam PcD a
             darem grandes voltas.
           </li>
-          <li style="margin-bottom: 8px">
+          <li>
             <strong>Barreiras Técnicas:</strong> Elevadores preferenciais
             desligados ou quebrados.
           </li>
-          <li style="margin-bottom: 8px">
+          <li>
             <strong>Sem Rebaixamento:</strong> Faixas de pedestre sem rampas de
             acesso.
           </li>
         </ul>
-
         <h4
           style="
             margin: 20px 0 10px 0;
@@ -169,15 +165,10 @@
             line-height: 1.6;
           "
         >
-          <li style="margin-bottom: 5px">Faça o login com o seu Google.</li>
-          <li style="margin-bottom: 5px">
-            Busque o endereço ou navegue no mapa.
-          </li>
-          <li style="margin-bottom: 5px">
-            Clique no local exato e "Grave no Asfalto".
-          </li>
+          <li>Faça o login com o seu Google.</li>
+          <li>Busque o endereço ou navegue no mapa.</li>
+          <li>Clique no local exato e "Grave no Asfalto".</li>
         </ol>
-
         <p
           style="
             font-weight: bold;
@@ -194,7 +185,6 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
-
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
       import {
@@ -229,7 +219,7 @@
 
       let currentUser = null;
 
-      // MAPA
+      // MAPA PADRÃO (OpenStreetMap)
       const map = L.map("map", { zoomControl: false }).setView(
         [-23.5505, -46.6333],
         13
@@ -239,7 +229,7 @@
       L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
         attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       }).addTo(map);
 
       // BUSCA
@@ -247,18 +237,16 @@
         defaultMarkGeocode: false,
         placeholder: "Buscar endereço...",
       })
-        .on("markgeocode", function (e) {
-          map.fitBounds(e.geocode.bbox);
-        })
+        .on("markgeocode", (e) => map.fitBounds(e.geocode.bbox))
         .addTo(map);
 
-      // LOGIN
+      // AUTH
       const btnAuth = document.getElementById("btn-auth");
       const userAvatar = document.getElementById("user-avatar");
 
       btnAuth.addEventListener("click", () => {
         if (currentUser) signOut(auth);
-        else signInWithPopup(auth, provider).catch((err) => console.error(err));
+        else signInWithPopup(auth, provider).catch(console.error);
       });
 
       onAuthStateChanged(auth, (user) => {
@@ -278,21 +266,19 @@
 
       // INCLUIR PONTO
       let tempMarker = null;
-      map.on("click", function (e) {
+      map.on("click", (e) => {
         if (!currentUser)
           return alert("Faça login com o Google para inserir um ponto.");
-
         const { lat, lng } = e.latlng;
         if (tempMarker) map.removeLayer(tempMarker);
 
         const popupContent = `
-            <div class="add-point-form">
-              <h3 style="margin: 0; font-family: var(--font-display);">Registrar Ponto</h3>
-              <input type="text" id="ponto-nome" placeholder="Localização / Fato" autocomplete="off">
-              <textarea id="ponto-desc" placeholder="Observações..." autocomplete="off"></textarea>
-              <button id="btn-salvar-ponto" class="btn-action">Gravar no Asfalto</button>
-            </div>
-          `;
+          <div class="add-point-form">
+            <h3 style="margin: 0; font-family: var(--font-display);">Registrar Ponto</h3>
+            <input type="text" id="ponto-nome" placeholder="Localização / Fato" autocomplete="off">
+            <textarea id="ponto-desc" placeholder="Observações..." autocomplete="off"></textarea>
+            <button id="btn-salvar-ponto" class="btn-action">Gravar no Asfalto</button>
+          </div>`;
 
         tempMarker = L.marker([lat, lng])
           .addTo(map)
@@ -300,15 +286,12 @@
           .openPopup();
 
         setTimeout(() => {
-          const btnSalvar = document.getElementById("btn-salvar-ponto");
-          if (btnSalvar) {
-            btnSalvar.addEventListener("click", async () => {
+          document
+            .getElementById("btn-salvar-ponto")
+            ?.addEventListener("click", async () => {
               const nome = document.getElementById("ponto-nome").value.trim();
               const desc = document.getElementById("ponto-desc").value.trim();
-
               if (!nome) return alert("Dê um nome ao ponto.");
-              btnSalvar.innerText = "Gravando...";
-              btnSalvar.disabled = true;
 
               try {
                 await addDoc(collection(db, "locais_fora_escala"), {
@@ -322,62 +305,83 @@
                 });
                 map.removeLayer(tempMarker);
                 tempMarker = null;
-              } catch (error) {
-                console.error(error);
-                btnSalvar.innerText = "Tentar novamente";
-                btnSalvar.disabled = false;
+              } catch (err) {
+                console.error(err);
               }
             });
-          }
         }, 100);
       });
 
       // LER PONTOS
-      onSnapshot(collection(db, "locais_fora_escala"), (snapshot) => {
-        snapshot.docChanges().forEach((change) => {
+      onSnapshot(collection(db, "locais_fora_escala"), (snap) => {
+        snap.docChanges().forEach((change) => {
           if (change.type === "added") {
-            const dados = change.doc.data();
-            const htmlPopup = `
-                <div style="font-family: var(--font-ui); max-width: 250px;">
-                  <h3 style="margin: 0 0 5px 0; font-family: var(--font-display);">${
-                    dados.nome
-                  }</h3>
-                  <p style="margin: 0 0 10px 0; font-size: 0.9rem; color: var(--text-muted);">${
-                    dados.descricao || ""
-                  }</p>
-                  <div style="border-top: 1px solid var(--border-color); padding-top: 5px; opacity: 0.5; font-size: 0.7rem;">
-                    Por: ${dados.autorNome}
-                  </div>
-                </div>
-              `;
-            L.marker([dados.latitude, dados.longitude])
-              .addTo(map)
-              .bindPopup(htmlPopup);
+            const d = change.doc.data();
+            const html = `
+              <div style="font-family: var(--font-ui); max-width: 250px;">
+                <h3 style="margin: 0; font-family: var(--font-display);">${
+                  d.nome
+                }</h3>
+                <p style="font-size: 0.9rem; color: #555;">${
+                  d.descricao || ""
+                }</p>
+                <div style="border-top: 1px solid #ddd; padding-top: 5px; opacity: 0.5; font-size: 0.7rem;">Por: ${
+                  d.autorNome
+                }</div>
+              </div>`;
+            L.marker([d.latitude, d.longitude]).addTo(map).bindPopup(html);
           }
         });
       });
 
-      // MODAL DE MANIFESTO
+      // MANIFESTO E GPS
       const infoModal = document.getElementById("info-modal");
-      const btnInfo = document.getElementById("btn-info");
-      const closeInfoModal = document.getElementById("close-info-modal");
-
-      btnInfo.addEventListener(
-        "click",
-        () => (infoModal.style.display = "flex")
-      );
-      closeInfoModal.addEventListener(
-        "click",
-        () => (infoModal.style.display = "none")
-      );
-      window.addEventListener("click", (e) => {
+      document.getElementById("btn-info").onclick = () =>
+        (infoModal.style.display = "flex");
+      document.getElementById("close-info-modal").onclick = () =>
+        (infoModal.style.display = "none");
+      window.onclick = (e) => {
         if (e.target === infoModal) infoModal.style.display = "none";
-      });
+      };
 
       if (!localStorage.getItem("manifestoVisto")) {
         infoModal.style.display = "flex";
         localStorage.setItem("manifestoVisto", "true");
       }
+
+      // ==========================================
+      // 6. GEOLOCALIZAÇÃO (GPS) - REVISADO
+      // ==========================================
+      document.getElementById("btn-gps").onclick = () => {
+        // enableHighAccuracy: Força o uso do GPS do celular em vez de triangulação de rede (mais preciso)
+        // maxZoom: Define o nível de proximidade (18 é ideal para ver quadras e detalhes da rua)
+        map.locate({
+          setView: true,
+          maxZoom: 18,
+          enableHighAccuracy: true,
+        });
+      };
+
+      map.on("locationfound", (e) => {
+        // Limpa marcadores antigos antes de criar novos
+        if (markerGpsLocal) map.removeLayer(markerGpsLocal);
+        if (circleGpsLocal) map.removeLayer(circleGpsLocal);
+
+        markerGpsLocal = L.circleMarker(e.latlng, {
+          radius: 8,
+          fillColor: "#4285F4",
+          color: "#fff",
+          weight: 2,
+          opacity: 1,
+          fillOpacity: 1,
+        }).addTo(map);
+
+        circleGpsLocal = L.circle(e.latlng, e.accuracy / 2, {
+          color: "#4285F4",
+          fillOpacity: 0.15,
+          weight: 1,
+        }).addTo(map);
+      });
     </script>
   </body>
 </html>
