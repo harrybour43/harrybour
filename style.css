@@ -1053,9 +1053,12 @@ body {
 /* ==========================================
    13. MAPA: FORA DE ESCALA (LEAFLET & GEOCODER)
 ========================================== */
-body[data-page="mapa"] {
-  overflow: hidden;
+
+/* Quebra o limite de 1200px do portfólio para o mapa ocupar a tela toda */
+body[data-page="mapa"] .app-wrapper.no-sidebar .main-content {
+  max-width: 100%;
 }
+
 /* Layout Base do Mapa */
 #map {
   width: 100%;
@@ -1063,7 +1066,6 @@ body[data-page="mapa"] {
   background-color: var(--bg-surface);
   z-index: 1;
 }
-
 /* Área de Login (Header) */
 .auth-area {
   display: flex;
@@ -1168,4 +1170,91 @@ body[data-page="mapa"] {
   background-color: var(--text-main);
   color: var(--bg-base);
   transform: scale(1.05);
+}
+/* --- Ajuste de Contraste na Barra de Busca --- */
+.leaflet-control-geocoder-alternatives,
+.leaflet-control-geocoder-alternatives li,
+.leaflet-control-geocoder-alternatives a,
+.leaflet-control-geocoder-alternatives span {
+  color: var(--text-main) !important;
+  text-shadow: none !important;
+}
+
+/* Deixa o subtítulo do endereço (cidade/estado) um pouco mais suave */
+.leaflet-control-geocoder-address-context {
+  color: var(--text-muted) !important;
+  font-size: 0.85rem;
+}
+
+/* --- Ajuste de Contraste no Formulário de Inclusão --- */
+.add-point-form input,
+.add-point-form textarea {
+  border: 1px solid #777777 !important; /* Borda mais visível */
+  background-color: #000000 !important; /* Fundo mais escuro para destacar o texto */
+}
+.add-point-form input:focus,
+.add-point-form textarea:focus {
+  border-color: var(--text-main) !important;
+}
+
+/* --- Estilo do Botão GPS --- */
+.btn-gps-map {
+  position: fixed;
+  bottom: 90px; /* Fica posicionado logo acima do controle de zoom (+/-) */
+  right: 10px;
+  z-index: 1000;
+  width: 34px;
+  height: 34px;
+  border-radius: 4px; /* Formato quadrado arredondado para combinar com o zoom */
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+.btn-gps-map:hover {
+  background-color: var(--text-main);
+  color: var(--bg-base);
+}
+/* --- Ajuste de Contraste e Full Screen --- */
+body[data-page="mapa"] .app-wrapper.no-sidebar .main-content {
+  max-width: 100%;
+}
+
+.leaflet-control-geocoder-alternatives li {
+  color: #000 !important; /* Texto preto na lista branca para contraste máximo */
+  font-weight: 600;
+}
+
+.add-point-form input,
+.add-point-form textarea {
+  border: 1px solid #333 !important;
+  color: var(--text-main) !important;
+}
+
+/* --- Botão GPS --- */
+.btn-gps-map {
+  position: fixed;
+  bottom: 90px;
+  right: 10px;
+  z-index: 1000;
+  width: 34px;
+  height: 34px;
+  border-radius: 4px;
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-gps-map:hover {
+  background-color: var(--text-main);
+  color: var(--bg-base);
 }
