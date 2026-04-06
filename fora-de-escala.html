@@ -8,7 +8,6 @@
       name="description"
       content="Cartografia coletiva e permanência das formas."
     />
-
     <link rel="stylesheet" href="style.css" />
     <link
       rel="stylesheet"
@@ -43,7 +42,8 @@
         <div class="auth-area">
           <img id="user-avatar" class="user-avatar" src="" alt="Avatar" />
           <button id="btn-auth" class="btn-login">
-            <i class="fa-brands fa-google"></i> Entrar
+            <i class="fa-brands fa-google"></i>
+            <span class="login-text">Entrar</span>
           </button>
         </div>
       </header>
@@ -52,7 +52,10 @@
         class="main-content full-width"
         style="padding-top: var(--header-height); margin-left: 0"
       >
-        <div id="map"></div>
+        <div
+          id="map"
+          style="height: calc(100svh - var(--header-height)); width: 100%"
+        ></div>
       </main>
     </div>
 
@@ -218,8 +221,9 @@
       const provider = new GoogleAuthProvider();
 
       let currentUser = null;
+      let markerGpsLocal = null; // DECLARADO
+      let circleGpsLocal = null; // DECLARADO
 
-      // MAPA PADRÃO (OpenStreetMap)
       const map = L.map("map", { zoomControl: false }).setView(
         [-23.5505, -46.6333],
         13
@@ -228,11 +232,9 @@
 
       L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        attribution: "&copy; OpenStreetMap",
       }).addTo(map);
 
-      // BUSCA
       const geocoder = L.Control.geocoder({
         defaultMarkGeocode: false,
         placeholder: "Buscar endereço...",
@@ -240,7 +242,6 @@
         .on("markgeocode", (e) => map.fitBounds(e.geocode.bbox))
         .addTo(map);
 
-      // AUTH
       const btnAuth = document.getElementById("btn-auth");
       const userAvatar = document.getElementById("user-avatar");
 
@@ -264,27 +265,17 @@
         }
       });
 
-      // INCLUIR PONTO
       let tempMarker = null;
       map.on("click", (e) => {
         if (!currentUser)
           return alert("Faça login com o Google para inserir um ponto.");
         const { lat, lng } = e.latlng;
         if (tempMarker) map.removeLayer(tempMarker);
-
-        const popupContent = `
-          <div class="add-point-form">
-            <h3 style="margin: 0; font-family: var(--font-display);">Registrar Ponto</h3>
-            <input type="text" id="ponto-nome" placeholder="Localização / Fato" autocomplete="off">
-            <textarea id="ponto-desc" placeholder="Observações..." autocomplete="off"></textarea>
-            <button id="btn-salvar-ponto" class="btn-action">Gravar no Asfalto</button>
-          </div>`;
-
+        const popupContent = `<div class="add-point-form"><h3 style="margin: 0; font-family: var(--font-display);">Registrar Ponto</h3><input type="text" id="ponto-nome" placeholder="Localização / Fato" autocomplete="off"><textarea id="ponto-desc" placeholder="Observações..." autocomplete="off"></textarea><button id="btn-salvar-ponto" class="btn-action">Gravar no Asfalto</button></div>`;
         tempMarker = L.marker([lat, lng])
           .addTo(map)
           .bindPopup(popupContent, { closeOnClick: false })
           .openPopup();
-
         setTimeout(() => {
           document
             .getElementById("btn-salvar-ponto")
@@ -292,7 +283,6 @@
               const nome = document.getElementById("ponto-nome").value.trim();
               const desc = document.getElementById("ponto-desc").value.trim();
               if (!nome) return alert("Dê um nome ao ponto.");
-
               try {
                 await addDoc(collection(db, "locais_fora_escala"), {
                   nome,
@@ -312,29 +302,22 @@
         }, 100);
       });
 
-      // LER PONTOS
       onSnapshot(collection(db, "locais_fora_escala"), (snap) => {
         snap.docChanges().forEach((change) => {
           if (change.type === "added") {
             const d = change.doc.data();
-            const html = `
-              <div style="font-family: var(--font-ui); max-width: 250px;">
-                <h3 style="margin: 0; font-family: var(--font-display);">${
-                  d.nome
-                }</h3>
-                <p style="font-size: 0.9rem; color: #555;">${
-                  d.descricao || ""
-                }</p>
-                <div style="border-top: 1px solid #ddd; padding-top: 5px; opacity: 0.5; font-size: 0.7rem;">Por: ${
-                  d.autorNome
-                }</div>
-              </div>`;
+            const html = `<div style="font-family: var(--font-ui); max-width: 250px;"><h3 style="margin: 0; font-family: var(--font-display);">${
+              d.nome
+            }</h3><p style="font-size: 0.9rem; color: #555;">${
+              d.descricao || ""
+            }</p><div style="border-top: 1px solid #ddd; padding-top: 5px; opacity: 0.5; font-size: 0.7rem;">Por: ${
+              d.autorNome
+            }</div></div>`;
             L.marker([d.latitude, d.longitude]).addTo(map).bindPopup(html);
           }
         });
       });
 
-      // MANIFESTO E GPS
       const infoModal = document.getElementById("info-modal");
       document.getElementById("btn-info").onclick = () =>
         (infoModal.style.display = "flex");
@@ -350,37 +333,55 @@
       }
 
       // ==========================================
-      // 6. GEOLOCALIZAÇÃO (GPS) - REVISADO
+      // 6. GEOLOCALIZAÇÃO (GPS) - REVISADO E FORÇADO
       // ==========================================
-      document.getElementById("btn-gps").onclick = () => {
-        // enableHighAccuracy: Força o uso do GPS do celular em vez de triangulação de rede (mais preciso)
-        // maxZoom: Define o nível de proximidade (18 é ideal para ver quadras e detalhes da rua)
+      const btnGps = document.getElementById("btn-gps");
+
+      btnGps.onclick = () => {
+        // Pedimos a localização com alta precisão e tempo de espera (timeout)
         map.locate({
-          setView: true,
-          maxZoom: 18,
+          setView: false, // Nós faremos o movimento manualmente abaixo
           enableHighAccuracy: true,
+          timeout: 10000, // Aguarda até 10 segundos pelo sinal
         });
       };
 
+      // Evento disparado quando a localização é encontrada com sucesso
       map.on("locationfound", (e) => {
-        // Limpa marcadores antigos antes de criar novos
+        // 1. Move o mapa obrigatoriamente para as coordenadas com zoom 18
+        map.flyTo(e.latlng, 18, {
+          animate: true,
+          duration: 1.5,
+        });
+
+        // 2. Limpa marcadores anteriores antes de criar o novo
         if (markerGpsLocal) map.removeLayer(markerGpsLocal);
         if (circleGpsLocal) map.removeLayer(circleGpsLocal);
 
+        // 3. Cria o ponto azul de posição
         markerGpsLocal = L.circleMarker(e.latlng, {
           radius: 8,
           fillColor: "#4285F4",
-          color: "#fff",
+          color: "#ffffff",
           weight: 2,
           opacity: 1,
           fillOpacity: 1,
         }).addTo(map);
 
+        // 4. Cria o círculo de precisão ao redor
         circleGpsLocal = L.circle(e.latlng, e.accuracy / 2, {
           color: "#4285F4",
-          fillOpacity: 0.15,
+          fillOpacity: 0.1,
           weight: 1,
         }).addTo(map);
+      });
+
+      // Evento disparado se o GPS falhar (permissão negada, sinal fraco ou sem HTTPS)
+      map.on("locationerror", (e) => {
+        console.error("Erro GPS:", e.message);
+        alert(
+          "Não foi possível obter sua localização. Verifique se o GPS está ativo e se você autorizou o site a acessar sua posição."
+        );
       });
     </script>
   </body>
