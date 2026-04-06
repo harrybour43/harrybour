@@ -165,14 +165,13 @@ body {
 /* Animação sutil: a seta se move levemente para a esquerda ao passar o mouse */
 .btn-back:hover {
   color: var(--text-muted);
-  transform: translateX(-4px); 
+  transform: translateX(-4px);
 }
 
 /* O espaçador invisível tem a mesma largura do botão para manter a simetria do Flexbox */
 .header-spacer {
   width: 40px;
 }
-
 .icon-btn {
   font-size: 1.5rem;
   color: var(--text-main);
@@ -422,7 +421,7 @@ body {
    7. GALERIA MASONRY E LIGHTBOX
 ------------------------------------------ */
 .gallery-page {
-  padding-top: 20px; 
+  padding-top: 20px;
 }
 
 .gallery-container {
@@ -897,7 +896,7 @@ body {
 .slider-input::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 40px; 
+  width: 40px;
   height: 100%;
   background: transparent;
 }
@@ -912,7 +911,7 @@ body {
   transform: translateX(-50%);
   pointer-events: none;
   z-index: 5;
-  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -923,7 +922,7 @@ body {
   height: 40px;
   background: white;
   border-radius: 50%;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -982,7 +981,6 @@ body {
   visibility: visible;
   transform: translateX(-50%) scale(1);
 }
-
 /* ==========================================
    12. PÁGINA AUDIOVISUAL
 ========================================== */
@@ -1004,7 +1002,7 @@ body {
 /* Garante proporção 16:9 e responsividade para o iframe */
 .video-wrapper {
   position: relative;
-  padding-bottom: 56.25%; 
+  padding-bottom: 56.25%;
   height: 0;
   overflow: hidden;
   border: 1px solid var(--border-color); /* Mantém a identidade visual do portfólio */
@@ -1022,7 +1020,7 @@ body {
 /* Caixa de texto abaixo do vídeo */
 .video-info {
   /* Padding lateral zerado garante alinhamento exato com as bordas do vídeo */
-  padding: 20px 0 0 0; 
+  padding: 20px 0 0 0;
   text-align: left;
 }
 
@@ -1051,4 +1049,123 @@ body {
   color: var(--text-muted); /* Mantém o texto discreto */
   line-height: 1.6;
   margin: 0;
+}
+/* ==========================================
+   13. MAPA: FORA DE ESCALA (LEAFLET & GEOCODER)
+========================================== */
+body[data-page="mapa"] {
+  overflow: hidden;
+}
+/* Layout Base do Mapa */
+#map {
+  width: 100%;
+  height: calc(100vh - var(--header-height));
+  background-color: var(--bg-surface);
+  z-index: 1;
+}
+
+/* Área de Login (Header) */
+.auth-area {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  display: none;
+}
+.btn-login {
+  background: var(--text-main);
+  color: var(--bg-base);
+  border: 1px solid transparent;
+  padding: 8px 16px;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+.btn-login:hover {
+  opacity: 0.8;
+}
+
+/* Customização Dark do Popup do Leaflet */
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+}
+
+/* Formulário de Inclusão de Pontos */
+.add-point-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 220px;
+}
+.add-point-form input,
+.add-point-form textarea {
+  background: var(--bg-base);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  padding: 10px;
+  font-family: var(--font-ui);
+  outline: none;
+}
+
+/* Barra de Busca (Geocoder) */
+.leaflet-control-geocoder {
+  background-color: var(--bg-surface) !important;
+  border: 1px solid var(--border-color) !important;
+  margin-top: 20px !important;
+}
+.leaflet-control-geocoder-form input {
+  color: var(--text-main) !important;
+  background: transparent !important;
+}
+.leaflet-control-geocoder-icon {
+  filter: invert(1);
+}
+.leaflet-control-geocoder-alternatives {
+  background-color: var(--bg-surface) !important;
+  border: 1px solid var(--border-color) !important;
+}
+.leaflet-control-geocoder-alternatives li:hover {
+  background-color: var(--btn-bg) !important;
+}
+
+/* Botão Flutuante de Informação */
+.btn-info-map {
+  position: fixed;
+  bottom: 30px;
+  left: 20px;
+  z-index: 1000;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+.btn-info-map:hover {
+  background-color: var(--text-main);
+  color: var(--bg-base);
+  transform: scale(1.05);
 }
