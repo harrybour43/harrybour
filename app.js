@@ -4,10 +4,7 @@
 
 // ==========================================
 
-
-
 const categoryData = {
-
   eventos: { title: "Eventos & Coberturas", desc: "", images: [] },
 
   rua: { title: "Fotografia de Rua", desc: "", images: [] },
@@ -17,109 +14,71 @@ const categoryData = {
   audiovisual: { title: "Audiovisual", desc: "", images: [] },
 
   lumen: { title: "Projeto Lumen (+18)", desc: "", images: [] },
-
 };
 
-
-
 document.addEventListener("DOMContentLoaded", () => {
-
   const page = document.body.getAttribute("data-page");
 
   if (page === "inicio") {
-
     initCarousel();
-
-  } else if (categoryData[page] && typeof loadCategory === 'function') {
-
+  } else if (categoryData[page] && typeof loadCategory === "function") {
     loadCategory(page);
-
   }
-
 });
-
-
 
 // --- CARROSSEL DA HOME ---
 
 let currentSlide = 0;
 
 function initCarousel() {
-
   const container = document.getElementById("home-carousel");
 
   if (!container) return;
-
-  
 
   const slides = document.querySelectorAll(".carousel-slide, .hypnotic-img");
 
   if (slides.length < 2) return;
 
-
-
   slides[0].classList.add("active");
 
-
-
   setInterval(() => {
-
     slides[currentSlide].classList.remove("active");
 
     currentSlide = (currentSlide + 1) % slides.length;
 
     slides[currentSlide].classList.add("active");
-
   }, 5000);
-
 }
-
-
 
 // --- FUNÇÕES DE MENU E MODAIS ---
 
 function toggleMobileMenu() {
-
   const sidebar = document.getElementById("sidebar");
 
   if (sidebar) sidebar.classList.toggle("open");
-
 }
 
-
-
 function closeModal(id) {
-
   const modal = document.getElementById(id);
 
   if (modal) modal.style.display = "none";
-
 }
-
-
 
 // --- PROJETO LUMEN (GATE DE IDADE) ---
 
 function openAgeGateModal() {
-
   if (sessionStorage.getItem("ageVerified") === "true") {
-
     window.location.href = "lumen.html";
 
     return;
-
   }
 
   const modal = document.getElementById("age-gate-modal");
 
   if (modal) modal.style.display = "flex";
-
 }
 
-
-
 function verifyAgeWithFriction() {
-
   const day = document.getElementById("age-day").value;
 
   const month = document.getElementById("age-month").value;
@@ -128,19 +87,13 @@ function verifyAgeWithFriction() {
 
   const errorMsg = document.getElementById("age-error-msg");
 
-
-
   if (!day || !month || !year) {
-
     errorMsg.innerText = "Por favor, preencha o dia, mês e ano.";
 
     errorMsg.style.display = "block";
 
     return;
-
   }
-
-
 
   const birthDate = new Date(year, month - 1, day);
 
@@ -150,12 +103,11 @@ function verifyAgeWithFriction() {
 
   const m = today.getMonth() - birthDate.getMonth();
 
-  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) { age--; }
-
-
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
 
   if (age >= 18) {
-
     errorMsg.style.display = "none";
 
     sessionStorage.setItem("ageVerified", "true");
@@ -163,56 +115,34 @@ function verifyAgeWithFriction() {
     document.getElementById("age-gate-modal").style.display = "none";
 
     window.location.href = "lumen.html";
-
   } else {
-
     rejectAgeRedirect();
-
   }
-
 }
-
-
 
 function rejectAgeRedirect() {
-
   window.location.href = "index.html";
-
 }
-
-
 
 // --- ACESSIBILIDADE ---
 
 function toggleA11yPanel() {
-
   const panel = document.getElementById("a11y-panel");
 
-  if (panel) panel.style.display = panel.style.display === "block" ? "none" : "block";
-
+  if (panel)
+    panel.style.display = panel.style.display === "block" ? "none" : "block";
 }
-
-
 
 function toggleA11y(className) {
-
   document.body.classList.toggle(className);
-
 }
 
-
-
 function setA11yTextSize(size) {
-
   document.body.classList.remove("a11y-text-lg", "a11y-text-xl");
 
   if (size === "lg") document.body.classList.add("a11y-text-lg");
-
   else if (size === "xl") document.body.classList.add("a11y-text-xl");
-
 }
-
-
 
 // ==========================================
 
@@ -224,73 +154,54 @@ let currentGalleryImages = [];
 
 let currentImageIndex = 0;
 
-
-
 function openLightbox(src, alt) {
-
   const lightbox = document.getElementById("lightbox");
 
   const lightboxImg = document.getElementById("lightbox-img");
 
   const caption = document.getElementById("lightbox-caption");
 
-
-
   if (lightbox && lightboxImg) {
+    currentGalleryImages = Array.from(
+      document.querySelectorAll(".masonry-item")
+    );
 
-    currentGalleryImages = Array.from(document.querySelectorAll('.masonry-item'));
+    currentImageIndex = currentGalleryImages.findIndex(
+      (img) => img.src === src
+    );
 
-    currentImageIndex = currentGalleryImages.findIndex(img => img.src === src);
-
-    lightboxImg.src = src; 
+    lightboxImg.src = src;
 
     lightboxImg.alt = alt;
 
-    if(caption) caption.innerText = alt; 
+    if (caption) caption.innerText = alt;
 
     lightbox.style.display = "flex";
 
-    document.body.style.overflow = "hidden"; 
-
+    document.body.style.overflow = "hidden";
   }
-
 }
 
-
-
 function closeLightbox() {
-
   const lightbox = document.getElementById("lightbox");
 
   if (lightbox) {
-
     lightbox.style.display = "none";
 
-    document.body.style.overflow = "auto"; 
-
+    document.body.style.overflow = "auto";
   }
-
 }
 
-
-
 function navigateLightbox(direction) {
+  if (currentGalleryImages.length <= 1) return;
 
-  if (currentGalleryImages.length <= 1) return; 
-
-  
-
-  if (direction === 'next') {
-
+  if (direction === "next") {
     currentImageIndex = (currentImageIndex + 1) % currentGalleryImages.length;
-
-  } else if (direction === 'prev') {
-
-    currentImageIndex = (currentImageIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
-
+  } else if (direction === "prev") {
+    currentImageIndex =
+      (currentImageIndex - 1 + currentGalleryImages.length) %
+      currentGalleryImages.length;
   }
-
-  
 
   const nextImg = currentGalleryImages[currentImageIndex];
 
@@ -298,40 +209,25 @@ function navigateLightbox(direction) {
 
   const caption = document.getElementById("lightbox-caption");
 
-  
-
   lightboxImg.src = nextImg.src;
 
   lightboxImg.alt = nextImg.alt;
 
-  if(caption) caption.innerText = nextImg.alt;
-
+  if (caption) caption.innerText = nextImg.alt;
 }
 
-
-
-document.addEventListener('keydown', function(event) {
-
+document.addEventListener("keydown", function (event) {
   const lightbox = document.getElementById("lightbox");
 
   if (lightbox && lightbox.style.display === "flex") {
-
     if (event.key === "ArrowRight") {
-
-      navigateLightbox('next');
-
+      navigateLightbox("next");
     } else if (event.key === "ArrowLeft") {
-
-      navigateLightbox('prev');
-
+      navigateLightbox("prev");
     } else if (event.key === "Escape") {
-
       closeLightbox();
-
     }
-
   }
-
 });
 
 // ==========================================
@@ -340,76 +236,50 @@ document.addEventListener('keydown', function(event) {
 
 // ==========================================
 
-
-
 // 1. Bloqueia o clique com o botão direito (Menu de contexto)
 
-document.addEventListener('contextmenu', function(event) {
-
+document.addEventListener("contextmenu", function (event) {
   event.preventDefault();
-
 });
-
-
 
 // 2. Bloqueia atalhos de teclado para Inspecionar Elemento e Código Fonte
 
-document.addEventListener('keydown', function(event) {
-
+document.addEventListener("keydown", function (event) {
   // Bloqueia a tecla F12
 
-  if (event.key === 'F12') {
-
+  if (event.key === "F12") {
     event.preventDefault();
-
   }
-
-  
 
   // Bloqueia Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+Shift+C / Ctrl+U (Windows/Linux)
 
-  if (event.ctrlKey && (
-
-      event.key === 'u' || event.key === 'U' || 
-
-      (event.shiftKey && ['i', 'I', 'j', 'J', 'c', 'C'].includes(event.key))
-
-  )) {
-
+  if (
+    event.ctrlKey &&
+    (event.key === "u" ||
+      event.key === "U" ||
+      (event.shiftKey && ["i", "I", "j", "J", "c", "C"].includes(event.key)))
+  ) {
     event.preventDefault();
-
   }
-
-
 
   // Bloqueia Cmd+Option+I / Cmd+Option+J / Cmd+Option+C / Cmd+U (Mac)
 
-  if (event.metaKey && (
-
-      event.key === 'u' || event.key === 'U' || 
-
-      (event.altKey && ['i', 'I', 'j', 'J', 'c', 'C'].includes(event.key))
-
-  )) {
-
+  if (
+    event.metaKey &&
+    (event.key === "u" ||
+      event.key === "U" ||
+      (event.altKey && ["i", "I", "j", "J", "c", "C"].includes(event.key)))
+  ) {
     event.preventDefault();
-
   }
-
 });
-
-
 
 // 3. Impede que o usuário "arraste e solte" a foto para fora do navegador
 
-document.addEventListener('dragstart', function(event) {
-
-  if (event.target.tagName === 'IMG') {
-
+document.addEventListener("dragstart", function (event) {
+  if (event.target.tagName === "IMG") {
     event.preventDefault();
-
   }
-
 });
 
 /* ==========================================
@@ -419,155 +289,128 @@ document.addEventListener('dragstart', function(event) {
 ========================================== */
 
 async function loadDynamicGallery() {
+  const gallery = document.getElementById("dynamic-gallery");
 
-  const gallery = document.getElementById('dynamic-gallery');
+  if (!gallery) return;
 
-  if (!gallery) return; 
+  const folderPath = gallery.getAttribute("data-folder");
 
+  const repoOwner = "harrybour43";
 
-
-  const folderPath = gallery.getAttribute('data-folder');
-
-  const repoOwner = 'harrybour43';
-
-  const repoName = 'harrybour';
+  const repoName = "harrybour";
 
   const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderPath}`;
 
-  
-
-  const isTratamento = folderPath.includes('tratamento');
-
-
+  const isTratamento = folderPath.includes("tratamento");
 
   try {
+    const response = await fetch(apiUrl);
 
-      const response = await fetch(apiUrl);
+    if (!response.ok) throw new Error("Não foi possível carregar a pasta.");
 
-      if (!response.ok) throw new Error('Não foi possível carregar a pasta.');
+    const files = await response.json();
 
-      const files = await response.json();
+    // 1. Pega apenas os arquivos de imagem
 
+    const images = files.filter((file) =>
+      file.name.match(/\.(jpg|jpeg|png|webp)$/i)
+    );
 
+    if (isTratamento) {
+      const imagensDepois = images.filter((file) =>
+        file.name.toLowerCase().includes("-depois")
+      );
 
-      // 1. Pega apenas os arquivos de imagem
+      imagensDepois.forEach((img) => {
+        const imgElement = document.createElement("img");
 
-      const images = files.filter(file => file.name.match(/\.(jpg|jpeg|png|webp)$/i));
+        imgElement.src = `${folderPath}/${img.name}`;
 
+        let cleanName = img.name
+          .replace(/\.[^/.]+$/, "")
+          .replace(/-/g, " ")
+          .replace(/ depois/i, "");
 
+        imgElement.alt = cleanName;
 
-      if (isTratamento) {
+        imgElement.className = "masonry-item";
 
-          const imagensDepois = images.filter(file => file.name.toLowerCase().includes('-depois'));
+        imgElement.setAttribute("loading", "lazy");
 
-          
+        imgElement.style.cursor = "pointer";
 
-          imagensDepois.forEach(img => {
+        imgElement.addEventListener("click", () => {
+          const urlAntes = imgElement.src.replace(/-depois/i, "-antes");
 
-              const imgElement = document.createElement('img');
+          openSliderLightbox(urlAntes, imgElement.src, cleanName);
+        });
 
-              imgElement.src = `${folderPath}/${img.name}`; 
+        gallery.appendChild(imgElement);
+      });
+    } else {
+      images.forEach((img) => {
+        const imgElement = document.createElement("img");
 
-              let cleanName = img.name.replace(/\.[^/.]+$/, "").replace(/-/g, " ").replace(/ depois/i, "");
+        imgElement.src = `${folderPath}/${img.name}`;
 
-              imgElement.alt = cleanName;
+        let cleanName = img.name.replace(/\.[^/.]+$/, "").replace(/-/g, " ");
 
-              imgElement.className = 'masonry-item';
+        imgElement.alt = cleanName;
 
-              imgElement.setAttribute('loading', 'lazy');
+        imgElement.className = "masonry-item";
 
-              imgElement.style.cursor = 'pointer';
+        imgElement.setAttribute("loading", "lazy");
 
+        imgElement.addEventListener("click", () => {
+          openLightbox(imgElement.src, imgElement.alt);
+        });
 
-
-              imgElement.addEventListener('click', () => {
-
-                  const urlAntes = imgElement.src.replace(/-depois/i, '-antes');
-
-                  openSliderLightbox(urlAntes, imgElement.src, cleanName);
-
-              });
-
-              gallery.appendChild(imgElement);
-
-          });
-
-      } else {
-
-          images.forEach(img => {
-
-              const imgElement = document.createElement('img');
-
-              imgElement.src = `${folderPath}/${img.name}`; 
-
-              let cleanName = img.name.replace(/\.[^/.]+$/, "").replace(/-/g, " ");
-
-              imgElement.alt = cleanName;
-
-              imgElement.className = 'masonry-item';
-
-              imgElement.setAttribute('loading', 'lazy');
-
-
-
-              imgElement.addEventListener('click', () => {
-
-                  openLightbox(imgElement.src, imgElement.alt);
-
-              });
-
-              gallery.appendChild(imgElement);
-
-          });
-
-      }
-
+        gallery.appendChild(imgElement);
+      });
+    }
   } catch (error) {
+    console.error("Erro na galeria dinâmica:", error);
 
-      console.error('Erro na galeria dinâmica:', error);
-
-      gallery.innerHTML = '<p style="color: var(--text-muted); text-align: center;">Não foi possível carregar as imagens no momento.</p>';
-
+    gallery.innerHTML =
+      '<p style="color: var(--text-muted); text-align: center;">Não foi possível carregar as imagens no momento.</p>';
   }
-
 }
-
-
 
 /* ==========================================
    LÓGICA DE ACESSO AO GOOGLE DRIVE (LINK DIRETO)
 ========================================== */
 async function acessarPasta() {
-  const emailInput = document.getElementById('user-email').value;
-  const errorMsg = document.getElementById('login-error-msg');
-  const loginSection = document.getElementById('client-login-section');
-  const driveContainer = document.getElementById('drive-container');
-  const btnLogin = document.getElementById('btn-login');
+  const emailInput = document.getElementById("user-email").value;
+  const errorMsg = document.getElementById("login-error-msg");
+  const loginSection = document.getElementById("client-login-section");
+  const driveContainer = document.getElementById("drive-container");
+  const btnLogin = document.getElementById("btn-login");
 
   // Seu link do Google Script (já está correto)
-  const scriptURL = 'https://script.google.com/macros/s/AKfycby2Bei3mDejBjbAcvWS0Wmx_5g25E2QBmMmjA5HMxzwIO1ovbxOhmhyEUnF3rt6-46NpQ/exec';
+  const scriptURL =
+    "https://script.google.com/macros/s/AKfycby2Bei3mDejBjbAcvWS0Wmx_5g25E2QBmMmjA5HMxzwIO1ovbxOhmhyEUnF3rt6-46NpQ/exec";
 
-  errorMsg.style.display = 'none';
-  btnLogin.innerText = 'Verificando...';
+  errorMsg.style.display = "none";
+  btnLogin.innerText = "Verificando...";
   btnLogin.disabled = true;
 
   try {
     const response = await fetch(scriptURL, {
-      method: 'POST',
-      headers: { 
-        "Content-Type": "text/plain;charset=utf-8" 
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8",
       },
-      body: JSON.stringify({ email: emailInput })
+      body: JSON.stringify({ email: emailInput }),
     });
-    
+
     const resultado = await response.json();
 
     if (resultado.sucesso) {
       // Esconde o formulário de login
-      loginSection.style.display = 'none';
-      
+      loginSection.style.display = "none";
+
       // Mostra o painel com o link limpo
-      driveContainer.style.display = 'block';
+      driveContainer.style.display = "block";
       driveContainer.innerHTML = `
         <div style="text-align: center; padding: 40px 20px; border: 1px solid var(--border-color); background: var(--bg-base); border-radius: 8px; max-width: 500px; margin: 0 auto;">
           <h3 style="margin-bottom: 15px; font-family: var(--font-heading); color: var(--text-main);">Acesso Liberado</h3>
@@ -583,20 +426,20 @@ async function acessarPasta() {
         </div>
       `;
     } else {
-      errorMsg.style.display = 'block';
+      errorMsg.style.display = "block";
       errorMsg.innerText = "E-mail não encontrado ou sem permissão.";
-      btnLogin.innerText = 'Acessar Meu Ensaio';
+      btnLogin.innerText = "Acessar Meu Ensaio";
       btnLogin.disabled = false;
     }
   } catch (error) {
     console.error("Erro na verificação:", error);
-    errorMsg.innerText = "Erro de conexão. Verifique sua internet e tente novamente.";
-    errorMsg.style.display = 'block';
-    btnLogin.innerText = 'Acessar Meu Ensaio';
+    errorMsg.innerText =
+      "Erro de conexão. Verifique sua internet e tente novamente.";
+    errorMsg.style.display = "block";
+    btnLogin.innerText = "Acessar Meu Ensaio";
     btnLogin.disabled = false;
   }
 }
-
 
 /* ==========================================
 
@@ -605,7 +448,6 @@ async function acessarPasta() {
 ========================================== */
 
 function openSliderLightbox(srcAntes, srcDepois, alt) {
-
   const lightbox = document.getElementById("lightbox");
 
   const imgAntes = document.getElementById("slider-img-antes");
@@ -618,37 +460,26 @@ function openSliderLightbox(srcAntes, srcDepois, alt) {
 
   const sliderLine = document.getElementById("slider-line");
 
-
-
   if (lightbox && imgAntes && imgDepois) {
+    imgAntes.src = srcAntes;
 
-      imgAntes.src = srcAntes;
+    imgDepois.src = srcDepois;
 
-      imgDepois.src = srcDepois;
+    if (caption) caption.innerText = alt;
 
-      if (caption) caption.innerText = alt;
+    if (slider && sliderLine) {
+      slider.value = 50;
 
-      
+      imgAntes.style.clipPath = `polygon(0 0, 50% 0, 50% 100%, 0 100%)`;
 
-      if (slider && sliderLine) {
+      sliderLine.style.left = `50%`;
+    }
 
-          slider.value = 50;
+    lightbox.style.display = "flex";
 
-          imgAntes.style.clipPath = `polygon(0 0, 50% 0, 50% 100%, 0 100%)`;
-
-          sliderLine.style.left = `50%`;
-
-      }
-
-      lightbox.style.display = "flex";
-
-      document.body.style.overflow = "hidden";
-
+    document.body.style.overflow = "hidden";
   }
-
 }
-
-
 
 // ==========================================
 
@@ -656,79 +487,74 @@ function openSliderLightbox(srcAntes, srcDepois, alt) {
 
 // ==========================================
 
-document.addEventListener('DOMContentLoaded', () => {
-
+document.addEventListener("DOMContentLoaded", () => {
   // Inicializa a galeria
 
   loadDynamicGallery();
 
-
-
   // Prepara o movimento do Slider (se existir na página)
 
-  const slider = document.getElementById('slider');
+  const slider = document.getElementById("slider");
 
   if (slider) {
+    slider.addEventListener("input", (event) => {
+      const valor = event.target.value;
 
-      slider.addEventListener('input', (event) => {
+      const imgAntes = document.getElementById("slider-img-antes");
 
-          const valor = event.target.value;
+      const sliderLine = document.getElementById("slider-line");
 
-          const imgAntes = document.getElementById('slider-img-antes');
+      if (imgAntes && sliderLine) {
+        imgAntes.style.clipPath = `polygon(0 0, ${valor}% 0, ${valor}% 100%, 0 100%)`;
 
-          const sliderLine = document.getElementById('slider-line');
-
-          
-
-          if(imgAntes && sliderLine) {
-
-              imgAntes.style.clipPath = `polygon(0 0, ${valor}% 0, ${valor}% 100%, 0 100%)`;
-
-              sliderLine.style.left = `${valor}%`;
-
-          }
-
-      });
-
+        sliderLine.style.left = `${valor}%`;
+      }
+    });
   }
   // --- CONTROLE DE TOQUE (SWIPE) PARA O LIGHTBOX ---
 
-const lightboxElement = document.getElementById('lightbox');
+  const lightboxElement = document.getElementById("lightbox");
 
-// Variáveis para armazenar a posição inicial e final do toque
-let touchStartX = 0;
-let touchEndX = 0;
+  // Variáveis para armazenar a posição inicial e final do toque
+  let touchStartX = 0;
+  let touchEndX = 0;
 
-// Captura onde o dedo encostou na tela
-lightboxElement.addEventListener('touchstart', function(event) {
-    touchStartX = event.changedTouches[0].screenX;
-}, false);
+  // Captura onde o dedo encostou na tela
+  lightboxElement.addEventListener(
+    "touchstart",
+    function (event) {
+      touchStartX = event.changedTouches[0].screenX;
+    },
+    false
+  );
 
-// Captura onde o dedo saiu da tela e calcula a direção
-lightboxElement.addEventListener('touchend', function(event) {
-    touchEndX = event.changedTouches[0].screenX;
-    handleSwipe();
-}, false);
+  // Captura onde o dedo saiu da tela e calcula a direção
+  lightboxElement.addEventListener(
+    "touchend",
+    function (event) {
+      touchEndX = event.changedTouches[0].screenX;
+      handleSwipe();
+    },
+    false
+  );
 
-function handleSwipe() {
+  function handleSwipe() {
     // Calcula a distância do arrasto
     const swipeDistance = touchStartX - touchEndX;
-    
+
     // Define um limite mínimo para não acionar com toques acidentais (50 pixels)
-    const threshold = 50; 
+    const threshold = 50;
 
     if (swipeDistance > threshold) {
-        // Arrastou para a ESQUERDA (Ver próxima foto)
-        // Substitua 'nextImage()' pelo nome real da sua função que avança a foto
-navigateLightbox('next');
-    } 
-    
-    if (swipeDistance < -threshold) {
-        // Arrastou para a DIREITA (Ver foto anterior)
-        // Substitua 'prevImage()' pelo nome real da sua função que volta a foto
-navigateLightbox('prev');
+      // Arrastou para a ESQUERDA (Ver próxima foto)
+      // Substitua 'nextImage()' pelo nome real da sua função que avança a foto
+      navigateLightbox("next");
     }
-}
 
+    if (swipeDistance < -threshold) {
+      // Arrastou para a DIREITA (Ver foto anterior)
+      // Substitua 'prevImage()' pelo nome real da sua função que volta a foto
+      navigateLightbox("prev");
+    }
+  }
 });
-
