@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>foRa dE eScaLa | Conectar</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Estilos específicos para esta página ocultar e centralizar o QR Code */
+        
+        body, html {
+            height: 100%;
+            overflow: hidden; /* Impede rolagem na página inteira */
+        }<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>foRa dE eScaLa | Conectar</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Estilos específicos para esta página ocultar e centralizar o QR Code */
+        
+        body, html {
+            height: 100%;
+            overflow: hidden; /* Impede rolagem na página inteira */
+        }
+
+        /* Container principal para centralizar o conteúdo abaixo do cabeçalho */
+        .main-qr-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: calc(100vh - var(--header-height)); /* Ocupa a altura restante da tela */
+            padding-top: var(--header-height); /* Compensa o cabeçalho fixo */
+            background-color: #ffffff; /* Fundo limpo solicitado */
+            box-sizing: border-box;
+        }
+
+        .qr-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* SVG QR Code Responsivo */
+        .qr-code-svg {
+            display: block;
+            shape-rendering: crispEdges;
+        }
+
+        /* Regras de Responsividade baseadas na orientação da tela */
+
+        /* Telas Verticais (Retrato) - Ocupa 70% da LARGURA útil */
+        @media (orientation: portrait) {
+            .qr-code-svg {
+                width: 70vw;
+                height: 70vw; /* Mantém proporção quadrada */
+                max-width: 90vh; /* Prevenção para telas muito altas e estreitas */
+                max-height: 90vh;
+            }
+        }
+
+        /* Telas Horizontais (Paisagem) - Ocupa 70% da ALTURA útil */
+        @media (orientation: landscape) {
+            .qr-code-svg {
+                height: 70vh;
+                width: 70vh; /* Mantém proporção quadrada */
+                max-width: 90vw; /* Prevenção para telas muito baixas e largas */
+                max-height: 90vw;
+            }
+        }
+    </style>
+</head>
+<body data-page="mapa"> <div class="app-wrapper no-sidebar">
+        
+        <header class="fixed-header">
+            <a href="index.html" class="btn-back" data-tooltip="Voltar ao Portfólio">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+
+            <h2 class="brand-name" style="text-transform: none; letter-spacing: 1px">
+                foRa dE eScaLa
+            </h2>
+
+            <div class="header-spacer"></div>
+        </header>
+
+        <main class="main-qr-container">
+            <div class="qr-wrapper">
+                <svg class="qr-code-svg" viewBox="0 0 41 41" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 0h7v7H0zM10 0h1v2h1v2h2v1h1v2h2v2h2v2h1v1h2v2h1v2h2v1h3v1h1v4h1v1h2v1h1v1h-1v1h-1v-2h-1v-1h-2v1h-1v-1h-3v-1h-2v-1h-1v-1h-1v-1h-1v-2h-2v-1h-2v1h-1v-1h-2v-1h-1v2h-1v2h-1v2h1v1h2v2h1v2h-2v1h-1v-1h-3v-1h-1v1h-1v1h2v1h-3v-1h-1v1h-1v1h-1v-7h1v-2h1v-1h1v-2h-1v-1h-2v-2h1v-1h1v-1h1v-1h-1v-2h-1v-1h-1v-2h1v-1h2v-1h1v2h1v1h2v1h1zM34 0h7v7h-7zM8 1h1v2h1v1h1v1h-1v1h-1V1zM35 1v5h5V1zM2 2v3h3V2zM36 2v3h1V2zM12 3h1v1h-1zM1 7h1v1h1v1h1v1h2v1h1v1h2v1h2v1h3v1h2v1h2v1h2v1h2v1h1v2h-1v1h-1v1h-1v1h-1v1h-1v1h-1v1h-1v1h1v1h1v1h1v1h1v1h1v1h1v1h1v1h-3v-1h-1v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1zM35 7h1v1h-1zM38 7h1v1h-1zM40 7h1v1h-1zM7 8h1v1h-1zM11 8h1v1h-1zM18 8h1v1h-1zM23 8h1v2h1v1h1v2h1v2h1v1h1v2h2v1h1v1h2v1h2v1h1v1h-1v1h-1v-1h-2v1h-1v1h-2v1h-1v-1h-1v1h-1v1h-1v1h-3v-1h-1v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-1v-4h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1zM39 8h1v1h-1zM34 9h1v1h-1zM21 10h1v1h-1zM0 12h1v2h1v2h2v1h2v2h-1v2h-1v-1h-1v1h-1v1h-1zM10 12h1v1h-1zM20 12h1v1h-1zM22 12h1v2h1v1h1v1h-1v1h-1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-3v-1h-1v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-1v-7h1v-2h1v-1h1v-2h-1v-1h-2v-2h1v-1h1v-1h1v-1h-1v-2h-1v-1h-1v-2h1v-1h2v-1h1v2h1v1h2v1h1zM34 12h1v1h-1zM40 12h1v1h-1zM35 13h1v1h-1zM39 13h1v1h-1zM11 14h1v1h-1zM13 14h1v2h1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-3v-1h-1v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-1v-7h1v-2h1v-1h1v-2h-1v-1h-2v-2h1v-1h1v-1h1v-1h-1v-2h-1v-1h-1v-2h1v-1h2v-1h1v2h1v1h2v1h1zM36 14h3v1h-3zM34 16h1v1h-1zM40 16h1v1h-1zM1 18h2v1h-2zM36 18h1v1h-1zM2 19h1v1h-1zM35 19h1v1h-1zM37 19h1v2h1v1h2v1h-1v1h1v1h1v3h1v2h-2v1h-1v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-1v-4h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1zM3 20h2v1h-2zM6 21h3v1h-3zM10 21h2v1h-2zM1 22h1v1h-1zM3 22h1v1h-1zM34 22h1v2h1v1h1v1h1v1h2v
+
+        /* Container principal para centralizar o conteúdo abaixo do cabeçalho */
+        .main-qr-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: calc(100vh - var(--header-height)); /* Ocupa a altura restante da tela */
+            padding-top: var(--header-height); /* Compensa o cabeçalho fixo */
+            background-color: #ffffff; /* Fundo limpo solicitado */
+            box-sizing: border-box;
+        }
+
+        .qr-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* SVG QR Code Responsivo */
+        .qr-code-svg {
+            display: block;
+            shape-rendering: crispEdges;
+        }
+
+        /* Regras de Responsividade baseadas na orientação da tela */
+
+        /* Telas Verticais (Retrato) - Ocupa 70% da LARGURA útil */
+        @media (orientation: portrait) {
+            .qr-code-svg {
+                width: 70vw;
+                height: 70vw; /* Mantém proporção quadrada */
+                max-width: 90vh; /* Prevenção para telas muito altas e estreitas */
+                max-height: 90vh;
+            }
+        }
+
+        /* Telas Horizontais (Paisagem) - Ocupa 70% da ALTURA útil */
+        @media (orientation: landscape) {
+            .qr-code-svg {
+                height: 70vh;
+                width: 70vh; /* Mantém proporção quadrada */
+                max-width: 90vw; /* Prevenção para telas muito baixas e largas */
+                max-height: 90vw;
+            }
+        }
+    </style>
+</head>
+<body data-page="mapa"> <div class="app-wrapper no-sidebar">
+        
+        <header class="fixed-header">
+            <a href="index.html" class="btn-back" data-tooltip="Voltar ao Portfólio">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+
+            <h2 class="brand-name" style="text-transform: none; letter-spacing: 1px">
+                foRa dE eScaLa
+            </h2>
+
+            <div class="header-spacer"></div>
+        </header>
+
+        <main class="main-qr-container">
+            <div class="qr-wrapper">
+                <svg class="qr-code-svg" viewBox="0 0 41 41" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 0h7v7H0zM10 0h1v2h1v2h2v1h1v2h2v2h2v2h1v1h2v2h1v2h2v1h3v1h1v4h1v1h2v1h1v1h-1v1h-1v-2h-1v-1h-2v1h-1v-1h-3v-1h-2v-1h-1v-1h-1v-1h-1v-2h-2v-1h-2v1h-1v-1h-2v-1h-1v2h-1v2h-1v2h1v1h2v2h1v2h-2v1h-1v-1h-3v-1h-1v1h-1v1h2v1h-3v-1h-1v1h-1v1h-1v-7h1v-2h1v-1h1v-2h-1v-1h-2v-2h1v-1h1v-1h1v-1h-1v-2h-1v-1h-1v-2h1v-1h2v-1h1v2h1v1h2v1h1zM34 0h7v7h-7zM8 1h1v2h1v1h1v1h-1v1h-1V1zM35 1v5h5V1zM2 2v3h3V2zM36 2v3h1V2zM12 3h1v1h-1zM1 7h1v1h1v1h1v1h2v1h1v1h2v1h2v1h3v1h2v1h2v1h2v1h2v1h1v2h-1v1h-1v1h-1v1h-1v1h-1v1h-1v1h-1v1h1v1h1v1h1v1h1v1h1v1h1v1h1v1h-3v-1h-1v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1zM35 7h1v1h-1zM38 7h1v1h-1zM40 7h1v1h-1zM7 8h1v1h-1zM11 8h1v1h-1zM18 8h1v1h-1zM23 8h1v2h1v1h1v2h1v2h1v1h1v2h2v1h1v1h2v1h2v1h1v1h-1v1h-1v-1h-2v1h-1v1h-2v1h-1v-1h-1v1h-1v1h-1v1h-3v-1h-1v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-1v-4h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1zM39 8h1v1h-1zM34 9h1v1h-1zM21 10h1v1h-1zM0 12h1v2h1v2h2v1h2v2h-1v2h-1v-1h-1v1h-1v1h-1zM10 12h1v1h-1zM20 12h1v1h-1zM22 12h1v2h1v1h1v1h-1v1h-1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-3v-1h-1v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-1v-7h1v-2h1v-1h1v-2h-1v-1h-2v-2h1v-1h1v-1h1v-1h-1v-2h-1v-1h-1v-2h1v-1h2v-1h1v2h1v1h2v1h1zM34 12h1v1h-1zM40 12h1v1h-1zM35 13h1v1h-1zM39 13h1v1h-1zM11 14h1v1h-1zM13 14h1v2h1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-3v-1h-1v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-1v-7h1v-2h1v-1h1v-2h-1v-1h-2v-2h1v-1h1v-1h1v-1h-1v-2h-1v-1h-1v-2h1v-1h2v-1h1v2h1v1h2v1h1zM36 14h3v1h-3zM34 16h1v1h-1zM40 16h1v1h-1zM1 18h2v1h-2zM36 18h1v1h-1zM2 19h1v1h-1zM35 19h1v1h-1zM37 19h1v2h1v1h2v1h-1v1h1v1h1v3h1v2h-2v1h-1v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-1v-4h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1zM3 20h2v1h-2zM6 21h3v1h-3zM10 21h2v1h-2zM1 22h1v1h-1zM3 22h1v1h-1zM34 22h1v2h1v1h1v1h1v1h2v
