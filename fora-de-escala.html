@@ -55,6 +55,19 @@
       </div>
     </div>
 
+    <div id="edit-modal" class="modal-overlay" style="z-index: 10000">
+      <div class="modal-content" style="max-width: 400px; text-align: left; padding: 30px; position: relative;">
+        <span id="close-edit-modal" style="position: absolute; top: 15px; right: 25px; font-size: 30px; cursor: pointer; color: var(--text-muted);">&times;</span>
+        <h3 style="font-family: var(--font-display); margin-bottom: 20px;">Editar Ponto</h3>
+        <div class="add-point-form" style="width: 100%;">
+          <input type="hidden" id="edit-ponto-id">
+          <input type="text" id="edit-ponto-nome" placeholder="Localização / Fato" autocomplete="off" style="width: 100%; margin-bottom: 10px; background: #000; color: #fff; border: 1px solid #777; padding: 10px;">
+          <textarea id="edit-ponto-desc" placeholder="Observações..." autocomplete="off" style="width: 100%; margin-bottom: 15px; min-height: 80px; background: #000; color: #fff; border: 1px solid #777; padding: 10px;"></textarea>
+          <button id="btn-salvar-edicao" class="btn-primary" style="background: var(--text-main); color: var(--bg-base); border: none; padding: 12px; font-weight: bold; cursor: pointer; width: 100%;">Salvar Alterações</button>
+        </div>
+      </div>
+    </div>
+
     <div id="info-modal" class="modal-overlay" style="z-index: 9999">
       <div class="modal-content" style="max-width: 600px; text-align: left; padding: 40px; position: relative;">
         <span id="close-info-modal" style="position: absolute; top: 15px; right: 25px; font-size: 30px; cursor: pointer; color: var(--text-muted);">&times;</span>
@@ -85,9 +98,10 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script type="module">
+      // Importamos updateDoc e doc e deleteDoc para edição e exclusão
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
       import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-      import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+      import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
       const firebaseConfig = {
         apiKey: "AIzaSyDCd1S38khytyrs3i4WKLytwraZKWucQfY",
@@ -117,10 +131,8 @@
         attribution: "&copy; OpenStreetMap",
       }).addTo(map);
 
-      // Cria um grupo de camadas para organizar os pontos do banco de dados
       const markersGroup = L.layerGroup().addTo(map);
 
-      // Busca Geocoder
       L.Control.geocoder({ defaultMarkGeocode: false, placeholder: "Buscar endereço..." })
         .on("markgeocode", (e) => map.fitBounds(e.geocode.bbox))
         .addTo(map);
@@ -182,7 +194,7 @@
         }, 100);
       });
 
-      // LER PONTOS E MONTAR INVENTÁRIO
+      // LER PONTOS E MONTAR INVENTÁRIO (COM EDIÇÃO E EXCLUSÃO)
       const inventoryModal = document.getElementById("inventory-modal");
       const pointsListContainer = document.getElementById("points-list-container");
 
@@ -191,17 +203,42 @@
 
       onSnapshot(collection(db, "locais_fora_escala"), (snapshot) => {
         pointsListContainer.innerHTML = "";
-        markersGroup.clearLayers(); // Limpa pinos antigos para não duplicar
+        markersGroup.clearLayers(); 
 
-        snapshot.docs.forEach((doc) => {
-          const dados = doc.data();
+        // INSIRA O SEU EMAIL AQUI PARA TER PODER DE ADMIN 👇
+        const emailAdmin = "harrybour.foto@gmail.com"; 
+
+        snapshot.docs.forEach((documento) => {
+          const dados = documento.data();
+          const idDoPonto = documento.id;
           
+          // Verifica se o usuário logado é o dono do ponto OU o Super Admin (Harry)
+          const isOwner = currentUser && currentUser.uid === dados.autorId;
+          const isAdmin = currentUser && currentUser.email === emailAdmin;
+          const temPermissao = isOwner || isAdmin;
+
+          // Monta os botões de ação se o usuário tiver permissão
+          let acoesHTML = "";
+          if (temPermissao) {
+            // Evita que aspas quebrem o código HTML do botão
+            const safeNome = dados.nome ? dados.nome.replace(/'/g, "\\'").replace(/"/g, "&quot;") : "";
+            const safeDesc = dados.descricao ? dados.descricao.replace(/'/g, "\\'").replace(/"/g, "&quot;") : "";
+            
+            acoesHTML = `
+              <div style="display: flex; gap: 12px; margin-top: 8px;">
+                <button onclick="abrirEdicaoPonto('${idDoPonto}', '${safeNome}', '${safeDesc}')" style="background: none; border: none; color: var(--text-main); font-size: 0.8rem; cursor: pointer; padding: 0;"><i class="fa-solid fa-pen"></i> Editar</button>
+                <button onclick="deletarPonto('${idDoPonto}')" style="background: none; border: none; color: #ff4444; font-size: 0.8rem; cursor: pointer; padding: 0;"><i class="fa-solid fa-trash"></i> Excluir</button>
+              </div>
+            `;
+          }
+
           // Pino no Mapa
           const htmlPopup = `
             <div style="font-family: var(--font-ui); max-width: 250px;">
               <h3 style="margin: 0; font-family: var(--font-display);">${dados.nome}</h3>
-              <p style="font-size: 0.9rem; color: #555;">${dados.descricao || ""}</p>
+              <p style="font-size: 0.9rem; color: #555; margin-bottom: 5px;">${dados.descricao || ""}</p>
               <div style="border-top: 1px solid #ddd; padding-top: 5px; opacity: 0.5; font-size: 0.7rem;">Por: ${dados.autorNome}</div>
+              ${acoesHTML}
             </div>`;
           L.marker([dados.latitude, dados.longitude]).bindPopup(htmlPopup).addTo(markersGroup);
 
@@ -210,19 +247,69 @@
           listItem.style.cssText = "padding: 15px; border: 1px solid var(--border-color); background: var(--bg-base); border-radius: 4px;";
           listItem.innerHTML = `
             <h4 style="margin: 0 0 5px 0; color: var(--text-main);">${dados.nome}</h4>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">${dados.descricao || "Sem descrição adicional."}</p>
-            <button onclick="focarPonto(${dados.latitude}, ${dados.longitude})" style="background: none; border: none; color: #4285F4; font-size: 0.75rem; cursor: pointer; padding: 5px 0; text-transform: uppercase; font-weight: bold;">Ver no Mapa</button>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0 0 10px 0;">${dados.descricao || "Sem descrição adicional."}</p>
+            <div style="display: flex; gap: 15px; border-top: 1px solid var(--border-color); padding-top: 10px;">
+              <button onclick="focarPonto(${dados.latitude}, ${dados.longitude})" style="background: none; border: none; color: #4285F4; font-size: 0.75rem; cursor: pointer; padding: 0; text-transform: uppercase; font-weight: bold;"><i class="fa-solid fa-location-crosshairs"></i> Mapa</button>
+              ${acoesHTML}
+            </div>
           `;
           pointsListContainer.appendChild(listItem);
         });
       });
 
+      // --- LÓGICA DE AÇÕES GLOBAIS (VER, EDITAR E EXCLUIR) ---
       window.focarPonto = (lat, lng) => {
         inventoryModal.style.display = "none";
         map.flyTo([lat, lng], 18);
       };
 
-      // MANIFESTO MODAL
+      window.deletarPonto = async (id) => {
+        if(confirm("Tem certeza que deseja apagar este registro do mapa?")) {
+          try {
+            await deleteDoc(doc(db, "locais_fora_escala", id));
+          } catch (error) {
+            console.error("Erro ao apagar:", error);
+            alert("Erro ao excluir o ponto.");
+          }
+        }
+      };
+
+      const editModal = document.getElementById("edit-modal");
+      document.getElementById("close-edit-modal").onclick = () => (editModal.style.display = "none");
+
+      window.abrirEdicaoPonto = (id, nomeAtual, descAtual) => {
+        document.getElementById("edit-ponto-id").value = id;
+        document.getElementById("edit-ponto-nome").value = nomeAtual;
+        document.getElementById("edit-ponto-desc").value = descAtual;
+        editModal.style.display = "flex";
+      };
+
+      document.getElementById("btn-salvar-edicao").onclick = async () => {
+        const id = document.getElementById("edit-ponto-id").value;
+        const novoNome = document.getElementById("edit-ponto-nome").value.trim();
+        const novaDesc = document.getElementById("edit-ponto-desc").value.trim();
+
+        if (!novoNome) return alert("Dê um nome ao ponto.");
+        
+        const btnSalvar = document.getElementById("btn-salvar-edicao");
+        btnSalvar.innerText = "Salvando...";
+
+        try {
+           await updateDoc(doc(db, "locais_fora_escala", id), {
+             nome: novoNome,
+             descricao: novaDesc
+           });
+           editModal.style.display = "none";
+           btnSalvar.innerText = "Salvar Alterações";
+           inventoryModal.style.display = "flex"; // Volta para a lista
+        } catch (error) {
+           console.error(error);
+           alert("Erro ao salvar edição.");
+           btnSalvar.innerText = "Salvar Alterações";
+        }
+      };
+
+      // MANIFESTO MODAL E FECHAMENTO
       const infoModal = document.getElementById("info-modal");
       document.getElementById("btn-info").onclick = () => (infoModal.style.display = "flex");
       document.getElementById("close-info-modal").onclick = () => (infoModal.style.display = "none");
@@ -230,6 +317,7 @@
       window.onclick = (e) => {
         if (e.target === infoModal) infoModal.style.display = "none";
         if (e.target === inventoryModal) inventoryModal.style.display = "none";
+        if (e.target === editModal) editModal.style.display = "none";
       };
 
       if (!localStorage.getItem("manifestoVisto")) {
@@ -245,18 +333,15 @@
           setView: false, 
           enableHighAccuracy: true, 
           timeout: 15000, 
-          maximumAge: 0 // Impede cache do navegador
+          maximumAge: 0 
         });
       };
 
       map.on("locationfound", (e) => {
         const precisaoEmMetros = e.accuracy;
-        
-        // Alerta diagnóstico se estiver usando IP de provedor ao invés de GPS
         if (precisaoEmMetros > 1000) {
           alert(`Aviso: O navegador usou sua rede (IP) e não o GPS real. Precisão atual: ${Math.round(precisaoEmMetros)}m. Para testar 100%, use o 4G no celular.`);
         }
-
         map.flyTo(e.latlng, 18, { animate: true, duration: 1.5 });
 
         if (markerGpsLocal) map.removeLayer(markerGpsLocal);
