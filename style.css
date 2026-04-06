@@ -1258,3 +1258,35 @@ body[data-page="mapa"] .app-wrapper.no-sidebar .main-content {
   background-color: var(--text-main);
   color: var(--bg-base);
 }
+/* --- Ajustes Mobile para o Mapa e Login --- */
+@media (max-width: 767px) {
+  /* Força o tamanho do avatar para não explodir no header */
+  .user-avatar {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px;
+    object-fit: cover;
+  }
+
+  /* Esconde o texto "Entrar" no mobile para caber tudo no topo */
+  .login-text {
+    display: none;
+  }
+
+  .btn-login {
+    padding: 8px !important;
+    width: 40px;
+    height: 40px;
+    justify-content: center;
+  }
+
+  /* Diminui o título no mobile para não empurrar o login */
+  .brand-name {
+    font-size: 1.1rem !important;
+  }
+
+  /* Garante que o mapa preencha a altura real do celular (Safe Viewport Height) */
+  #map {
+    height: calc(100svh - var(--header-height)) !important;
+  }
+}
