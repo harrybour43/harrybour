@@ -9,11 +9,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* Bloqueia rolagem para manter o foco total no QR Code */
+        /* Fundo Preto Absoluto e bloqueio de rolagem */
         body, html {
             height: 100%;
             overflow: hidden;
-            background-color: #ffffff; /* Fundo limpo conforme solicitado */
+            background-color: #000000 !important;
+        }
+
+        /* Ajuste do cabeçalho para o modo totalmente escuro */
+        .fixed-header {
+            background-color: #000000 !important;
+            border-bottom: 1px solid #222222 !important;
+        }
+        
+        /* Força os textos e ícones do header para branco */
+        .brand-name, .btn-back {
+            color: #ffffff !important;
         }
 
         /* Centralização absoluta do QR Code abaixo do header */
@@ -22,10 +33,10 @@
             justify-content: center;
             align-items: center;
             width: 100%;
-            /* Ocupa a tela inteira menos a altura do seu header fixo (70px) */
             height: calc(100vh - var(--header-height)); 
             margin-top: var(--header-height);
             box-sizing: border-box;
+            background-color: #000000;
         }
 
         .qr-wrapper {
@@ -34,24 +45,25 @@
             align-items: center;
         }
 
-        .qr-code-svg {
+        /* Otimiza a renderização da imagem para que os quadrados fiquem perfeitos */
+        .qr-code-img {
             display: block;
-            shape-rendering: crispEdges;
+            image-rendering: pixelated; 
         }
 
-        /* LOGICA DE PROPORÇÃO:
-           70% da LARGURA em telas verticais (Portrait)
-           70% da ALTURA em telas horizontais (Landscape) */
-
+        /* LOGICA DE PROPORÇÃO RESPONSIVA */
+        
+        /* Telas Verticais (Retrato) - 70% da LARGURA */
         @media (orientation: portrait) {
-            .qr-code-svg {
+            .qr-code-img {
                 width: 70vw;
                 height: 70vw;
             }
         }
 
+        /* Telas Horizontais (Paisagem) - 70% da ALTURA */
         @media (orientation: landscape) {
-            .qr-code-svg {
+            .qr-code-img {
                 height: 70vh;
                 width: 70vh;
             }
@@ -75,8 +87,7 @@
 
         <main class="main-qr-container">
             <div class="qr-wrapper">
-                <svg class="qr-code-svg" viewBox="0 0 41 41" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M0 0h7v7H0zM10 0h1v2h1v2h2v1h1v2h2v2h2v2h1v1h2v2h1v2h2v1h3v1h1v4h1v1h2v1h1v1h-1v1h-1v-2h-1v-1h-2v1h-1v-1h-3v-1h-2v-1h-1v-1h-1v-1h-1v-2h-2v-1h-2v1h-1v-1h-2v-1h-1v2h-1v2h-1v2h1v1h2v2h1v2h-2v1h-1v-1h-3v-1h-1v1h-1v1h2v1h-3v-1h-1v1h-1v1h-1v-7h1v-2h1v-1h1v-2h-1v-1h-2v-2h1v-1h1v-1h1v-1h-1v-2h-1v-1h-1v-2h1v-1h2v-1h1v2h1v1h2v1h1zM34 0h7v7h-7zM8 1h1v2h1v1h1v1h-1v1h-1V1zM35 1v5h5V1zM2 2v3h3V2zM36 2v3h1V2zM12 3h1v1h-1zM1 7h1v1h1v1h1v1h2v1h1v1h2v1h2v1h3v1h2v1h2v1h2v1h2v1h1v2h-1v1h-1v1h-1v1h-1v1h-1v1h-1v1h-1v1h1v1h1v1h1v1h1v1h1v1h1v1h1v1h-3v-1h-1v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1zM35 7h1v1h-1zM38 7h1v1h-1zM40 7h1v1h-1zM7 8h1v1h-1zM11 8h1v1h-1zM18 8h1v1h-1zM23 8h1v2h1v1h1v2h1v2h1v1h1v2h2v1h1v1h2v1h2v1h1v1h-1v1h-1v-1h-2v1h-1v1h-2v1h-1v-1h-1v1h-1v1h-1v1h-3v-1h-1v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-1v-4h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1zM39 8h1v1h-1zM34 9h1v1h-1zM21 10h1v1h-1zM0 12h1v2h1v2h2v1h2v2h-1v2h-1v-1h-1v1h-1v1h-1zM10 12h1v1h-1zM20 12h1v1h-1zM22 12h1v2h1v1h1v1h-1v1h-1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-3v-1h-1v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-1v-7h1v-2h1v-1h1v-2h-1v-1h-2v-2h1v-1h1v-1h1v-1h-1v-2h-1v-1h-1v-2h1v-1h2v-1h1v2h1v1h2v1h1zM34 12h1v1h-1zM40 12h1v1h-1zM35 13h1v1h-1zM39 13h1v1h-1zM11 14h1v1h-1zM13 14h1v2h1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-3v-1h-1v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-1v-7h1v-2h1v-1h1v-2h-1v-1h-2v-2h1v-1h1v-1h1v-1h-1v-2h-1v-1h-1v-2h1v-1h2v-1h1v2h1v1h2v1h1zM36 14h3v1h-3zM34 16h1v1h-1zM40 16h1v1h-1zM1 18h2v1h-2zM36 18h1v1h-1zM2 19h1v1h-1zM35 19h1v1h-1zM37 19h1v2h1v1h2v1h-1v1h1v1h1v3h1v2h-2v1h-1v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-1v-4h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1zM3 20h2v1h-2zM6 21h3v1h-3zM10 21h2v1h-2zM1 22h1v1h-1zM3 22h1v1h-1zM34 22h1v2h1v1h1v1h1v1h2v1h2v1h1v1h-1v1h-1v-1h-2v1h-1v1h-2v1h-1v-1h-1v1h-1v1h-1v1h-3v-1h-1v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-1v-7h1v-2h1v-1h1v-2h-1v-1h-2v-2h1v-1h1v-1h1v-1h-1v-2h-1v-1h-1v-2h1v-1h2v-1h1v2h1v1h2v1h1zM0 23h3v1h-3zM4 23h1v1h-1zM35 23h1v1h-1zM37 23h2v1h-2zM1 24h1v1h-1zM3 24h1v1h-1zM36 24h1v1h-1zM39 24h1v1h-1zM1 26h1v1h-1zM3 26h1v1h-1zM5 26h1v1h-1zM34 26h2v1h-2zM37 26h1v2h1v1h1v1h1v1h2v1h2v1h1v1h-1v1h-1v-1h-2v1h-1v1h-2v1h-1v-1h-1v1h-1v1h-1v1h-3v-1h-1v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-1v-7h1v-2h1v-1h1v-2h-1v-1h-2v-2h1v-1h1v-1h1v-1h-1v-2h-1v-1h-1v-2h1v-1h2v-1h1v2h1v1h2v1h1zM11 27h2v1h-2zM0 28h1v1h-1zM2 28h1v1h-1zM35 28h1v1h-1zM39 28h1v1h-1zM1 29h1v1h-1zM3 29h1v1h-1zM5 29h1v1h-1zM10 29h1v1h-1zM36 29h1v1h-1zM38 29h1v1h-1zM40 29h1v1h-1zM0 31h1v1h-1zM2 31h1v1h-1zM5 31h1v1h-1zM7 31h2v1h-2zM12 31h2v1h-2zM34 31h7v7h-7zM1 32h1v1h-1zM3 32h1v1h-1zM35 32v5h5v-5zM2 33h1v1h-1zM36 33v3h1v-3zM0 34h3v1h-3zM10 34h1v1h-1zM38 34h1v1h-1zM1 35h1v1h-1zM3 35h1v1h-1zM36 35h1v1h-1zM39 35h1v1h-1zM0 36h1v1h-1zM2 36h1v1h-1zM6 36h1v1h-1zM12 36h2v1h-2zM34 36v1h1v-1zM40 36v1h1v-1zM36 37h3v1h-3zM34 38h1v3h1v-1h1v-1h1v1h1v1h1v1h1v-3h1v-2h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-1v4h1v1h-1v-1h1v2h1v1h2v1h1zM35 38v1h1v-1zM1 39h1v2h1v-1h1v-1h1v1h1v1h1v1h1v-3h1v-2h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-1v-4h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1zM5 39v1h1v1h1v-2h1v1h1v1h1v-3h1v-2h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-1v4h1v1h-1v-2h1v-1h1v1h1v1h-1v1h1v1h2v1h1z" fill="#000"/></svg>
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=https://harrybour.com.br/fora-de-escala.html&color=ffffff&bgcolor=000000&format=svg" alt="QR Code foRa dE eScaLa" class="qr-code-img" />
             </div>
         </main>
     </div>
