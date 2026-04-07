@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>foRa dE eScaLa | Conectar</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Bloqueia rolagem para manter o foco total no QR Code */
+        body, html {
+            height: 100%;
+            overflow: hidden;
+            background-color: #ffffff; /* Fundo limpo conforme solicitado */
+        }
+
+        /* Centralização absoluta do QR Code abaixo do header */
+        .main-qr-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            /* Ocupa a tela inteira menos a altura do seu header fixo (70px) */
+            height: calc(100vh - var(--header-height)); 
+            margin-top: var(--header-height);
+            box-sizing: border-box;
+        }
+
+        .qr-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .qr-code-svg {
+            display: block;
+            shape-rendering: crispEdges;
+        }
+
+        /* LOGICA DE PROPORÇÃO:
+           70% da LARGURA em telas verticais (Portrait)
+           70% da ALTURA em telas horizontais (Landscape) */
+
+        @media (orientation: portrait) {
+            .qr-code-svg {
+                width: 70vw;
+                height: 70vw;
+            }
+        }
+
+        @media (orientation: landscape) {
+            .qr-code-svg {
+                height: 70vh;
+                width: 70vh;
+            }
+        }
+    </style>
+</head>
+<body data-page="mapa"> 
+    <div class="app-wrapper no-sidebar">
+        
+        <header class="fixed-header">
+            <a href="index.html" class="btn-back" data-tooltip="Voltar ao Portfólio">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+
+            <h2 class="brand-name" style="text-transform: none; letter-spacing: 1px">
+                foRa dE eScaLa
+            </h2>
+
+            <div class="header-spacer"></div>
+        </header>
+
+        <main class="main-qr-container">
+            <div class="qr-wrapper">
+                <svg class="qr-code-svg" viewBox="0 0 41 41" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 0h7v7H0zM10 0h1v2h1v2h2v1h1v2h2v2h2v2h1v1h2v2h1v2h2v1h3v1h1v4h1v1h2v1h1v1h-1v1h-1v-2h-1v-1h-2v1h-1v-1h-3v-1h-2v-1h-1v-1h-1v-1h-1v-2h-2v-1h-2v1h-1v-1h-2v-1h-1v2h-1v2h-1v2h1v1h2v2h1v2h-2v1h-1v-1h-3v-1h-1v1h-1v1h2v1h-3v-1h-1v1h-1v1h-1v-7h1v-2h1v-1h1v-2h-1v-1h-2v-2h1v-1h1v-1h1v-1h-1v-2h-1v-1h-1v-2h1v-1h2v-1h1v2h1v1h2v1h1zM34 0h7v7h-7zM8 1h1v2h1v1h1v1h-1v1h-1V1zM35 1v5h5V1zM2 2v3h3V2zM36 2v3h1V2zM12 3h1v1h-1zM1 7h1v1h1v1h1v1h2v1h1v1h2v1h2v1h3v1h2v1h2v1h2v1h2v1h1v2h-1v1h-1v1h-1v1h-1v1h-1v1h-1v1h-1v1h1v1h1v1h1v1h1v1h1v1h1v1h1v1h-3v-1h-1v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1zM35 7h1v1h-1zM38 7h1v1h-1zM40 7h1v1h-1zM7 8h1v1h-1zM11 8h1v1h-1zM18 8h1v1h-1zM23 8h1v2h1v1h1v2h1v2h1v1h1v2h2v1h1v1h2v1h2v1h1v1h-1v1h-1v-1h-2v1h-1v1h-2v1h-1v-1h-1v1h-1v1h-1v1h-3v-1h-1v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-1v-4h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1zM39 8h1v1h-1zM34 9h1v1h-1zM21 10h1v1h-1zM0 12h1v2h1v2h2v1h2v2h-1v2h-1v-1h-1v1h-1v1h-1zM10 12h1v1h-1zM20 12h1v1h-1zM22 12h1v2h1v1h1v1h-1v1h-1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-3v-1h-1v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-1v-7h1v-2h1v-1h1v-2h-1v-1h-2v-2h1v-1h1v-1h1v-1h-1v-2h-1v-1h-1v-2h1v-1h2v-1h1v2h1v1h2v1h1zM34 12h1v1h-1zM40 12h1v1h-1zM35 13h1v1h-1zM39 13h1v1h-1zM11 14h1v1h-1zM13 14h1v2h1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-1v1h-1v1h1v1h1v1h-3v-1h-1v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-1v-7h1v-2h1v-1h1v-2h-1v-1h-2v-2h1v-1h1v-1h1v-1h-1v-2h-1v-1h-1v-2h1v-1h2v-1h1v2h1v1h2v1h1zM36 14h3v1h-3zM34 16h1v1h-1zM40 16h1v1h-1zM1 18h2v1h-2zM36 18h1v1h-1zM2 19h1v1h-1zM35 19h1v1h-1zM37 19h1v2h1v1h2v1h-1v1h1v1h1v3h1v2h-2v1h-1v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-1v-4h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1zM3 20h2v1h-2zM6 21h3v1h-3zM10 21h2v1h-2zM1 22h1v1h-1zM3 22h1v1h-1zM34 22h1v2h1v1h1v1h1v1h2v1h2v1h1v1h-1v1h-1v-1h-2v1h-1v1h-2v1h-1v-1h-1v1h-1v1h-1v1h-3v-1h-1v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-1v-7h1v-2h1v-1h1v-2h-1v-1h-2v-2h1v-1h1v-1h1v-1h-1v-2h-1v-1h-1v-2h1v-1h2v-1h1v2h1v1h2v1h1zM0 23h3v1h-3zM4 23h1v1h-1zM35 23h1v1h-1zM37 23h2v1h-2zM1 24h1v1h-1zM3 24h1v1h-1zM36 24h1v1h-1zM39 24h1v1h-1zM1 26h1v1h-1zM3 26h1v1h-1zM5 26h1v1h-1zM34 26h2v1h-2zM37 26h1v2h1v1h1v1h1v1h2v1h2v1h1v1h-1v1h-1v-1h-2v1h-1v1h-2v1h-1v-1h-1v1h-1v1h-1v1h-3v-1h-1v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-3v-1h-1v1h-1v1h-1v-7h1v-2h1v-1h1v-2h-1v-1h-2v-2h1v-1h1v-1h1v-1h-1v-2h-1v-1h-1v-2h1v-1h2v-1h1v2h1v1h2v1h1zM11 27h2v1h-2zM0 28h1v1h-1zM2 28h1v1h-1zM35 28h1v1h-1zM39 28h1v1h-1zM1 29h1v1h-1zM3 29h1v1h-1zM5 29h1v1h-1zM10 29h1v1h-1zM36 29h1v1h-1zM38 29h1v1h-1zM40 29h1v1h-1zM0 31h1v1h-1zM2 31h1v1h-1zM5 31h1v1h-1zM7 31h2v1h-2zM12 31h2v1h-2zM34 31h7v7h-7zM1 32h1v1h-1zM3 32h1v1h-1zM35 32v5h5v-5zM2 33h1v1h-1zM36 33v3h1v-3zM0 34h3v1h-3zM10 34h1v1h-1zM38 34h1v1h-1zM1 35h1v1h-1zM3 35h1v1h-1zM36 35h1v1h-1zM39 35h1v1h-1zM0 36h1v1h-1zM2 36h1v1h-1zM6 36h1v1h-1zM12 36h2v1h-2zM34 36v1h1v-1zM40 36v1h1v-1zM36 37h3v1h-3zM34 38h1v3h1v-1h1v-1h1v1h1v1h1v1h1v-3h1v-2h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-1v4h1v1h-1v-1h1v2h1v1h2v1h1zM35 38v1h1v-1zM1 39h1v2h1v-1h1v-1h1v1h1v1h1v1h1v-3h1v-2h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-1v-4h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1v-1h-1v-2h1zM5 39v1h1v1h1v-2h1v1h1v1h1v-3h1v-2h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-2v-1h-1v1h-1v1h-1v4h1v1h-1v-2h1v-1h1v1h1v1h-1v1h1v1h2v1h1z" fill="#000"/></svg>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>
