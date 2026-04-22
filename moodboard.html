@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de PDF A4 - 2 Imagens</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; line-height: 1.6; background: #f4f4f4; }
+        .container { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #333; font-size: 1.5rem; }
+        input[type="file"] { margin: 20px 0; display: block; }
+        button { background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        button:disabled { background: #ccc; }
+        #status { margin-top: 15px; font-weight: bold; color: #d97706; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Conversor A4 (2 imagens por folha)</h1>
+    <p>Selecione as imagens (JPG/PNG). O app organizará automaticamente em pares.</p>
+    
+    <input type="file" id="fileInput" accept="image/*" multiple>
+    <button id="generateBtn">Gerar e Baixar PDF</button>
+    <div id="status"></div>
+</div>
+
+<script>
+    const { jsPDF } = window.jspdf;
+
+    document.getElementById('generateBtn').addEventListener('click', async () => {
+        const input = document.getElementById('fileInput');
+        const status = document.getElementById('status');
+        const files = Array.from(input.files);
+
+        if (files.length === 0) {
+            alert("Por favor, selecione pelo menos uma imagem.");
+            return;
+        }
+
+        status.innerText = "Processando imagens... aguarde.";
+        const pdf = new jsPDF({ compress: true });
+        let firstPage = true;
+
+        // Processa em pares
+        for (let i = 0; i < files.length; i += 2) {
+            const pair = files.slice(i, i + 2);
+            
+            // Carrega a primeira imagem do par para definir a orientação da página
+            const imgData1 = await loadImage(pair[0]);
+            const isVertical = imgData1.height > imgData1.width;
+            
+            // Regra de Orientação
+            // Se imagem vertical (H>W) -> Página Horizontal ('l')
+            // Se imagem horizontal (W>H) -> Página Vertical ('p')
+            const orientation = isVertical ? 'l' : 'p';
+            
+            if (!firstPage) {
+                pdf.addPage(orientation, 'mm', 'a4');
+            } else {
+                // Ajusta a orientação da primeira página padrão
+                pdf.setPage(1);
+                pdf.addPage(orientation, 'mm', 'a4');
+                pdf.deletePage(1); 
+                firstPage = false;
+            }
+
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const margin = 10;
+
+            // Desenha imagem 1
+            drawOnPage(pdf, imgData1, 0, orientation, pageWidth, pageHeight, margin);
+
+            // Desenha imagem 2 (se existir)
+            if (pair[1]) {
+                const imgData2 = await loadImage(pair[1]);
+                drawOnPage(pdf, imgData2, 1, orientation, pageWidth, pageHeight, margin);
+            }
+        }
+
+        pdf.save("documento_organizado.pdf");
+        status.innerText = "PDF gerado com sucesso!";
+    });
+
+    // Função para carregar imagem e obter dimensões
+    function loadImage(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => resolve({ src: e.target.result, width: img.width, height: img.height });
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // Lógica de posicionamento (Lado a lado ou Empilhado)
+    function drawOnPage(pdf, img, index, orientation, pw, ph, m) {
+        let x, y, w, h;
+
+        if (orientation === 'l') { // Duas imagens verticais lado a lado
+            const availableW = (pw - (3 * m)) / 2;
+            const availableH = ph - (2 * m);
+            const ratio = Math.min(availableW / img.width, availableH / img.height);
+            w = img.width * ratio;
+            h = img.height * ratio;
+            
+            x = m + (index * (availableW + m)) + (availableW - w) / 2;
+            y = m + (availableH - h) / 2;
+        } else { // Duas imagens horizontais uma em cima da outra
+            const availableW = pw - (2 * m);
+            const availableH = (ph - (3 * m)) / 2;
+            const ratio = Math.min(availableW / img.width, availableH / img.height);
+            w = img.width * ratio;
+            h = img.height * ratio;
+
+            x = m + (availableW - w) / 2;
+            y = m + (index * (availableH + m)) + (availableH - h) / 2;
+        }
+
+        pdf.addImage(img.src, 'JPEG', x, y, w, h);
+    }
+</script>
+
+</body>
+</html>
