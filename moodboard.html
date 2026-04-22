@@ -12,7 +12,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
-    /* Estilos Simplificados e Minimalistas */
     .moodboard-tool {
       max-width: 500px;
       margin: 0 auto;
@@ -37,10 +36,13 @@
       text-align: center;
       transition: background-color 0.2s, color 0.2s;
       width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
     .btn-action:hover {
       background-color: #222222;
-      color: #ffffff;
     }
     .btn-action:disabled {
       background-color: #1a1a1a;
@@ -82,19 +84,22 @@
           <div class="section-header" style="border-bottom: none; text-align: center; margin-bottom: 40px">
             <h2>Moodboard</h2>
             <p class="category-description">
-              Upload de referências visuais. A ferramenta organiza e exporta um PDF A4 (2 imagens por folha), rotacionando verticais automaticamente e aplicando margens de segurança de 10%.
+              Investigação visual sobre geometria e permanência das formas. 
+              Upload de referências para exportação em PDF A4 (2 imagens por folha).
             </p>
           </div>
 
           <div class="moodboard-tool">
             <label class="btn-action">
               <input type="file" id="fileInput" accept="image/*" multiple />
-              Selecionar Imagens
+              <i class="fa-solid fa-images"></i> Selecionar Imagens
             </label>
             
             <div id="fileCount">Nenhum arquivo selecionado</div>
             
-            <button id="generateBtn" class="btn-action" disabled>Gerar Prancha (PDF)</button>
+            <button id="generateBtn" class="btn-action" disabled>
+              <i class="fa-solid fa-file-pdf"></i> Gerar PDF
+            </button>
             
             <div id="status"></div>
           </div>
@@ -133,7 +138,6 @@
       try {
         const processedImages = [];
         
-        // 1. Processa e comprime todas as imagens
         for (let i = 0; i < files.length; i++) {
           statusDiv.innerText = `> OTIMIZANDO IMAGEM ${i + 1} DE ${files.length}...`;
           const imgInfo = await processAndCompressImage(files[i]);
@@ -142,12 +146,10 @@
 
         statusDiv.innerText = "> MONTANDO LAYOUT DO PDF...";
 
-        // 2. Ordena: Verticais (originais) primeiro
         const verticals = processedImages.filter(img => img.originalIsVertical);
         const horizontals = processedImages.filter(img => !img.originalIsVertical);
         const sortedImages = [...verticals, ...horizontals];
 
-        // 3. Configuração A4 Vertical
         const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4', compress: true });
         let firstPage = true;
 
@@ -155,36 +157,39 @@
         const ph = 297;
         const marginX = pw * 0.10;
         const marginY = ph * 0.10;
-
         const availableW = pw - (2 * marginX);
         const availableH = (ph - (3 * marginY)) / 2; 
 
-        // 4. Desenha no PDF
         for (let i = 0; i < sortedImages.length; i += 2) {
           if (!firstPage) pdf.addPage('p', 'mm', 'a4');
           firstPage = false;
 
           const pair = sortedImages.slice(i, i + 2);
-
           for (let j = 0; j < pair.length; j++) {
             let img = pair[j];
-
             const ratio = Math.min(availableW / img.width, availableH / img.height);
             const renderW = img.width * ratio;
             const renderH = img.height * ratio;
-
             const x = marginX + (availableW - renderW) / 2;
             const slotStartY = marginY + j * (availableH + marginY);
             const y = slotStartY + (availableH - renderH) / 2;
-
             pdf.addImage(img.src, 'JPEG', x, y, renderW, renderH);
           }
         }
 
-        statusDiv.innerText = "> FINALIZANDO ARQUIVO...";
-        pdf.save("Harry_Bour_Moodboard.pdf");
-        statusDiv.innerText = "> DOWNLOAD CONCLUÍDO.";
+        // Geração do Timestamp aammddhhmmss
+        const agora = new Date();
+        const timestamp = agora.getFullYear().toString().slice(-2) +
+                          (agora.getMonth() + 1).toString().padStart(2, '0') +
+                          agora.getDate().toString().padStart(2, '0') +
+                          agora.getHours().toString().padStart(2, '0') +
+                          agora.getMinutes().toString().padStart(2, '0') +
+                          agora.getSeconds().toString().padStart(2, '0');
 
+        statusDiv.innerText = "> FINALIZANDO ARQUIVO...";
+        pdf.save(`moodboard_${timestamp}.pdf`);
+        statusDiv.innerText = "> DOWNLOAD CONCLUÍDO.";
+        
       } catch (error) {
         console.error(error);
         statusDiv.innerText = "> ERRO AO GERAR PDF. TENTE NOVAMENTE.";
@@ -195,7 +200,6 @@
       }
     });
 
-    // Função que resolve a Compressão (Max 12MB) e a Rotação de uma só vez
     function processAndCompressImage(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -203,11 +207,7 @@
           const img = new Image();
           img.onload = () => {
             const originalIsVertical = img.height > img.width;
-            
-            // Limite de 1600px garante alta qualidade no papel A4, 
-            // mas reduz o tamanho do arquivo drasticamente.
             const MAX_DIM = 1600; 
-            
             let newW = img.width;
             let newH = img.height;
 
@@ -220,7 +220,6 @@
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
 
-            // Se vertical, inverte largura e altura no canvas e rotaciona
             if (originalIsVertical) {
               canvas.width = newH;
               canvas.height = newW;
@@ -233,9 +232,7 @@
               ctx.drawImage(img, 0, 0, newW, newH);
             }
 
-            // Exporta como JPEG com 75% de qualidade (Compressão severa e limpa)
             const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
-
             resolve({
               src: dataUrl,
               width: canvas.width,
