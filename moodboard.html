@@ -1,129 +1,230 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de PDF A4 - 2 Imagens</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <style>
-        body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; line-height: 1.6; background: #f4f4f4; }
-        .container { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { color: #333; font-size: 1.5rem; }
-        input[type="file"] { margin: 20px 0; display: block; }
-        button { background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        button:disabled { background: #ccc; }
-        #status { margin-top: 15px; font-weight: bold; color: #d97706; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Moodboard | Harry Bour</title>
+  <meta name="description" content="Ferramenta para montagem automática de pranchas em PDF." />
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    .moodboard-tool {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+      padding: 40px 20px;
+      border: 1px solid #ddd;
+      background-color: #fafafa;
+    }
+    .moodboard-tool input[type="file"] {
+      display: none;
+    }
+    .custom-file-upload {
+      border: 2px solid #000;
+      display: inline-block;
+      padding: 12px 24px;
+      cursor: pointer;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      transition: all 0.2s ease;
+    }
+    .custom-file-upload:hover {
+      background-color: #000;
+      color: #fff;
+    }
+    .btn-generate {
+      background-color: #000;
+      color: #fff;
+      border: none;
+      padding: 15px 30px;
+      font-size: 1rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      cursor: pointer;
+      width: 100%;
+      letter-spacing: 1px;
+    }
+    .btn-generate:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      font-family: monospace;
+      color: #555;
+    }
+  </style>
 </head>
-<body>
 
-<div class="container">
-    <h1>Conversor A4 (2 imagens por folha)</h1>
-    <p>Selecione as imagens (JPG/PNG). O app organizará automaticamente em pares.</p>
-    
-    <input type="file" id="fileInput" accept="image/*" multiple>
-    <button id="generateBtn">Gerar e Baixar PDF</button>
-    <div id="status"></div>
-</div>
+<body data-page="moodboard">
+  <div class="app-wrapper no-sidebar">
+    <header class="fixed-header">
+      <a href="index.html" class="btn-back">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+      <a href="index.html" class="brand-name">Harry Bour</a>
+      <div class="header-spacer"></div>
+    </header>
 
-<script>
+    <main class="main-content full-width">
+      <section class="gallery-page active">
+        <div class="gallery-container">
+          <div class="section-header" style="border-bottom: none; text-align: center; margin-bottom: 40px">
+            <h2>Moodboard</h2>
+            <p class="category-description">
+              Upload de referências visuais. A ferramenta organiza e exporta um PDF A4 (2 imagens por folha), rotacionando verticais automaticamente e aplicando margens de segurança de 10%.
+            </p>
+          </div>
+
+          <div class="moodboard-tool">
+            <label class="custom-file-upload">
+              <input type="file" id="fileInput" accept="image/*" multiple />
+              Selecionar Imagens
+            </label>
+            <p id="fileCount" style="font-size: 0.8rem; margin-bottom: 20px;">Nenhum arquivo selecionado</p>
+            
+            <button id="generateBtn" class="btn-generate">Gerar Prancha (PDF)</button>
+            <div id="status"></div>
+          </div>
+
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Atualiza o contador de arquivos
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+      const count = e.target.files.length;
+      document.getElementById('fileCount').innerText = count > 0 ? `${count} arquivo(s) selecionado(s)` : 'Nenhum arquivo selecionado';
+    });
+
     const { jsPDF } = window.jspdf;
 
     document.getElementById('generateBtn').addEventListener('click', async () => {
-        const input = document.getElementById('fileInput');
-        const status = document.getElementById('status');
-        const files = Array.from(input.files);
+      const input = document.getElementById('fileInput');
+      const status = document.getElementById('status');
+      const files = Array.from(input.files);
 
-        if (files.length === 0) {
-            alert("Por favor, selecione pelo menos uma imagem.");
-            return;
+      if (files.length === 0) {
+        alert("Por favor, selecione as imagens para o Moodboard.");
+        return;
+      }
+
+      status.innerText = "> PROCESSANDO IMAGENS...";
+
+      // 1. Carrega todas as imagens
+      const processedImages = [];
+      for (let file of files) {
+        const imgInfo = await loadImage(file);
+        imgInfo.isVertical = imgInfo.height > imgInfo.width;
+        processedImages.push(imgInfo);
+      }
+
+      // 2. Ordena: Verticais primeiro, horizontais depois
+      const verticals = processedImages.filter(img => img.isVertical);
+      const horizontals = processedImages.filter(img => !img.isVertical);
+      const sortedImages = [...verticals, ...horizontals];
+
+      // Configuração A4 Vertical
+      const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4', compress: true });
+      let firstPage = true;
+
+      // Dimensões A4 e Regra de Margem de 10%
+      const pw = 210;
+      const ph = 297;
+      const marginX = pw * 0.10; // 21mm (Margem lateral)
+      const marginY = ph * 0.10; // 29.7mm (Margem superior/inferior)
+
+      // Área útil para as imagens
+      const availableW = pw - (2 * marginX); // Largura total descontando esquerda e direita
+      // Altura disponível: Pega a folha inteira, tira 3 margens (topo, meio, base) e divide por 2 slots
+      const availableH = (ph - (3 * marginY)) / 2; 
+
+      // 3. Aplica no PDF em pares
+      for (let i = 0; i < sortedImages.length; i += 2) {
+        if (!firstPage) pdf.addPage('p', 'mm', 'a4');
+        firstPage = false;
+
+        const pair = sortedImages.slice(i, i + 2);
+
+        for (let j = 0; j < pair.length; j++) {
+          let imgToDraw = pair[j];
+
+          // Gira 90 graus para a direita se for vertical
+          if (imgToDraw.isVertical) {
+            status.innerText = `> ROTACIONANDO ESTRUTURA VERTICAL...`;
+            imgToDraw = await rotateImage90(imgToDraw.imgElement);
+          }
+
+          // Cálculo da escala para caber na área útil mantendo a proporção (Aspect Ratio)
+          const ratio = Math.min(availableW / imgToDraw.width, availableH / imgToDraw.height);
+          const renderW = imgToDraw.width * ratio;
+          const renderH = imgToDraw.height * ratio;
+
+          // Centralizando dentro do seu respectivo Slot
+          const x = marginX + (availableW - renderW) / 2;
+          const slotStartY = marginY + j * (availableH + marginY); // Deslocamento Y para a 1ª ou 2ª imagem
+          const y = slotStartY + (availableH - renderH) / 2;
+
+          pdf.addImage(imgToDraw.src, 'JPEG', x, y, renderW, renderH);
         }
+      }
 
-        status.innerText = "Processando imagens... aguarde.";
-        const pdf = new jsPDF({ compress: true });
-        let firstPage = true;
-
-        // Processa em pares
-        for (let i = 0; i < files.length; i += 2) {
-            const pair = files.slice(i, i + 2);
-            
-            // Carrega a primeira imagem do par para definir a orientação da página
-            const imgData1 = await loadImage(pair[0]);
-            const isVertical = imgData1.height > imgData1.width;
-            
-            // Regra de Orientação
-            // Se imagem vertical (H>W) -> Página Horizontal ('l')
-            // Se imagem horizontal (W>H) -> Página Vertical ('p')
-            const orientation = isVertical ? 'l' : 'p';
-            
-            if (!firstPage) {
-                pdf.addPage(orientation, 'mm', 'a4');
-            } else {
-                // Ajusta a orientação da primeira página padrão
-                pdf.setPage(1);
-                pdf.addPage(orientation, 'mm', 'a4');
-                pdf.deletePage(1); 
-                firstPage = false;
-            }
-
-            const pageWidth = pdf.internal.pageSize.getWidth();
-            const pageHeight = pdf.internal.pageSize.getHeight();
-            const margin = 10;
-
-            // Desenha imagem 1
-            drawOnPage(pdf, imgData1, 0, orientation, pageWidth, pageHeight, margin);
-
-            // Desenha imagem 2 (se existir)
-            if (pair[1]) {
-                const imgData2 = await loadImage(pair[1]);
-                drawOnPage(pdf, imgData2, 1, orientation, pageWidth, pageHeight, margin);
-            }
-        }
-
-        pdf.save("documento_organizado.pdf");
-        status.innerText = "PDF gerado com sucesso!";
+      pdf.save("Harry_Bour_Moodboard.pdf");
+      status.innerText = "> FINALIZADO. DOWNLOAD INICIADO.";
     });
 
-    // Função para carregar imagem e obter dimensões
+    // Função de apoio: Carregar Imagem
     function loadImage(file) {
-        return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = new Image();
-                img.onload = () => resolve({ src: e.target.result, width: img.width, height: img.height });
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => resolve({ 
+            src: e.target.result, 
+            width: img.width, 
+            height: img.height, 
+            imgElement: img 
+          });
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Função de apoio: Girar 90 graus via Canvas (resolução limpa)
+    function rotateImage90(img) {
+      return new Promise((resolve) => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.height;
+        canvas.height = img.width;
+        
+        const ctx = canvas.getContext('2d');
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate(90 * Math.PI / 180); // 90 graus para a direita
+        ctx.drawImage(img, -img.width / 2, -img.height / 2);
+
+        // Exporta em JPEG alta qualidade para o PDF não ficar pesado
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+        resolve({ 
+          src: dataUrl, 
+          width: canvas.width, 
+          height: canvas.height, 
+          imgElement: null, 
+          isVertical: false // Após girar, ela vira horizontal
         });
+      });
     }
-
-    // Lógica de posicionamento (Lado a lado ou Empilhado)
-    function drawOnPage(pdf, img, index, orientation, pw, ph, m) {
-        let x, y, w, h;
-
-        if (orientation === 'l') { // Duas imagens verticais lado a lado
-            const availableW = (pw - (3 * m)) / 2;
-            const availableH = ph - (2 * m);
-            const ratio = Math.min(availableW / img.width, availableH / img.height);
-            w = img.width * ratio;
-            h = img.height * ratio;
-            
-            x = m + (index * (availableW + m)) + (availableW - w) / 2;
-            y = m + (availableH - h) / 2;
-        } else { // Duas imagens horizontais uma em cima da outra
-            const availableW = pw - (2 * m);
-            const availableH = (ph - (3 * m)) / 2;
-            const ratio = Math.min(availableW / img.width, availableH / img.height);
-            w = img.width * ratio;
-            h = img.height * ratio;
-
-            x = m + (availableW - w) / 2;
-            y = m + (index * (availableH + m)) + (availableH - h) / 2;
-        }
-
-        pdf.addImage(img.src, 'JPEG', x, y, w, h);
-    }
-</script>
-
+  </script>
+  
+  <script src="app.js"></script>
 </body>
 </html>
