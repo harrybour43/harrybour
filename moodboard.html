@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Moodboard | Harry Bour</title>
-  <meta name="description" content="Ferramenta para montagem automática de pranchas em PDF." />
+  <title>Moodboard Dinâmico | Harry Bour</title>
+  <meta name="description" content="Ferramenta personalizada para montagem de pranchas PDF." />
 
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -17,52 +17,74 @@
       margin: 0 auto;
       display: flex;
       flex-direction: column;
+      gap: 20px;
+    }
+    .controls-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 15px;
+      border: 1px solid var(--border-color);
+      padding: 20px;
+      background: var(--bg-surface);
+    }
+    .control-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .control-item label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+    .control-item select {
+      background: #000;
+      color: #fff;
+      border: 1px solid #444;
+      padding: 8px;
+      font-family: var(--font-ui);
+      cursor: pointer;
     }
     .moodboard-tool input[type="file"] {
       display: none;
     }
     .btn-action {
-      background-color: #000000;
-      color: #ffffff;
-      border: 1px solid #333333;
-      padding: 15px 30px;
-      font-family: var(--font-ui), sans-serif;
-      font-size: 1rem;
+      background-color: #000;
+      color: #fff;
+      border: 1px solid #333;
+      padding: 15px;
+      font-family: var(--font-ui);
+      font-size: 0.9rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 1px;
       cursor: pointer;
-      text-align: center;
-      transition: background-color 0.2s, color 0.2s;
-      width: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
+      transition: all 0.2s;
     }
-    .btn-action:hover {
-      background-color: #222222;
+    .btn-action:hover:not(:disabled) {
+      background-color: #222;
+      border-color: #555;
     }
     .btn-action:disabled {
-      background-color: #1a1a1a;
-      color: #555555;
-      border-color: #222222;
+      opacity: 0.3;
       cursor: not-allowed;
     }
     #fileCount {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       color: var(--text-muted);
       text-align: center;
-      margin-bottom: 10px;
     }
     #status {
-      margin-top: 15px;
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       font-family: monospace;
       color: var(--text-muted);
       text-align: center;
-      min-height: 20px;
+      min-height: 1.2em;
     }
   </style>
 </head>
@@ -83,21 +105,40 @@
           
           <div class="section-header" style="border-bottom: none; text-align: center; margin-bottom: 40px">
             <h2>Moodboard</h2>
-            <p class="category-description">
-              Upload de referências para exportação em PDF A4 (2 imagens por folha).
-            </p>
+            <p class="category-description">Configuração personalizada de pranchas técnicas e visuais.</p>
           </div>
 
           <div class="moodboard-tool">
+            <div class="controls-group">
+              <div class="control-item">
+                <label>Imagens por página</label>
+                <select id="imgsPerPage">
+                  <option value="1">1 Imagem</option>
+                  <option value="2" selected>2 Imagens</option>
+                  <option value="4">4 Imagens</option>
+                  <option value="6">6 Imagens</option>
+                  <option value="8">8 Imagens</option>
+                  <option value="10">10 Imagens</option>
+                </select>
+              </div>
+              <div class="control-item">
+                <label>Orientação PDF</label>
+                <select id="pdfOrientation">
+                  <option value="p">Retrato (Vertical)</option>
+                  <option value="l">Paisagem (Horizontal)</option>
+                </select>
+              </div>
+            </div>
+
             <label class="btn-action">
               <input type="file" id="fileInput" accept="image/*" multiple />
-              <i class="fa-solid fa-images"></i> Selecionar Imagens
+              <i class="fa-solid fa-images"></i> Selecionar Arquivos
             </label>
             
             <div id="fileCount">Nenhum arquivo selecionado</div>
             
             <button id="generateBtn" class="btn-action" disabled>
-              <i class="fa-solid fa-file-pdf"></i> Gerar PDF
+              <i class="fa-solid fa-file-pdf"></i> Gerar PDF Customizado
             </button>
             
             <div id="status"></div>
@@ -113,140 +154,100 @@
     const generateBtn = document.getElementById('generateBtn');
     const statusDiv = document.getElementById('status');
     const fileCountDiv = document.getElementById('fileCount');
+    const selectImgs = document.getElementById('imgsPerPage');
+    const selectOrient = document.getElementById('pdfOrientation');
 
-    fileInput.addEventListener('change', function(e) {
+    fileInput.addEventListener('change', (e) => {
       const count = e.target.files.length;
-      if (count > 0) {
-        fileCountDiv.innerText = `${count} arquivo(s) selecionado(s)`;
-        generateBtn.disabled = false;
-      } else {
-        fileCountDiv.innerText = 'Nenhum arquivo selecionado';
-        generateBtn.disabled = true;
-      }
+      fileCountDiv.innerText = count > 0 ? `${count} arquivo(s) selecionado(s)` : 'Nenhum arquivo selecionado';
+      generateBtn.disabled = count === 0;
     });
 
     const { jsPDF } = window.jspdf;
 
     generateBtn.addEventListener('click', async () => {
       const files = Array.from(fileInput.files);
-      if (files.length === 0) return;
+      const perPage = parseInt(selectImgs.value);
+      const orientation = selectOrient.value;
 
       generateBtn.disabled = true;
-      fileInput.disabled = true;
+      statusDiv.innerText = "> INICIANDO PROCESSAMENTO...";
 
       try {
         const processedImages = [];
-        
         for (let i = 0; i < files.length; i++) {
-          statusDiv.innerText = `> OTIMIZANDO IMAGEM ${i + 1} DE ${files.length}...`;
-          const imgInfo = await processAndCompressImage(files[i]);
-          processedImages.push(imgInfo);
+          statusDiv.innerText = `> OTIMIZANDO ${i + 1}/${files.length}...`;
+          processedImages.push(await processImage(files[i]));
         }
 
-        statusDiv.innerText = "> MONTANDO LAYOUT DO PDF...";
+        const pdf = new jsPDF({ orientation: orientation, unit: 'mm', format: 'a4', compress: true });
+        const pw = pdf.internal.pageSize.getWidth();
+        const ph = pdf.internal.pageSize.getHeight();
+        const margin = pw * 0.05; // Margem de 5% para grids maiores
+        const gap = 5; // Espaço entre fotos
 
-        const verticals = processedImages.filter(img => img.originalIsVertical);
-        const horizontals = processedImages.filter(img => !img.originalIsVertical);
-        const sortedImages = [...verticals, ...horizontals];
+        // Lógica de Grid Masonry Simplificada
+        let cols = perPage <= 1 ? 1 : perPage <= 4 ? 2 : perPage <= 9 ? 3 : 4;
+        if (orientation === 'l' && perPage > 2) cols = Math.ceil(perPage / 2);
+        const rows = Math.ceil(perPage / cols);
 
-        const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4', compress: true });
-        let firstPage = true;
+        const availableW = (pw - (2 * margin) - ((cols - 1) * gap)) / cols;
+        const availableH = (ph - (2 * margin) - ((rows - 1) * gap)) / rows;
 
-        const pw = 210;
-        const ph = 297;
-        const marginX = pw * 0.10;
-        const marginY = ph * 0.10;
-        const availableW = pw - (2 * marginX);
-        const availableH = (ph - (3 * marginY)) / 2; 
+        for (let i = 0; i < processedImages.length; i += perPage) {
+          if (i > 0) pdf.addPage(orientation, 'mm', 'a4');
+          
+          const chunk = processedImages.slice(i, i + perPage);
+          chunk.forEach((img, idx) => {
+            const col = idx % cols;
+            const row = Math.floor(idx / cols);
 
-        for (let i = 0; i < sortedImages.length; i += 2) {
-          if (!firstPage) pdf.addPage('p', 'mm', 'a4');
-          firstPage = false;
+            const ratio = Math.min(availableW / img.w, availableH / img.h);
+            const w = img.w * ratio;
+            const h = img.h * ratio;
 
-          const pair = sortedImages.slice(i, i + 2);
-          for (let j = 0; j < pair.length; j++) {
-            let img = pair[j];
-            const ratio = Math.min(availableW / img.width, availableH / img.height);
-            const renderW = img.width * ratio;
-            const renderH = img.height * ratio;
-            const x = marginX + (availableW - renderW) / 2;
-            const slotStartY = marginY + j * (availableH + marginY);
-            const y = slotStartY + (availableH - renderH) / 2;
-            pdf.addImage(img.src, 'JPEG', x, y, renderW, renderH);
-          }
+            const x = margin + (col * (availableW + gap)) + (availableW - w) / 2;
+            const y = margin + (row * (availableH + gap)) + (availableH - h) / 2;
+
+            pdf.addImage(img.src, 'JPEG', x, y, w, h);
+          });
         }
 
-        // Geração do Timestamp aammddhhmmss
-        const agora = new Date();
-        const timestamp = agora.getFullYear().toString().slice(-2) +
-                          (agora.getMonth() + 1).toString().padStart(2, '0') +
-                          agora.getDate().toString().padStart(2, '0') +
-                          agora.getHours().toString().padStart(2, '0') +
-                          agora.getMinutes().toString().padStart(2, '0') +
-                          agora.getSeconds().toString().padStart(2, '0');
+        const ts = new Date().toISOString().replace(/[-:T]/g, '').slice(2, 14);
+        pdf.save(`moodboard_${ts}.pdf`);
+        statusDiv.innerText = "> PDF GERADO COM SUCESSO.";
 
-        statusDiv.innerText = "> FINALIZANDO ARQUIVO...";
-        pdf.save(`moodboard_${timestamp}.pdf`);
-        statusDiv.innerText = "> DOWNLOAD CONCLUÍDO.";
-        
-      } catch (error) {
-        console.error(error);
-        statusDiv.innerText = "> ERRO AO GERAR PDF. TENTE NOVAMENTE.";
+      } catch (e) {
+        statusDiv.innerText = "> ERRO NO PROCESSAMENTO.";
       } finally {
         generateBtn.disabled = false;
-        fileInput.disabled = false;
         setTimeout(() => statusDiv.innerText = "", 5000);
       }
     });
 
-    function processAndCompressImage(file) {
-      return new Promise((resolve, reject) => {
+    async function processImage(file) {
+      return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onload = (e) => {
           const img = new Image();
           img.onload = () => {
-            const originalIsVertical = img.height > img.width;
-            const MAX_DIM = 1600; 
-            let newW = img.width;
-            let newH = img.height;
-
-            if (Math.max(newW, newH) > MAX_DIM) {
-              const scale = MAX_DIM / Math.max(newW, newH);
-              newW *= scale;
-              newH *= scale;
-            }
-
             const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-
-            if (originalIsVertical) {
-              canvas.width = newH;
-              canvas.height = newW;
-              ctx.translate(canvas.width / 2, canvas.height / 2);
-              ctx.rotate(90 * Math.PI / 180);
-              ctx.drawImage(img, -newW / 2, -newH / 2, newW, newH);
-            } else {
-              canvas.width = newW;
-              canvas.height = newH;
-              ctx.drawImage(img, 0, 0, newW, newH);
+            const MAX = 1200; // Reduzido ligeiramente para garantir os 12MB em grids de 10
+            let w = img.width, h = img.height;
+            if (Math.max(w, h) > MAX) {
+              const s = MAX / Math.max(w, h);
+              w *= s; h *= s;
             }
-
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
-            resolve({
-              src: dataUrl,
-              width: canvas.width,
-              height: canvas.height,
-              originalIsVertical: originalIsVertical
-            });
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            resolve({ src: canvas.toDataURL('image/jpeg', 0.7), w: w, h: h });
           };
-          img.onerror = reject;
           img.src = e.target.result;
         };
         reader.readAsDataURL(file);
       });
     }
   </script>
-  
   <script src="app.js"></script>
 </body>
 </html>
