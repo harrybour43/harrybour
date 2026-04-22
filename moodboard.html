@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Moodboard | Harry Bour</title>
+  <meta name="description" content="Ferramenta para montagem automática de pranchas em PDF." />
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    /* Estilos Simplificados e Minimalistas */
+    .moodboard-tool {
+      max-width: 500px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .moodboard-tool input[type="file"] {
+      display: none;
+    }
+    .btn-action {
+      background-color: #000000;
+      color: #ffffff;
+      border: 1px solid #333333;
+      padding: 15px 30px;
+      font-family: var(--font-ui), sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s, color 0.2s;
+      width: 100%;
+    }
+    .btn-action:hover {
+      background-color: #222222;
+      color: #ffffff;
+    }
+    .btn-action:disabled {
+      background-color: #1a1a1a;
+      color: #555555;
+      border-color: #222222;
+      cursor: not-allowed;
+    }
+    #fileCount {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    #status {
+      margin-top: 15px;
+      font-size: 0.85rem;
+      font-family: monospace;
+      color: var(--text-muted);
+      text-align: center;
+      min-height: 20px;
+    }
+  </style>
+</head>
+
+<body data-page="moodboard">
+  <div class="app-wrapper no-sidebar">
+    <header class="fixed-header">
+      <a href="index.html" class="btn-back">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+      <a href="index.html" class="brand-name">Harry Bour</a>
+      <div class="header-spacer"></div>
+    </header>
+
+    <main class="main-content full-width">
+      <section class="gallery-page active">
+        <div class="gallery-container">
+          
+          <div class="section-header" style="border-bottom: none; text-align: center; margin-bottom: 40px">
+            <h2>Moodboard</h2>
+            <p class="category-description">
+              Upload de referências visuais. A ferramenta organiza e exporta um PDF A4 (2 imagens por folha), rotacionando verticais automaticamente e aplicando margens de segurança de 10%.
+            </p>
+          </div>
+
+          <div class="moodboard-tool">
+            <label class="btn-action">
+              <input type="file" id="fileInput" accept="image/*" multiple />
+              Selecionar Imagens
+            </label>
+            
+            <div id="fileCount">Nenhum arquivo selecionado</div>
+            
+            <button id="generateBtn" class="btn-action" disabled>Gerar Prancha (PDF)</button>
+            
+            <div id="status"></div>
+          </div>
+
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const generateBtn = document.getElementById('generateBtn');
+    const statusDiv = document.getElementById('status');
+    const fileCountDiv = document.getElementById('fileCount');
+
+    fileInput.addEventListener('change', function(e) {
+      const count = e.target.files.length;
+      if (count > 0) {
+        fileCountDiv.innerText = `${count} arquivo(s) selecionado(s)`;
+        generateBtn.disabled = false;
+      } else {
+        fileCountDiv.innerText = 'Nenhum arquivo selecionado';
+        generateBtn.disabled = true;
+      }
+    });
+
+    const { jsPDF } = window.jspdf;
+
+    generateBtn.addEventListener('click', async () => {
+      const files = Array.from(fileInput.files);
+      if (files.length === 0) return;
+
+      generateBtn.disabled = true;
+      fileInput.disabled = true;
+
+      try {
+        const processedImages = [];
+        
+        // 1. Processa e comprime todas as imagens
+        for (let i = 0; i < files.length; i++) {
+          statusDiv.innerText = `> OTIMIZANDO IMAGEM ${i + 1} DE ${files.length}...`;
+          const imgInfo = await processAndCompressImage(files[i]);
+          processedImages.push(imgInfo);
+        }
+
+        statusDiv.innerText = "> MONTANDO LAYOUT DO PDF...";
+
+        // 2. Ordena: Verticais (originais) primeiro
+        const verticals = processedImages.filter(img => img.originalIsVertical);
+        const horizontals = processedImages.filter(img => !img.originalIsVertical);
+        const sortedImages = [...verticals, ...horizontals];
+
+        // 3. Configuração A4 Vertical
+        const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4', compress: true });
+        let firstPage = true;
+
+        const pw = 210;
+        const ph = 297;
+        const marginX = pw * 0.10;
+        const marginY = ph * 0.10;
+
+        const availableW = pw - (2 * marginX);
+        const availableH = (ph - (3 * marginY)) / 2; 
+
+        // 4. Desenha no PDF
+        for (let i = 0; i < sortedImages.length; i += 2) {
+          if (!firstPage) pdf.addPage('p', 'mm', 'a4');
+          firstPage = false;
+
+          const pair = sortedImages.slice(i, i + 2);
+
+          for (let j = 0; j < pair.length; j++) {
+            let img = pair[j];
+
+            const ratio = Math.min(availableW / img.width, availableH / img.height);
+            const renderW = img.width * ratio;
+            const renderH = img.height * ratio;
+
+            const x = marginX + (availableW - renderW) / 2;
+            const slotStartY = marginY + j * (availableH + marginY);
+            const y = slotStartY + (availableH - renderH) / 2;
+
+            pdf.addImage(img.src, 'JPEG', x, y, renderW, renderH);
+          }
+        }
+
+        statusDiv.innerText = "> FINALIZANDO ARQUIVO...";
+        pdf.save("Harry_Bour_Moodboard.pdf");
+        statusDiv.innerText = "> DOWNLOAD CONCLUÍDO.";
+
+      } catch (error) {
+        console.error(error);
+        statusDiv.innerText = "> ERRO AO GERAR PDF. TENTE NOVAMENTE.";
+      } finally {
+        generateBtn.disabled = false;
+        fileInput.disabled = false;
+        setTimeout(() => statusDiv.innerText = "", 5000);
+      }
+    });
+
+    // Função que resolve a Compressão (Max 12MB) e a Rotação de uma só vez
+    function processAndCompressImage(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const originalIsVertical = img.height > img.width;
+            
+            // Limite de 1600px garante alta qualidade no papel A4, 
+            // mas reduz o tamanho do arquivo drasticamente.
+            const MAX_DIM = 1600; 
+            
+            let newW = img.width;
+            let newH = img.height;
+
+            if (Math.max(newW, newH) > MAX_DIM) {
+              const scale = MAX_DIM / Math.max(newW, newH);
+              newW *= scale;
+              newH *= scale;
+            }
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Se vertical, inverte largura e altura no canvas e rotaciona
+            if (originalIsVertical) {
+              canvas.width = newH;
+              canvas.height = newW;
+              ctx.translate(canvas.width / 2, canvas.height / 2);
+              ctx.rotate(90 * Math.PI / 180);
+              ctx.drawImage(img, -newW / 2, -newH / 2, newW, newH);
+            } else {
+              canvas.width = newW;
+              canvas.height = newH;
+              ctx.drawImage(img, 0, 0, newW, newH);
+            }
+
+            // Exporta como JPEG com 75% de qualidade (Compressão severa e limpa)
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+
+            resolve({
+              src: dataUrl,
+              width: canvas.width,
+              height: canvas.height,
+              originalIsVertical: originalIsVertical
+            });
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  </script>
+  
+  <script src="app.js"></script>
+</body>
+</html>
