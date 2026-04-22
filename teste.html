@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Moodboard Maker | Harry Bour</title>
+  <meta name="description" content="Ferramenta personalizada para montagem de pranchas PDF." />
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    .moodboard-tool {
+      max-width: 500px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .controls-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      border: 1px solid var(--border-color);
+      padding: 20px;
+      background: var(--bg-surface);
+    }
+    .control-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .control-item label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+    .control-item select {
+      background: #000;
+      color: #fff;
+      border: 1px solid #444;
+      padding: 8px;
+      font-family: var(--font-ui);
+      cursor: pointer;
+    }
+    .moodboard-tool input[type="file"] {
+      display: none;
+    }
+    .btn-action {
+      background-color: #000;
+      color: #fff;
+      border: 1px solid #333;
+      padding: 15px;
+      font-family: var(--font-ui);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+    .btn-action:hover:not(:disabled) {
+      background-color: #222;
+      border-color: #555;
+    }
+    .btn-action:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+    #fileCount {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+    #status {
+      font-size: 0.75rem;
+      font-family: monospace;
+      color: var(--text-muted);
+      text-align: center;
+      min-height: 1.2em;
+    }
+  </style>
+</head>
+
+<body data-page="moodboard">
+  <div class="app-wrapper no-sidebar">
+    <header class="fixed-header">
+      <a href="index.html" class="btn-back">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+      <a href="index.html" class="brand-name">Harry Bour</a>
+      <div class="header-spacer"></div>
+    </header>
+
+    <main class="main-content full-width">
+      <section class="gallery-page active">
+        <div class="gallery-container">
+          
+          <div class="section-header" style="border-bottom: none; text-align: center; margin-bottom: 40px">
+            <h2>Moodboard</h2>
+            <p class="category-description">Configuração dinâmica de referências visuais.</p>
+          </div>
+
+          <div class="moodboard-tool">
+            <div class="controls-group">
+              <div class="control-item">
+                <label>Máx. Imagens por página</label>
+                <select id="imgsPerPage">
+                  <option value="1">1 Imagem</option>
+                  <option value="2">2 Imagens</option>
+                  <option value="4">4 Imagens</option>
+                  <option value="6" selected>6 Imagens</option>
+                  <option value="8">8 Imagens</option>
+                  <option value="10">10 Imagens</option>
+                </select>
+              </div>
+              <div class="control-item">
+                <label>Orientação PDF</label>
+                <select id="pdfOrientation">
+                  <option value="p">Retrato (Vertical)</option>
+                  <option value="l">Paisagem (Horizontal)</option>
+                </select>
+              </div>
+            </div>
+
+            <label class="btn-action">
+              <input type="file" id="fileInput" accept="image/*" multiple />
+              <i class="fa-solid fa-images"></i> Selecionar Arquivos
+            </label>
+            
+            <div id="fileCount">Nenhum arquivo selecionado</div>
+            
+            <button id="generateBtn" class="btn-action" disabled>
+              <i class="fa-solid fa-file-pdf"></i> Gerar Prancha Dinâmica
+            </button>
+            
+            <div id="status"></div>
+          </div>
+
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const generateBtn = document.getElementById('generateBtn');
+    const statusDiv = document.getElementById('status');
+    const fileCountDiv = document.getElementById('fileCount');
+    const selectImgs = document.getElementById('imgsPerPage');
+    const selectOrient = document.getElementById('pdfOrientation');
+
+    fileInput.addEventListener('change', (e) => {
+      const count = e.target.files.length;
+      fileCountDiv.innerText = count > 0 ? `${count} arquivo(s) selecionado(s)` : 'Nenhum arquivo selecionado';
+      generateBtn.disabled = count === 0;
+    });
+
+    const { jsPDF } = window.jspdf;
+
+    generateBtn.addEventListener('click', async () => {
+      const files = Array.from(fileInput.files);
+      const perPage = parseInt(selectImgs.value);
+      const orientation = selectOrient.value;
+
+      generateBtn.disabled = true;
+      statusDiv.innerText = "> INICIANDO PROCESSAMENTO...";
+
+      try {
+        let processedImages = [];
+        for (let i = 0; i < files.length; i++) {
+          statusDiv.innerText = `> OTIMIZANDO ${i + 1}/${files.length}...`;
+          processedImages.push(await processImage(files[i]));
+        }
+
+        // LÓGICA DE DINAMISMO: Mistura as imagens para forçar blocos assimétricos
+        // Ordena por Aspect Ratio e intercala (1 larga, 1 estreita) para dar ritmo
+        processedImages.sort((a, b) => b.ar - a.ar);
+        let dynamicMix = [];
+        let left = 0; let right = processedImages.length - 1;
+        while (left <= right) {
+          dynamicMix.push(processedImages[left++]);
+          if (left <= right) dynamicMix.push(processedImages[right--]);
+        }
+        processedImages = dynamicMix;
+
+        // Configuração A4
+        const pdf = new jsPDF({ orientation: orientation, unit: 'mm', format: 'a4', compress: true });
+        const pw = pdf.internal.pageSize.getWidth();
+        const ph = pdf.internal.pageSize.getHeight();
+        
+        // Exatos 10% de margem em cada eixo
+        const marginX = pw * 0.10;
+        const marginY = ph * 0.10;
+        const availableW = pw - (2 * marginX);
+        const availableH = ph - (2 * marginY);
+        const gap = 4; // Respiro de 4mm entre as imagens (Estética de galeria)
+
+        // Quebra em lotes/páginas
+        for (let i = 0; i < processedImages.length; i += perPage) {
+          if (i > 0) pdf.addPage(orientation, 'mm', 'a4');
+          
+          const chunk = processedImages.slice(i, i + perPage);
+          
+          // Calcula o layout ideal que maximiza a área
+          const layout = getBestJustifiedLayout(chunk, availableW, availableH, gap);
+
+          // Centraliza o bloco resultante verticalmente na página
+          let startY = marginY + (availableH - layout.totalH) / 2;
+
+          // Desenha as imagens linha por linha
+          layout.rows.forEach(row => {
+            let currentX = marginX;
+            let rowHeightScaled = row.hRow * layout.scale;
+
+            row.rowImgs.forEach(img => {
+              let imgWidthScaled = rowHeightScaled * img.ar;
+              
+              // Ajuste fino para evitar bordas quebradas por dízimas do JS
+              pdf.addImage(img.src, 'JPEG', currentX, startY, imgWidthScaled - 0.1, rowHeightScaled - 0.1);
+              
+              currentX += imgWidthScaled + gap;
+            });
+            startY += rowHeightScaled + gap;
+          });
+        }
+
+        const ts = new Date().toISOString().replace(/[-:T]/g, '').slice(2, 14);
+        pdf.save(`moodboard_${ts}.pdf`);
+        statusDiv.innerText = "> PDF GERADO COM SUCESSO.";
+
+      } catch (e) {
+        console.error(e);
+        statusDiv.innerText = "> ERRO NO PROCESSAMENTO.";
+      } finally {
+        generateBtn.disabled = false;
+        setTimeout(() => statusDiv.innerText = "", 5000);
+      }
+    });
+
+    // Função de Processamento e Otimização
+    async function processImage(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const MAX = 1200; // Qualidade suficiente pra A4, leve para o PDF de 12mb
+            let w = img.width, h = img.height;
+            if (Math.max(w, h) > MAX) {
+              const s = MAX / Math.max(w, h);
+              w *= s; h *= s;
+            }
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            // Salva o Aspect Ratio (largura / altura) fundamental para o algoritmo
+            resolve({ src: canvas.toDataURL('image/jpeg', 0.75), w: w, h: h, ar: w / h });
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // ALGORITMO: Encontra a melhor distribuição de linhas para justificar as imagens
+    function getBestJustifiedLayout(chunk, availW, availH, gap) {
+      let bestLayout = null;
+      let maxArea = 0;
+
+      // Testa dividir as fotos do chunk em 1 linha, 2 linhas, etc.
+      for (let numRows = 1; numRows <= chunk.length; numRows++) {
+        let rows = [];
+        let cIdx = 0;
+        
+        // Divide o array de forma equilibrada entre as linhas
+        for (let i = 0; i < numRows; i++) {
+          let take = Math.floor(chunk.length / numRows);
+          if (i < chunk.length % numRows) take++;
+          if (take > 0) rows.push(chunk.slice(cIdx, cIdx + take));
+          cIdx += take;
+        }
+
+        let rowLayouts = [];
+        let totalH = 0;
+
+        for (let r = 0; r < rows.length; r++) {
+          let rowImgs = rows[r];
+          // Soma das proporções (Aspect Ratios) da linha
+          let sumAR = rowImgs.reduce((acc, img) => acc + img.ar, 0);
+          
+          // Largura livre descontando os vãos
+          let wForImgs = availW - (rowImgs.length - 1) * gap;
+          
+          // Altura necessária para preencher a largura total
+          let hRow = wForImgs / sumAR;
+          
+          rowLayouts.push({ rowImgs, hRow });
+          totalH += hRow;
+        }
+
+        let totalHWithGaps = totalH + (rows.length - 1) * gap;
+        
+        // Se a montagem ultrapassar a altura da página, aplica um fator de redução
+        let scale = 1;
+        if (totalHWithGaps > availH) {
+          scale = availH / totalHWithGaps;
+        }
+
+        // Calcula a área total preenchida
+        let area = 0;
+        rowLayouts.forEach(rl => {
+          rl.rowImgs.forEach(img => {
+            area += (rl.hRow * scale * img.ar) * (rl.hRow * scale);
+          });
+        });
+
+        // Elege a diagramação que menos desperdiça papel
+        if (area > maxArea) {
+          maxArea = area;
+          bestLayout = { rows: rowLayouts, scale, totalH: totalHWithGaps * scale };
+        }
+      }
+      return bestLayout;
+    }
+  </script>
+  <script src="app.js"></script>
+</body>
+</html>
