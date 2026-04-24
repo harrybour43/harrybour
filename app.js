@@ -558,36 +558,3 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
-
-// Adicione isso ao seu app.js
-
-// 1. Registrar a visita na página principal (Pageview)
-function registrarVisita() {
-    // Exemplo de envio para a sua futura API
-    fetch('/api/registrar-visita', { method: 'POST' })
-        .catch(err => console.error("Erro ao registrar visita", err));
-}
-registrarVisita();
-
-// 2. Rastrear os cliques nos links do menu
-document.addEventListener('DOMContentLoaded', () => {
-    // Seleciona todos os links de navegação da sua sidebar
-    const navLinks = document.querySelectorAll('.nav-link');
-
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(event) {
-            // Pega para onde o link está apontando (ex: 'voz-do-povo.html')
-            const destino = this.getAttribute('href'); 
-            
-            // Verifica se não é um botão (como o do Lumen ou Acessibilidade que não tem href)
-            if (destino) {
-                // Envia a informação do clique para o servidor
-                fetch('/api/registrar-clique', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ link: destino })
-                }).catch(err => console.error("Erro ao registrar clique", err));
-            }
-        });
-    });
-});
