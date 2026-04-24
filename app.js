@@ -558,3 +558,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
+
+// ==========================================
+// CONTADOR DE VISITAS OCULTO (Página Inicial)
+// ==========================================
+
+async function registrarVisitaOculta() {
+  const counterElement = document.getElementById("hidden-counter");
+  
+  // Se o elemento não existir nesta página, não faz nada
+  if (!counterElement) return;
+
+  try {
+    // Faz a chamada para a API gratuita. 
+    // O "/up" no final já soma +1 à contagem automaticamente.
+    const response = await fetch("https://api.counterapi.dev/v1/harrybour/index/up");
+    const data = await response.json();
+    
+    // Escreve o número atualizado de forma invisível no HTML
+    counterElement.innerText = data.count;
+  } catch (error) {
+    console.error("Erro silencioso no contador:", error);
+  }
+}
+
+// Executa a função assim que a página carregar
+document.addEventListener("DOMContentLoaded", () => {
+  registrarVisitaOculta();
+});
