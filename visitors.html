@@ -7,37 +7,42 @@
     <link rel="stylesheet" href="style.css" />
     <style>
         body {
-            margin: 0;
-            padding: 0;
             background-color: var(--bg-base);
-            height: 100vh;
+            color: var(--text-main);
             display: flex;
             flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
         }
-        .header-stats {
-            padding: 20px;
+        .stats-box {
             text-align: center;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .iframe-container {
-            flex-grow: 1;
-            width: 100%;
-        }
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
+            padding: 40px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--bg-base);
+            max-width: 400px;
         }
     </style>
 </head>
 <body>
-    <div class="header-stats">
-        <h2>Contador de Visitantes</h2>
-        <a href="index.html" style="color: var(--text-muted); text-decoration: none;">&larr; Voltar para o site</a>
-    </div>
+    <div class="stats-box">
+        <h2 style="font-family: var(--font-heading); margin-bottom: 10px;">Painel de Visitantes</h2>
+        
+        <p style="color: var(--text-muted); margin-bottom: 30px; line-height: 1.5;">
+            Por questões de segurança e privacidade do GoatCounter, o painel deve ser acessado em sua página oficial.
+        </p>
 
-    <div class="iframe-container">
-        <iframe src="https://harrybour.goatcounter.com/"></iframe>
+        <a href="https://harrybour.goatcounter.com/" target="_blank" rel="noopener noreferrer" class="btn-primary" style="text-decoration: none; display: inline-block;">
+            Abrir Dashboard Completo
+        </a>
+        
+        <br><br><br>
+        
+        <a href="index.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.9em;">
+            &larr; Voltar para a Home
+        </a>
     </div>
 </body>
 </html>
