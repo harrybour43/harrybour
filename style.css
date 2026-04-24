@@ -1197,3 +1197,21 @@ body[data-page="mapa"] .app-wrapper.no-sidebar .main-content {
     display: none; /* Mantém apenas o ícone no mobile para poupar espaço */
   }
 }
+
+/* ==========================================
+   CONTADOR SECRETO
+========================================== */
+.secret-counter {
+  color: transparent; /* Torna o número invisível a olho nu */
+  font-size: 0.8rem;
+  text-align: center;
+  margin-top: 15px;
+  cursor: text; /* Mantém o cursor de texto para facilitar a seleção */
+  user-select: all; /* Um clique duplo seleciona o número inteiro */
+}
+
+/* Revela o número ao ser selecionado com o mouse */
+.secret-counter::selection {
+  background-color: var(--text-main); 
+  color: var(--bg-base); 
+}
