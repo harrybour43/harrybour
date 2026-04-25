@@ -3,196 +3,156 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Calculadora de Resolução | Harry Bour</title>
-    <meta name="description" content="Auditoria técnica de imagens para impressão e web." />
-
+    <title>Auditoria de Imagem V2 | Harry Bour</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     
     <style>
-      /* ESTILOS ESPECÍFICOS DA CALCULADORA (Complementares ao style.css) */
       .calc-wrapper {
         display: flex;
         flex-wrap: wrap;
         gap: 30px;
-        max-width: 1000px;
+        max-width: 1200px;
         margin: 0 auto;
-        align-items: flex-start;
       }
 
       .calc-panel {
         flex: 1;
-        min-width: 320px;
+        min-width: 350px;
         background: var(--bg-surface);
         border: 1px solid var(--border-color);
         padding: 30px;
         border-radius: 4px;
       }
 
+      .full-width { flex-basis: 100%; }
+
       .drop-zone {
         border: 2px dashed var(--border-color);
-        padding: 40px 20px;
+        padding: 30px;
         text-align: center;
         cursor: pointer;
-        transition: all 0.3s ease;
-        margin-bottom: 25px;
         background: var(--bg-base);
         color: var(--text-muted);
-      }
-
-      .drop-zone:hover, .drop-zone.dragover {
-        background: var(--btn-bg);
-        border-color: var(--text-main);
-        color: var(--text-main);
-      }
-
-      .drop-zone i {
-        font-size: 2rem;
-        margin-bottom: 10px;
-      }
-
-      .inputs-manuais {
-        display: flex;
-        gap: 15px;
         margin-bottom: 20px;
       }
 
-      .divisor {
-        text-align: center;
-        margin: 20px 0;
-        color: var(--text-muted);
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        display: flex;
-        align-items: center;
-      }
-
-      .divisor::before, .divisor::after {
-        content: "";
-        flex: 1;
-        border-bottom: 1px solid var(--border-color);
-        margin: 0 10px;
-      }
-
-      /* Estilizando selects para bater com os inputs do form-group do style.css */
-      select {
-        width: 100%;
-        padding: 12px;
-        background: var(--bg-surface);
-        color: var(--text-main);
-        border: 1px solid var(--border-color);
-        font-family: var(--font-ui);
-        font-size: 1rem;
-        appearance: none;
-      }
+      .drop-zone.dragover { border-color: var(--text-main); background: var(--btn-bg); }
 
       .result-box {
-        margin-top: 25px;
+        margin-top: 20px;
         padding: 20px;
         border-left: 4px solid var(--border-color);
         background: var(--bg-base);
         display: none;
-        animation: fadeIn 0.3s ease-out;
       }
 
-      .result-title {
-        font-family: var(--font-display);
-        font-size: 1.4rem;
-        margin-bottom: 10px;
+      /* Estilização da Tabela Dinâmica */
+      .table-container {
+        margin-top: 20px;
+        overflow-x: auto;
       }
 
-      .result-text {
-        font-size: 1rem;
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: var(--font-ui);
+        font-size: 0.9rem;
+      }
+
+      th {
+        text-align: left;
+        background: var(--bg-base);
         color: var(--text-muted);
-        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 12px;
+        border-bottom: 2px solid var(--border-color);
       }
+
+      td {
+        padding: 12px;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-main);
+      }
+
+      .badge {
+        padding: 2px 8px;
+        border-radius: 3px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .badge-good { background: #155724; color: #d4edda; }
+      .badge-warn { background: #856404; color: #fff3cd; }
+      .badge-crit { background: #721c24; color: #f8d7da; }
 
       .status-good { border-left-color: #4ade80; }
       .status-warning { border-left-color: #facc15; }
       .status-bad { border-left-color: #f87171; }
-
-      .tech-specs {
-        font-family: monospace;
-        background: rgba(0,0,0,0.2);
-        padding: 10px;
-        font-size: 0.9rem;
-        color: var(--text-main);
-        margin-bottom: 15px;
-      }
     </style>
   </head>
 
-  <body data-page="calculadora">
+  <body data-page="calculadora-v2">
     <div class="app-wrapper no-sidebar">
       <header class="fixed-header">
-        <a href="index.html" class="btn-back">
-          <i class="fa-solid fa-arrow-left"></i>
-        </a>
+        <a href="index.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
         <a href="index.html" class="brand-name">Harry Bour</a>
         <div class="header-spacer"></div>
       </header>
 
       <main class="main-content">
-        <section class="view-section active" style="display:flex;">
+        <section class="view-section active" style="display:block;">
           <div class="section-header" style="text-align: center; margin-bottom: 40px">
-            <h2>Auditoria de Resolução</h2>
-            <p class="category-description">Valide as especificações do seu arquivo para impressão ou uso digital.</p>
+            <h2>Auditoria de Resolução V2</h2>
+            <p class="category-description">Análise técnica de densidade (PPI) e saída física (DPI).</p>
           </div>
 
           <div class="calc-wrapper">
             <div class="calc-panel">
               <div class="drop-zone" id="drop-zone">
-                <i class="fa-solid fa-image"></i>
-                <p>Arraste uma imagem aqui<br>ou clique para fazer upload</p>
+                <i class="fa-solid fa-upload"></i>
+                <p>Arraste a imagem ou clique</p>
                 <input type="file" id="file-input" accept="image/*" style="display: none;">
               </div>
-
-              <div class="divisor">OU DIGITE MANUALMENTE</div>
-
-              <div class="inputs-manuais">
-                <div class="form-group" style="flex: 1;">
+              <div style="display: flex; gap: 10px;">
+                <div class="form-group" style="flex:1">
                   <label>Largura (px)</label>
-                  <input type="number" id="input-w" placeholder="Ex: 1920">
+                  <input type="number" id="input-w">
                 </div>
-                <div class="form-group" style="flex: 1;">
+                <div class="form-group" style="flex:1">
                   <label>Altura (px)</label>
-                  <input type="number" id="input-h" placeholder="Ex: 1080">
+                  <input type="number" id="input-h">
                 </div>
               </div>
-
-              <div class="form-group" style="margin-bottom: 25px;">
-                <label>Objetivo de Saída / Suporte</label>
-                <select id="suporte-alvo">
-                  <optgroup label="Impressão Física (Fine Art / Gráfica)">
-                    <option value="impresso_livre">Descobrir Tamanho Máximo Físico</option>
-                    <option value="impresso_a4">Impressão A4 (21 x 29,7 cm)</option>
-                    <option value="impresso_a3">Impressão A3 (29,7 x 42 cm)</option>
-                    <option value="impresso_10x15">Foto 10x15 cm</option>
-                  </optgroup>
-                  <optgroup label="Meios Digitais">
-                    <option value="instagram_feed">Instagram (Feed / Quadrado)</option>
-                    <option value="instagram_stories">Instagram (Stories / Reels)</option>
-                    <option value="web_site">Web Site / Blog / Portfólio</option>
-                    <option value="whatsapp">WhatsApp (Envio Padrão)</option>
-                  </optgroup>
-                </select>
-              </div>
-
-              <button class="btn-submit" id="btn-calcular" style="width: 100%;">Analisar Imagem</button>
+              <button class="btn-submit" id="btn-calcular" style="width: 100%; margin-top: 20px;">Gerar Laudo Completo</button>
             </div>
 
             <div class="calc-panel">
-              <h3 style="font-family: var(--font-display); font-weight: 400; font-size: 1.5rem; margin-bottom: 10px;">Relatório Técnico</h3>
-              <p style="color: var(--text-muted); font-size: 0.95rem;">Preencha os dados e clique em "Analisar Imagem" para gerar o laudo técnico.</p>
-              
+              <h3 style="font-family: var(--font-display); margin-bottom: 15px;">Diagnóstico Geral</h3>
               <div id="resultado-box" class="result-box">
-                <div class="tech-specs" id="specs-texto"></div>
-                <div class="result-title" id="resultado-titulo"></div>
-                <div class="result-text" id="resultado-texto"></div>
-                
-                <div id="dica-extra" style="font-size: 0.85rem; padding-top: 10px; border-top: 1px solid var(--border-color); color: var(--text-muted);">
-                  </div>
+                <div id="res-titulo" style="font-weight: 600; font-size: 1.1rem; margin-bottom: 10px;"></div>
+                <div id="res-texto" style="font-size: 0.95rem; color: var(--text-muted);"></div>
+              </div>
+            </div>
+
+            <div class="calc-panel full-width">
+              <h3 style="font-family: var(--font-display); margin-bottom: 20px;">Matriz de Capacidade e Suportes (2026)</h3>
+              <div class="table-container">
+                <table id="tabela-capacidade">
+                  <thead>
+                    <tr>
+                      <th>Destino / Uso</th>
+                      <th>Padrão Sugerido</th>
+                      <th>Dimensão Máxima</th>
+                      <th>Qualidade</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td colspan="4" style="text-align:center; color:var(--text-muted)">Aguardando dados da imagem...</td></tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
@@ -201,214 +161,103 @@
     </div>
 
     <script>
-      const dropZone = document.getElementById('drop-zone');
       const fileInput = document.getElementById('file-input');
-      const inputW = document.getElementById('input-w');
-      const inputH = document.getElementById('input-h');
-      const suporteSelect = document.getElementById('suporte-alvo');
+      const dropZone = document.getElementById('drop-zone');
       const btnCalcular = document.getElementById('btn-calcular');
-      const resultadoBox = document.getElementById('resultado-box');
 
-      // --- 1. LÓGICA DE UPLOAD E DRAG & DROP ---
-      dropZone.addEventListener('click', () => fileInput.click());
+      // Drag and Drop
+      dropZone.onclick = () => fileInput.click();
+      dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('dragover'); };
+      dropZone.ondragleave = () => dropZone.classList.remove('dragover');
+      dropZone.ondrop = (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        if (e.dataTransfer.files.length) processar(e.dataTransfer.files[0]);
+      };
+      fileInput.onchange = (e) => processar(e.target.files[0]);
 
-      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
-        dropZone.addEventListener(evt, (e) => {
-          e.preventDefault(); e.stopPropagation();
-        });
-      });
-
-      ['dragenter', 'dragover'].forEach(evt => {
-        dropZone.addEventListener(evt, () => dropZone.classList.add('dragover'));
-      });
-
-      ['dragleave', 'drop'].forEach(evt => {
-        dropZone.addEventListener(evt, () => dropZone.classList.remove('dragover'));
-      });
-
-      dropZone.addEventListener('drop', (e) => {
-        const file = e.dataTransfer.files[0];
-        if (file && file.type.startsWith('image/')) extrairDimensoes(file);
-      });
-
-      fileInput.addEventListener('change', (e) => {
-        if (e.target.files.length) extrairDimensoes(e.target.files[0]);
-      });
-
-      function extrairDimensoes(file) {
+      function processar(file) {
         const reader = new FileReader();
-        dropZone.querySelector('p').innerHTML = `<span style="color:var(--text-main)">Arquivo carregado:</span><br>${file.name}`;
-        
-        reader.onload = (event) => {
+        reader.onload = (e) => {
           const img = new Image();
           img.onload = () => {
-            inputW.value = img.width;
-            inputH.value = img.height;
-            // Opcional: já calcula automaticamente ao subir a foto
-            // calcular(); 
-          }
-          img.src = event.target.result;
-        }
+            document.getElementById('input-w').value = img.width;
+            document.getElementById('input-h').value = img.height;
+            gerarRelatorio(img.width, img.height);
+          };
+          img.src = e.target.result;
+        };
         reader.readAsDataURL(file);
       }
 
-      // --- 2. LÓGICA DA CALCULADORA (O MOTOR DE REGRAS) ---
-      btnCalcular.addEventListener('click', calcular);
+      btnCalcular.onclick = () => {
+        const w = parseInt(document.getElementById('input-w').value);
+        const h = parseInt(document.getElementById('input-h').value);
+        if (w && h) gerarRelatorio(w, h);
+      };
 
-      function calcular() {
-        const w = parseInt(inputW.value);
-        const h = parseInt(inputH.value);
-        const suporte = suporteSelect.value;
+      function gerarRelatorio(w, h) {
+        const resBox = document.getElementById('resultado-box');
+        resBox.style.display = 'block';
+        
+        // Regras de PPI vs DPI
+        // PPI (Pixels Per Inch) é para telas. 72-96 é o padrão "legado" para web sem retina.
+        // 150-300 PPI é o padrão para telas modernas de alta densidade.
+        
+        const megapixels = ((w * h) / 1000000).toFixed(1);
+        document.getElementById('res-titulo').innerText = `${megapixels} Megapixels detectados`;
+        document.getElementById('res-texto').innerText = `O arquivo possui resolução suficiente para cobrir uma ampla gama de suportes, desde ícones de sistema até ampliações físicas.`;
 
-        if (!w || !h) {
-          alert("Por favor, insira a largura e a altura da imagem (ou faça upload).");
-          return;
-        }
+        const formatos = [
+          { nome: "Ícone (PWA/Android)", ref: 192, ppi: 96, tipo: "Digital" },
+          { nome: "WhatsApp (Compressão padrão)", ref: 1600, ppi: 96, tipo: "Rede Social" },
+          { nome: "Instagram Feed (1:1)", ref: 1080, ppi: 150, tipo: "Rede Social" },
+          { nome: "Instagram Stories/Reels", ref: 1080, ppi: 300, tipo: "Rede Social" },
+          { nome: "Web Standard (Full HD)", ref: 1920, ppi: 72, tipo: "Web" },
+          { nome: "Monitor Retina / 4K", ref: 3840, ppi: 240, tipo: "Web" },
+          { nome: "Impressão Fine Art (Máxima)", dpi: 300, tipo: "Papel" },
+          { nome: "Impressão Jornal/Outdoor", dpi: 72, tipo: "Papel" }
+        ];
 
-        let titulo = "";
-        let texto = "";
-        let dica = "";
-        let statusClass = "status-good"; // status-good, status-warning, status-bad
+        const tbody = document.querySelector('#tabela-capacidade tbody');
+        tbody.innerHTML = '';
 
-        // Cálculos base para impressão
-        // Fórmula: Pixels / DPI * 2.54 = Centímetros
-        const cmW300 = ((w / 300) * 2.54).toFixed(1);
-        const cmH300 = ((h / 300) * 2.54).toFixed(1);
-        const cmW150 = ((w / 150) * 2.54).toFixed(1);
-        const cmH150 = ((h / 150) * 2.54).toFixed(1);
+        formatos.forEach(f => {
+          let dim = "";
+          let qual = "";
+          let badge = "";
 
-        const isPaisagem = w > h;
-
-        document.getElementById('specs-texto').innerHTML = `LIDO: ${w}px larg. × ${h}px alt.`;
-
-        switch (suporte) {
-          case 'impresso_livre':
-            titulo = "Capacidade Máxima de Impressão";
-            texto = `<strong>Qualidade Fotográfica (300 DPI):</strong><br>Até ${cmW300} × ${cmH300} cm.<br><br>
-                     <strong>Qualidade Pôster/Tela (150 DPI):</strong><br>Até ${cmW150} × ${cmH150} cm.`;
-            dica = "Dica: Impressões a 150 DPI são ideais apenas se a imagem for observada a mais de 1 metro de distância.";
-            statusClass = "status-good";
-            break;
-
-          case 'impresso_a4':
-            // A4 a 300 DPI = aprox 2480 x 3508px
-            const reqA4_W = isPaisagem ? 3508 : 2480;
-            const reqA4_H = isPaisagem ? 2480 : 3508;
+          if (f.dpi) {
+            // Cálculo para papel (DPI)
+            const cmW = ((w / f.dpi) * 2.54).toFixed(1);
+            const cmH = ((h / f.dpi) * 2.54).toFixed(1);
+            dim = `${cmW} x ${cmH} cm`;
+            qual = `${f.dpi} DPI`;
+            badge = f.dpi >= 300 ? "badge-good" : (f.dpi >= 150 ? "badge-warn" : "badge-crit");
+          } else {
+            // Cálculo para telas (PPI)
+            const ratio = (w / f.ref).toFixed(2);
+            dim = `${f.ref}px base`;
+            qual = `${f.ppi} PPI`;
             
-            if (w >= reqA4_W && h >= reqA4_H) {
-              titulo = "Aprovado para A4";
-              texto = "Resolução excelente. A imagem atingirá 300 DPI ou mais no formato A4, garantindo nitidez absoluta em gráficas ou fine art.";
-              statusClass = "status-good";
-            } else if (w >= (reqA4_W/2) && h >= (reqA4_H/2)) {
-              titulo = "Atenção: Resolução Limite";
-              texto = "A imagem é menor que o ideal para 300 DPI no formato A4, mas suportará impressão a aprox. 150-200 DPI. Pode haver leve perda de nitidez se vista de perto.";
-              statusClass = "status-warning";
+            if (ratio >= 1) {
+              badge = "badge-good";
+            } else if (ratio >= 0.7) {
+              badge = "badge-warn";
             } else {
-              titulo = "Reprovado para A4";
-              texto = "A resolução está muito baixa (DPI abaixo do aceitável). A impressão sairá visivelmente pixelada e sem foco no papel A4.";
-              statusClass = "status-bad";
+              badge = "badge-crit";
             }
-            dica = `Seu arquivo cobre ${cmW300}x${cmH300}cm com qualidade máxima (A4 possui 21x29,7cm).`;
-            break;
+          }
 
-          case 'impresso_a3':
-            // A3 a 300 DPI = aprox 3508 x 4960px
-            const reqA3_W = isPaisagem ? 4960 : 3508;
-            const reqA3_H = isPaisagem ? 3508 : 4960;
-            
-            if (w >= reqA3_W && h >= reqA3_H) {
-              titulo = "Aprovado para A3";
-              texto = "Resolução excelente para o formato A3 a rigorosos 300 DPI.";
-              statusClass = "status-good";
-            } else if (w >= (reqA3_W/2) && h >= (reqA3_H/2)) {
-              titulo = "Atenção: Resolução Média";
-              texto = "Imagem suportará impressão a 150 DPI no formato A3. Como pôsteres A3 costumam ser vistos de mais longe, a qualidade visual será satisfatória.";
-              statusClass = "status-warning";
-            } else {
-              titulo = "Reprovado para A3";
-              texto = "A imagem é pequena demais para cobrir o papel A3 sem distorção grave.";
-              statusClass = "status-bad";
-            }
-            dica = `Lembre-se: Gráficas de offset exigem arquivos finalizados em CMYK, esta ferramenta analisa apenas a resolução métrica.`;
-            break;
-
-          case 'instagram_feed':
-            if (w === 1080) {
-              titulo = "Tamanho Perfeito";
-              texto = "A largura está cravada nos 1080px indicados pelo Instagram. Nenhuma compressão agressiva será feita.";
-              statusClass = "status-good";
-            } else if (w > 1080 && w <= 2160) {
-              titulo = "Resolução Acima do Necessário";
-              texto = "A imagem passará pelo algoritmo de compressão do Instagram, pois a largura máxima nativa é 1080px. Costuma perder um pouco de nitidez.";
-              statusClass = "status-warning";
-              dica = "Dica para fotógrafos: Exporte a imagem diretamente em 1080px de largura e aplique leve nitidez (Sharpen) na exportação.";
-            } else if (w > 2160) {
-              titulo = "Risco de Compressão Severa";
-              texto = "Imagem gigantesca para redes sociais. O algoritmo do Instagram vai destruir a imagem para comprimi-la.";
-              statusClass = "status-bad";
-              dica = "Não poste RAWs gigantes, redimensione antes de postar.";
-            } else {
-              titulo = "Resolução Baixa";
-              texto = "A imagem tem largura inferior a 1080px. O Instagram vai esticar o arquivo e ele perderá qualidade.";
-              statusClass = "status-bad";
-            }
-            break;
-
-          case 'instagram_stories':
-            const prop = (h/w).toFixed(2);
-            if (w === 1080 && h === 1920) {
-              titulo = "Perfeito para Stories/Reels";
-              texto = "A imagem possui a proporção 9:16 (1080x1920px) exata recomendada pela plataforma.";
-              statusClass = "status-good";
-            } else if (prop >= 1.77 && prop <= 1.78) {
-              titulo = "Proporção Correta, Tamanho Não";
-              texto = "A imagem tem a proporção 9:16, mas não está exatamente em 1080x1920px. O app irá redimensionar automaticamente.";
-              statusClass = "status-warning";
-            } else {
-              titulo = "Proporção Inadequada";
-              texto = `Sua imagem está na proporção de 1:${prop}. Os Stories cortarão as bordas ou criarão barras de fundo preenchendo a tela.`;
-              statusClass = "status-warning";
-              dica = "Dimensões exatas para a tela cheia: 1080px de largura por 1920px de altura.";
-            }
-            break;
-
-          case 'web_site':
-            if (w >= 1000 && w <= 2000) {
-              titulo = "Resolução Excelente para Web";
-              texto = "O tamanho está dentro do padrão (geralmente Full HD: 1920px) para preencher telas de monitores mantendo carregamento rápido.";
-              statusClass = "status-good";
-            } else if (w > 2500) {
-              titulo = "Alerta de Performance (PPI Excessivo)";
-              texto = "A imagem é maior que a maioria dos monitores suporta nativamente. Resolução (PPI) e dimensões muito altas vão deixar seu site lento e prejudicar seu SEO no Google.";
-              statusClass = "status-bad";
-              dica = "Salve imagens para web entre 72 a 96 PPI. Exporte em formato WebP ou JPEG comprimido a 80%. O tamanho físico do arquivo deve estar abaixo de 500kb.";
-            } else {
-              titulo = "Atenção: Pequena para Banners";
-              texto = "Se usada como ícone ou no corpo do texto, está ótima. Se for usada como Banner de topo (cobrindo a tela), ela vai pixelar em computadores.";
-              statusClass = "status-warning";
-            }
-            break;
-
-          case 'whatsapp':
-            if (w <= 1600 && h <= 1600) {
-              titulo = "Ideal para Envio em Galeria";
-              texto = "Sua imagem está numa margem segura (<1600px). O WhatsApp aplicará pouquíssima compressão caso envie normalmente pela galeria.";
-              statusClass = "status-good";
-            } else {
-              titulo = "Atenção à Compressão Padrão";
-              texto = "Imagens acima de 1600px sofrem redimensionamento forçado pelo WhatsApp ao enviar como 'Foto'.";
-              statusClass = "status-warning";
-              dica = "Dica: Se quiser enviar o arquivo com a resolução total para impressão ao seu cliente, selecione enviar como 'DOCUMENTO' no WhatsApp (ícone de clipe > Documento).";
-            }
-            break;
-        }
-
-        // 3. Atualizar a UI
-        resultadoBox.className = `result-box ${statusClass}`;
-        document.getElementById('resultado-titulo').innerText = titulo;
-        document.getElementById('resultado-texto').innerHTML = texto;
-        document.getElementById('dica-extra').innerText = dica;
-        resultadoBox.style.display = 'block';
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>${f.nome}</strong><br><small>${f.tipo}</small></td>
+            <td>${qual}</td>
+            <td>${dim}</td>
+            <td><span class="badge ${badge}">${badge === 'badge-good' ? 'Excelente' : (badge === 'badge-warn' ? 'Aceitável' : 'Crítico')}</span></td>
+          `;
+          tbody.appendChild(tr);
+        });
       }
     </script>
   </body>
