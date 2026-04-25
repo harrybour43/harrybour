@@ -3,98 +3,37 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Auditoria de Imagem V2 | Harry Bour</title>
+    <title>Calculadora de Resolução | Harry Bour</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     
     <style>
-      .calc-wrapper {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 30px;
-        max-width: 1200px;
-        margin: 0 auto;
-      }
-
-      .calc-panel {
-        flex: 1;
-        min-width: 350px;
-        background: var(--bg-surface);
-        border: 1px solid var(--border-color);
-        padding: 30px;
-        border-radius: 4px;
-      }
-
+      .calc-wrapper { display: flex; flex-wrap: wrap; gap: 30px; max-width: 1200px; margin: 0 auto; }
+      .calc-panel { flex: 1; min-width: 350px; background: var(--bg-surface); border: 1px solid var(--border-color); padding: 30px; border-radius: 4px; }
       .full-width { flex-basis: 100%; }
-
-      .drop-zone {
-        border: 2px dashed var(--border-color);
-        padding: 30px;
-        text-align: center;
-        cursor: pointer;
-        background: var(--bg-base);
-        color: var(--text-muted);
-        margin-bottom: 20px;
-      }
-
+      .drop-zone { border: 2px dashed var(--border-color); padding: 30px; text-align: center; cursor: pointer; background: var(--bg-base); color: var(--text-muted); margin-bottom: 20px; }
       .drop-zone.dragover { border-color: var(--text-main); background: var(--btn-bg); }
+      .result-box { margin-top: 20px; padding: 20px; border-left: 4px solid var(--border-color); background: var(--bg-base); display: none; }
+      
+      .table-container { margin-top: 20px; overflow-x: auto; }
+      table { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: 0.9rem; }
+      th { text-align: left; background: var(--bg-base); color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; padding: 12px; border-bottom: 2px solid var(--border-color); }
+      td { padding: 12px; border-bottom: 1px solid var(--border-color); color: var(--text-main); }
 
-      .result-box {
-        margin-top: 20px;
-        padding: 20px;
-        border-left: 4px solid var(--border-color);
-        background: var(--bg-base);
-        display: none;
-      }
-
-      /* Estilização da Tabela Dinâmica */
-      .table-container {
-        margin-top: 20px;
-        overflow-x: auto;
-      }
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        font-family: var(--font-ui);
-        font-size: 0.9rem;
-      }
-
-      th {
-        text-align: left;
-        background: var(--bg-base);
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        padding: 12px;
-        border-bottom: 2px solid var(--border-color);
-      }
-
-      td {
-        padding: 12px;
-        border-bottom: 1px solid var(--border-color);
-        color: var(--text-main);
-      }
-
-      .badge {
-        padding: 2px 8px;
-        border-radius: 3px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-      }
-
-      .badge-good { background: #155724; color: #d4edda; }
-      .badge-warn { background: #856404; color: #fff3cd; }
-      .badge-crit { background: #721c24; color: #f8d7da; }
+      .badge { padding: 2px 8px; border-radius: 3px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+      .badge-good { background: #155724; color: #d4edda; } /* Ideal */
+      .badge-warn { background: #856404; color: #fff3cd; } /* Risco de compressão/pixelização */
+      .badge-crit { background: #721c24; color: #f8d7da; } /* Inadequado */
 
       .status-good { border-left-color: #4ade80; }
       .status-warning { border-left-color: #facc15; }
       .status-bad { border-left-color: #f87171; }
+      
+      .suggestion-tag { display: inline-block; margin-top: 8px; padding: 4px 10px; background: var(--btn-bg); border: 1px solid var(--border-color); font-size: 0.8rem; color: var(--text-main); }
     </style>
   </head>
 
-  <body data-page="calculadora-v2">
+  <body data-page="calculadora-v3">
     <div class="app-wrapper no-sidebar">
       <header class="fixed-header">
         <a href="index.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
@@ -105,53 +44,67 @@
       <main class="main-content">
         <section class="view-section active" style="display:block;">
           <div class="section-header" style="text-align: center; margin-bottom: 40px">
-            <h2>Auditoria de Resolução V2</h2>
-            <p class="category-description">Análise técnica de densidade (PPI) e saída física (DPI).</p>
+            <h2>Calculadora de Resolução</h2>
+            <p class="category-description">Análise comportamental de arquivos de imagem em relação ao destino ou suporte.</p>
           </div>
 
           <div class="calc-wrapper">
             <div class="calc-panel">
+              <h3 style="font-family: var(--font-display); margin-bottom: 20px;">1. Entrada e Destino</h3>
               <div class="drop-zone" id="drop-zone">
                 <i class="fa-solid fa-upload"></i>
-                <p>Arraste a imagem ou clique</p>
+                <p>Arraste a foto ou clique</p>
                 <input type="file" id="file-input" accept="image/*" style="display: none;">
               </div>
-              <div style="display: flex; gap: 10px;">
+              <div style="display: flex; gap: 10px; margin-bottom: 20px;">
                 <div class="form-group" style="flex:1">
                   <label>Largura (px)</label>
-                  <input type="number" id="input-w">
+                  <input type="number" id="input-w" placeholder="6000">
                 </div>
                 <div class="form-group" style="flex:1">
                   <label>Altura (px)</label>
-                  <input type="number" id="input-h">
+                  <input type="number" id="input-h" placeholder="4000">
                 </div>
               </div>
-              <button class="btn-submit" id="btn-calcular" style="width: 100%; margin-top: 20px;">Gerar Laudo Completo</button>
+              <div class="form-group">
+                <label>Destino Principal</label>
+                <select id="select-destino">
+                  <option value="insta_feed">Instagram Feed (Post)</option>
+                  <option value="insta_stories">Instagram Stories / Reels</option>
+                  <option value="whatsapp">WhatsApp (Mensagem Rápida)</option>
+                  <option value="web_portfolio">Web Portfolio / Site</option>
+                  <option value="print_fineart">Impressão Fine Art (Papel Algodão)</option>
+                  <option value="print_grande">Grandes Formatos (Banner/Canvas)</option>
+                </select>
+              </div>
+              <button class="btn-submit" id="btn-calcular" style="width: 100%; margin-top: 20px;">Analisar Viabilidade</button>
             </div>
 
             <div class="calc-panel">
-              <h3 style="font-family: var(--font-display); margin-bottom: 15px;">Diagnóstico Geral</h3>
+              <h3 style="font-family: var(--font-display); margin-bottom: 20px;">2. Diagnóstico de Destino</h3>
+              <div id="diag-vazio" style="color: var(--text-muted); font-style: italic;">Aguardando dados para auditoria...</div>
               <div id="resultado-box" class="result-box">
-                <div id="res-titulo" style="font-weight: 600; font-size: 1.1rem; margin-bottom: 10px;"></div>
-                <div id="res-texto" style="font-size: 0.95rem; color: var(--text-muted);"></div>
+                <div id="res-meta" style="font-family: monospace; font-size: 0.8rem; margin-bottom: 10px; color: var(--text-muted);"></div>
+                <div id="res-titulo" style="font-weight: 600; font-size: 1.2rem; margin-bottom: 10px;"></div>
+                <div id="res-texto" style="font-size: 0.95rem; line-height: 1.5;"></div>
+                <div id="res-sugestao" class="suggestion-tag"></div>
               </div>
             </div>
 
             <div class="calc-panel full-width">
-              <h3 style="font-family: var(--font-display); margin-bottom: 20px;">Matriz de Capacidade e Suportes (2026)</h3>
+              <h3 style="font-family: var(--font-display); margin-bottom: 20px;">Matriz de Comportamento Multi-Suporte</h3>
               <div class="table-container">
                 <table id="tabela-capacidade">
                   <thead>
                     <tr>
-                      <th>Destino / Uso</th>
-                      <th>Padrão Sugerido</th>
-                      <th>Dimensão Máxima</th>
-                      <th>Qualidade</th>
+                      <th>Suporte</th>
+                      <th>Proporção/PPI Alvo</th>
+                      <th>Status de Entrega</th>
+                      <th>Sugestão de Redimensionamento</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr><td colspan="4" style="text-align:center; color:var(--text-muted)">Aguardando dados da imagem...</td></tr>
-                  </tbody>
+                    </tbody>
                 </table>
               </div>
             </div>
@@ -164,8 +117,8 @@
       const fileInput = document.getElementById('file-input');
       const dropZone = document.getElementById('drop-zone');
       const btnCalcular = document.getElementById('btn-calcular');
+      const destinoSelect = document.getElementById('select-destino');
 
-      // Drag and Drop
       dropZone.onclick = () => fileInput.click();
       dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('dragover'); };
       dropZone.ondragleave = () => dropZone.classList.remove('dragover');
@@ -183,78 +136,132 @@
           img.onload = () => {
             document.getElementById('input-w').value = img.width;
             document.getElementById('input-h').value = img.height;
-            gerarRelatorio(img.width, img.height);
+            auditar();
           };
           img.src = e.target.result;
         };
         reader.readAsDataURL(file);
       }
 
-      btnCalcular.onclick = () => {
+      btnCalcular.onclick = auditar;
+
+      function auditar() {
         const w = parseInt(document.getElementById('input-w').value);
         const h = parseInt(document.getElementById('input-h').value);
-        if (w && h) gerarRelatorio(w, h);
-      };
+        const destinoKey = destinoSelect.value;
+        if (!w || !h) return;
 
-      function gerarRelatorio(w, h) {
+        document.getElementById('diag-vazio').style.display = 'none';
         const resBox = document.getElementById('resultado-box');
         resBox.style.display = 'block';
-        
-        // Regras de PPI vs DPI
-        // PPI (Pixels Per Inch) é para telas. 72-96 é o padrão "legado" para web sem retina.
-        // 150-300 PPI é o padrão para telas modernas de alta densidade.
-        
+
         const megapixels = ((w * h) / 1000000).toFixed(1);
-        document.getElementById('res-titulo').innerText = `${megapixels} Megapixels detectados`;
-        document.getElementById('res-texto').innerText = `O arquivo possui resolução suficiente para cobrir uma ampla gama de suportes, desde ícones de sistema até ampliações físicas.`;
+        const proporcaoAtual = (w / h).toFixed(2);
+        
+        // Definição de Destinos e Regras
+        const specs = {
+          insta_feed: { nome: "Instagram Feed", w: 1080, ratio: "1:1 ou 4:5", ratioVal: [1, 0.8], ppi: 150 },
+          insta_stories: { nome: "Instagram Stories", w: 1080, h: 1920, ratio: "9:16", ratioVal: [0.56], ppi: 300 },
+          whatsapp: { nome: "WhatsApp", w: 1600, ratio: "Livre", ppi: 96 },
+          web_portfolio: { nome: "Web Portfolio", w: 1920, ratio: "Livre", ppi: 72 },
+          print_fineart: { nome: "Fine Art", ppi: 300, print: true },
+          print_grande: { nome: "Grande Formato", ppi: 100, print: true }
+        };
 
-        const formatos = [
-          { nome: "Ícone (PWA/Android)", ref: 192, ppi: 96, tipo: "Digital" },
-          { nome: "WhatsApp (Compressão padrão)", ref: 1600, ppi: 96, tipo: "Rede Social" },
-          { nome: "Instagram Feed (1:1)", ref: 1080, ppi: 150, tipo: "Rede Social" },
-          { nome: "Instagram Stories/Reels", ref: 1080, ppi: 300, tipo: "Rede Social" },
-          { nome: "Web Standard (Full HD)", ref: 1920, ppi: 72, tipo: "Web" },
-          { nome: "Monitor Retina / 4K", ref: 3840, ppi: 240, tipo: "Web" },
-          { nome: "Impressão Fine Art (Máxima)", dpi: 300, tipo: "Papel" },
-          { nome: "Impressão Jornal/Outdoor", dpi: 72, tipo: "Papel" }
-        ];
+        const target = specs[destinoKey];
+        let status = "status-good";
+        let titulo = "";
+        let texto = "";
+        let sugestao = "";
 
+        // Lógica de Auditoria Específica
+        if (target.print) {
+          const cmW = ((w / target.ppi) * 2.54).toFixed(1);
+          const cmH = ((h / target.ppi) * 2.54).toFixed(1);
+          titulo = `Viabilidade para ${target.nome}`;
+          texto = `Em ${target.ppi} PPI (Resolução de saída), seu arquivo atinge <strong>${cmW} x ${cmH} cm</strong>.`;
+          sugestao = "Dica: Mantenha em TIFF ou JPEG 100% para evitar artefatos de compressão térmica.";
+        } else {
+          const excesso = w / target.w;
+          if (excesso > 2) {
+            status = "status-warning";
+            titulo = "Qualidade Excessiva Detectada";
+            texto = `Sua imagem está ${excesso.toFixed(1)}x maior que o alvo do ${target.nome}. O algoritmo de compressão da rede social causará perda de nitidez (muttering).`;
+            sugestao = `Redimensione para ${target.w}px de largura antes de enviar.`;
+          } else if (excesso < 0.8) {
+            status = "status-bad";
+            titulo = "Risco de Pixelização";
+            texto = `Arquivo pequeno para ${target.nome}. A plataforma esticará os pixels, gerando artefatos visíveis e falta de definição.`;
+            sugestao = "Busque o arquivo original ou use um upscaler de IA.";
+          } else {
+            titulo = "Resolução Ideal";
+            texto = `Arquivo equilibrado para o ${target.nome}. O impacto do processamento automático será mínimo.`;
+            sugestao = "Pronto para publicação.";
+          }
+        }
+
+        document.getElementById('res-meta').innerText = `${w}x${h}px • ${megapixels}MP • Proporção ${proporcaoAtual}:1`;
+        document.getElementById('res-titulo').innerText = titulo;
+        document.getElementById('res-texto').innerHTML = texto;
+        document.getElementById('res-sugestao').innerText = sugestao;
+        resBox.className = `result-box ${status}`;
+
+        // Gerar Tabela Dinâmica Completa
+        gerarTabela(w, h, proporcaoAtual);
+      }
+
+      function gerarTabela(w, h, prop) {
         const tbody = document.querySelector('#tabela-capacidade tbody');
         tbody.innerHTML = '';
 
-        formatos.forEach(f => {
-          let dim = "";
-          let qual = "";
-          let badge = "";
+        const destinos = [
+          { n: "Instagram Feed", p: "1:1 ou 4:5", targetW: 1080, ppi: 150 },
+          { n: "Instagram Stories", p: "9:16", targetW: 1080, ppi: 300 },
+          { n: "WhatsApp (Foto)", p: "Livre", targetW: 1600, ppi: 96 },
+          { n: "WhatsApp (Doc)", p: "Livre", targetW: w, ppi: "Nativo" },
+          { n: "Web (Retina)", p: "Livre", targetW: 2560, ppi: 144 },
+          { n: "Fine Art (300 PPI)", p: "Nativa", targetW: w, ppi: 300, isPrint: true },
+          { n: "Canvas (150 PPI)", p: "Nativa", targetW: w, ppi: 150, isPrint: true }
+        ];
 
-          if (f.dpi) {
-            // Cálculo para papel (DPI)
-            const cmW = ((w / f.dpi) * 2.54).toFixed(1);
-            const cmH = ((h / f.dpi) * 2.54).toFixed(1);
-            dim = `${cmW} x ${cmH} cm`;
-            qual = `${f.dpi} DPI`;
-            badge = f.dpi >= 300 ? "badge-good" : (f.dpi >= 150 ? "badge-warn" : "badge-crit");
+        destinos.forEach(d => {
+          let statusStr = "";
+          let badge = "";
+          let sug = "";
+          const diff = w / d.targetW;
+
+          if (d.isPrint) {
+            const cmW = ((w / d.ppi) * 2.54).toFixed(1);
+            const cmH = ((h / d.ppi) * 2.54).toFixed(1);
+            statusStr = `Saída: ${cmW}x${cmH}cm`;
+            badge = "badge-good";
+            sug = "Não redimensionar";
           } else {
-            // Cálculo para telas (PPI)
-            const ratio = (w / f.ref).toFixed(2);
-            dim = `${f.ref}px base`;
-            qual = `${f.ppi} PPI`;
-            
-            if (ratio >= 1) {
-              badge = "badge-good";
-            } else if (ratio >= 0.7) {
+            if (diff > 2.5) {
+              statusStr = "Qualidade Excessiva";
               badge = "badge-warn";
-            } else {
+              sug = `Reduzir para ${d.targetW}px`;
+            } else if (diff < 0.6) {
+              statusStr = "Pixelização Crítica";
               badge = "badge-crit";
+              sug = "Não utilizar";
+            } else if (d.n.includes("WhatsApp (Doc)")) {
+               statusStr = "Preservação Total";
+               badge = "badge-good";
+               sug = "Melhor forma de envio";
+            } else {
+              statusStr = "Otimizado";
+              badge = "badge-good";
+              sug = "Manter como está";
             }
           }
 
           const tr = document.createElement('tr');
           tr.innerHTML = `
-            <td><strong>${f.nome}</strong><br><small>${f.tipo}</small></td>
-            <td>${qual}</td>
-            <td>${dim}</td>
-            <td><span class="badge ${badge}">${badge === 'badge-good' ? 'Excelente' : (badge === 'badge-warn' ? 'Aceitável' : 'Crítico')}</span></td>
+            <td><strong>${d.n}</strong></td>
+            <td>${d.p} / ${d.ppi}</td>
+            <td><span class="badge ${badge}">${statusStr}</span></td>
+            <td><small>${sug}</small></td>
           `;
           tbody.appendChild(tr);
         });
