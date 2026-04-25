@@ -18,14 +18,17 @@
         max-width: 1200px;
         margin: 0 auto;
       }
+
+      /* Ajuste principal de responsividade do painel */
       .calc-panel {
-        flex: 1;
-        min-width: 350px;
+        flex: 1 1 100%;
+        min-width: 0; /* Previne que elementos internos vazem a div flex */
         background: var(--bg-surface);
         border: 1px solid var(--border-color);
         padding: 30px;
         border-radius: 4px;
       }
+
       .full-width {
         flex-basis: 100%;
       }
@@ -50,12 +53,27 @@
         display: none;
       }
 
+      /* Tratamento das linhas de input para o mobile */
+      .input-row {
+        display: flex;
+        flex-wrap: wrap; /* Permite quebrar a linha se não houver espaço */
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+      .input-row .form-group {
+        flex: 1 1 120px; /* Tamanho mínimo de 120px antes de quebrar para a linha de baixo */
+      }
+
+      /* Tabela responsiva com rolagem horizontal */
       .table-container {
         margin-top: 20px;
+        width: 100%;
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch; /* Rolagem suave no iOS */
       }
       table {
         width: 100%;
+        min-width: 650px; /* Força a tabela a ter espaço de respiro, ativando o scroll horizontal */
         border-collapse: collapse;
         font-family: var(--font-ui);
         font-size: 0.9rem;
@@ -81,6 +99,7 @@
         font-size: 0.75rem;
         font-weight: 600;
         text-transform: uppercase;
+        white-space: nowrap;
       }
       .badge-good {
         background: #155724;
@@ -129,6 +148,13 @@
       .color-info {
         color: #60a5fa;
       }
+
+      /* Media Query para refinar espaços em telas pequenas */
+      @media (max-width: 767px) {
+        .calc-panel {
+          padding: 20px 15px;
+        }
+      }
     </style>
   </head>
 
@@ -171,29 +197,31 @@
                   style="display: none"
                 />
               </div>
-              <div style="display: flex; gap: 10px; margin-bottom: 20px">
-                <div class="form-group" style="flex: 1">
+
+              <div class="input-row">
+                <div class="form-group">
                   <label>Largura (px)</label>
                   <input type="number" id="input-w" placeholder="6000" />
                 </div>
-                <div class="form-group" style="flex: 1">
+                <div class="form-group">
                   <label>Altura (px)</label>
                   <input type="number" id="input-h" placeholder="4000" />
                 </div>
-                <div class="form-group" style="flex: 1">
+                <div class="form-group">
                   <label>PPI Atual</label>
                   <input type="number" id="input-ppi" placeholder="Ex: 300" />
                 </div>
               </div>
-              <div style="display: flex; gap: 10px; margin-bottom: 20px">
-                <div class="form-group" style="flex: 1">
+
+              <div class="input-row">
+                <div class="form-group" style="flex: 1 1 150px">
                   <label>Espaço de Cor</label>
                   <select id="select-cor">
                     <option value="rgb">RGB / sRGB</option>
                     <option value="cmyk">CMYK</option>
                   </select>
                 </div>
-                <div class="form-group" style="flex: 2">
+                <div class="form-group" style="flex: 1 1 250px">
                   <label>Destino Principal</label>
                   <select id="select-destino">
                     <option value="insta_feed">Instagram Feed (Post)</option>
@@ -383,13 +411,12 @@
               "Não redimensione. Mantenha os pixels originais da imagem.";
           }
 
-          // Lógica de Auditoria do PPI informado para Impressão
           if (ppiInput) {
             if (ppiInput < target.ppi) {
               status = "status-warning";
               const cmW_atual = ((w / ppiInput) * 2.54).toFixed(1);
               const cmH_atual = ((h / ppiInput) * 2.54).toFixed(1);
-              texto += `<br><br><strong>Atenção ao PPI Informado:</strong> A ${ppiInput} PPI o arquivo atinge fisicamente ${cmW_atual}x${cmH_atual}cm. O laboratório poderá pedir o envio a ${target.ppi} PPI para este suporte.`;
+              texto += `<br><br><strong>Atenção ao PPI Informado:</strong> A ${ppiInput} PPI o arquivo atinge fisicamente ${cmW_atual}x${cmH_atual}cm. O laboratório exigirá o envio a ${target.ppi} PPI para este suporte.`;
             } else {
               texto += `<br><br><strong>PPI Informado Adequado:</strong> ${ppiInput} PPI atende ou supera a exigência do suporte escolhido.`;
             }
@@ -399,17 +426,17 @@
             status = "status-warning";
             titulo = "Aresta Longa Excessiva";
             texto = `Sua aresta longa é de ${arestaLonga}px. Para um portfólio web, isso gera arquivos pesados que prejudicam o carregamento (SEO) sem trazer ganho real de visualização na maioria dos monitores.`;
-            sugestao = `Redimensione para 1920px na aresta longa e mantenha em 96ppi (padrão de telas).`;
+            sugestao = `Redimensione para 1920px na aresta longa e mantenha em 96ppi como padrão de telas.`;
           } else if (arestaLonga < 1500) {
             status = "status-bad";
             titulo = "Baixa Resolução para Zoom";
-            texto = `Aresta longa de ${arestaLonga}px. Em um portfólio onde usuários usam recursos de "pinçar e dar zoom", a imagem poderá apresentar falta de nitidez.`;
+            texto = `Aresta longa de ${arestaLonga}px. Em um portfólio onde usuários usam recursos de "pinçar e dar zoom" ou abrem lightboxes, a imagem apresentará falta de nitidez em telas Retina/4K.`;
             sugestao =
-              "Exporte com pelo menos 1920px na aresta longa e mantenha em 96ppi (padrão de telas).";
+              "Exporte com pelo menos 1920px na aresta longa e mantenha em 96ppi como padrão de telas.";
           } else {
             titulo = "Tamanho Ideal para Portfólio";
             texto = `Aresta longa de ${arestaLonga}px. Excelente equilíbrio entre qualidade para visualização de detalhes (Lightbox/Zoom) e tempo de carregamento na web.`;
-            sugestao = "Mantenha em 96ppi (padrão de telas).";
+            sugestao = "Mantenha em 96ppi como padrão de telas.";
           }
         } else {
           // Lógica para Redes Sociais (Compressão de Algoritmo)
@@ -439,7 +466,7 @@
 
           if (destinoKey === "whatsapp") {
             sugestao =
-              "Para manter a resolução original sem compressão, envie o arquivo como 'Documento'. Se enviar como Foto, mantenha em até 1600px de aresta longa e 96ppi como padrão de telas.";
+              "Para manter a resolução original sem compressão, envie o arquivo como 'Documento'. Se enviar como Foto, mantenha em 96ppi como padrão de telas.";
           }
         }
 
@@ -453,7 +480,7 @@
           corKey === "cmyk" &&
           (destinoKey === "print_fineart" || destinoKey === "print_minilab")
         ) {
-          msgCor = `<div class="color-crit"><i class="fa-solid fa-triangle-exclamation"></i> <strong>Atenção ao Perfil de Cor:</strong> Minilabs e laboratórios Fine Art exigem arquivos em RGB (sRGB, AdobeRGB). Converter previamente o arquivo para CMYK reduzirá drasticamente o gamut (alcance de cores) da impressão. Envie em RGB.</div>`;
+          msgCor = `<div class="color-crit"><i class="fa-solid fa-triangle-exclamation"></i> <strong>Atenção ao Perfil de Cor:</strong> Minilabs e laboratórios Fine Art exigem arquivos em RGB (sRGB, AdobeRGB). Converter o arquivo para CMYK reduzirá drasticamente o gamut (alcance de cores) da impressão. Envie em RGB.</div>`;
         }
 
         document.getElementById(
