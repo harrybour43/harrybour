@@ -5,94 +5,259 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Calculadora de Resolução | Harry Bour</title>
     <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
     <style>
-      .calc-wrapper { display: flex; flex-wrap: wrap; gap: 30px; max-width: 1200px; margin: 0 auto; }
-      .calc-panel { flex: 1; min-width: 350px; background: var(--bg-surface); border: 1px solid var(--border-color); padding: 30px; border-radius: 4px; }
-      .full-width { flex-basis: 100%; }
-      .drop-zone { border: 2px dashed var(--border-color); padding: 30px; text-align: center; cursor: pointer; background: var(--bg-base); color: var(--text-muted); margin-bottom: 20px; }
-      .drop-zone.dragover { border-color: var(--text-main); background: var(--btn-bg); }
-      .result-box { margin-top: 20px; padding: 20px; border-left: 4px solid var(--border-color); background: var(--bg-base); display: none; }
-      
-      .table-container { margin-top: 20px; overflow-x: auto; }
-      table { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: 0.9rem; }
-      th { text-align: left; background: var(--bg-base); color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; padding: 12px; border-bottom: 2px solid var(--border-color); }
-      td { padding: 12px; border-bottom: 1px solid var(--border-color); color: var(--text-main); }
+      .calc-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .calc-panel {
+        flex: 1;
+        min-width: 350px;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        padding: 30px;
+        border-radius: 4px;
+      }
+      .full-width {
+        flex-basis: 100%;
+      }
+      .drop-zone {
+        border: 2px dashed var(--border-color);
+        padding: 30px;
+        text-align: center;
+        cursor: pointer;
+        background: var(--bg-base);
+        color: var(--text-muted);
+        margin-bottom: 20px;
+      }
+      .drop-zone.dragover {
+        border-color: var(--text-main);
+        background: var(--btn-bg);
+      }
+      .result-box {
+        margin-top: 20px;
+        padding: 20px;
+        border-left: 4px solid var(--border-color);
+        background: var(--bg-base);
+        display: none;
+      }
 
-      .badge { padding: 2px 8px; border-radius: 3px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
-      .badge-good { background: #155724; color: #d4edda; } /* Ideal */
-      .badge-warn { background: #856404; color: #fff3cd; } /* Risco de compressão/pixelização */
-      .badge-crit { background: #721c24; color: #f8d7da; } /* Inadequado */
+      .table-container {
+        margin-top: 20px;
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: var(--font-ui);
+        font-size: 0.9rem;
+      }
+      th {
+        text-align: left;
+        background: var(--bg-base);
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 12px;
+        border-bottom: 2px solid var(--border-color);
+      }
+      td {
+        padding: 12px;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-main);
+      }
 
-      .status-good { border-left-color: #4ade80; }
-      .status-warning { border-left-color: #facc15; }
-      .status-bad { border-left-color: #f87171; }
-      
-      .suggestion-tag { display: inline-block; margin-top: 8px; padding: 4px 10px; background: var(--btn-bg); border: 1px solid var(--border-color); font-size: 0.8rem; color: var(--text-main); }
+      .badge {
+        padding: 2px 8px;
+        border-radius: 3px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      .badge-good {
+        background: #155724;
+        color: #d4edda;
+      }
+      .badge-warn {
+        background: #856404;
+        color: #fff3cd;
+      }
+      .badge-crit {
+        background: #721c24;
+        color: #f8d7da;
+      }
+
+      .status-good {
+        border-left-color: #4ade80;
+      }
+      .status-warning {
+        border-left-color: #facc15;
+      }
+      .status-bad {
+        border-left-color: #f87171;
+      }
+
+      .suggestion-tag {
+        display: inline-block;
+        margin-top: 8px;
+        padding: 4px 10px;
+        background: var(--btn-bg);
+        border: 1px solid var(--border-color);
+        font-size: 0.8rem;
+        color: var(--text-main);
+      }
+      .color-alert {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px dashed var(--border-color);
+        font-size: 0.9rem;
+      }
+      .color-alert i {
+        margin-right: 5px;
+      }
+      .color-crit {
+        color: #f87171;
+      }
+      .color-info {
+        color: #60a5fa;
+      }
     </style>
   </head>
 
   <body data-page="calculadora-v3">
     <div class="app-wrapper no-sidebar">
       <header class="fixed-header">
-        <a href="index.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
+        <a href="index.html" class="btn-back"
+          ><i class="fa-solid fa-arrow-left"></i
+        ></a>
         <a href="index.html" class="brand-name">Harry Bour</a>
         <div class="header-spacer"></div>
       </header>
 
       <main class="main-content">
-        <section class="view-section active" style="display:block;">
-          <div class="section-header" style="text-align: center; margin-bottom: 40px">
+        <section class="view-section active" style="display: block">
+          <div
+            class="section-header"
+            style="text-align: center; margin-bottom: 40px"
+          >
             <h2>Calculadora de Resolução</h2>
-            <p class="category-description">Análise comportamental de arquivos de imagem em relação ao destino ou suporte.</p>
+            <p class="category-description">
+              Análise comportamental de imagens em relação ao suporte ou plataforma de exibição. 
+            </p>
           </div>
 
           <div class="calc-wrapper">
             <div class="calc-panel">
-              <h3 style="font-family: var(--font-display); margin-bottom: 20px;">1. Entrada e Destino</h3>
+              <h3 style="font-family: var(--font-display); margin-bottom: 20px">
+                1. Entrada e Destino
+              </h3>
               <div class="drop-zone" id="drop-zone">
                 <i class="fa-solid fa-upload"></i>
                 <p>Arraste a foto ou clique</p>
-                <input type="file" id="file-input" accept="image/*" style="display: none;">
+                <input
+                  type="file"
+                  id="file-input"
+                  accept="image/*"
+                  style="display: none"
+                />
               </div>
-              <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                <div class="form-group" style="flex:1">
+              <div style="display: flex; gap: 10px; margin-bottom: 20px">
+                <div class="form-group" style="flex: 1">
                   <label>Largura (px)</label>
-                  <input type="number" id="input-w" placeholder="6000">
+                  <input type="number" id="input-w" placeholder="6000" />
                 </div>
-                <div class="form-group" style="flex:1">
+                <div class="form-group" style="flex: 1">
                   <label>Altura (px)</label>
-                  <input type="number" id="input-h" placeholder="4000">
+                  <input type="number" id="input-h" placeholder="4000" />
                 </div>
               </div>
-              <div class="form-group">
-                <label>Destino Principal</label>
-                <select id="select-destino">
-                  <option value="insta_feed">Instagram Feed (Post)</option>
-                  <option value="insta_stories">Instagram Stories / Reels</option>
-                  <option value="whatsapp">WhatsApp (Mensagem Rápida)</option>
-                  <option value="web_portfolio">Web Portfolio / Site</option>
-                  <option value="print_fineart">Impressão Fine Art (Papel Algodão)</option>
-                  <option value="print_grande">Grandes Formatos (Banner/Canvas)</option>
-                </select>
+              <div style="display: flex; gap: 10px; margin-bottom: 20px">
+                <div class="form-group" style="flex: 1">
+                  <label>Espaço de Cor</label>
+                  <select id="select-cor">
+                    <option value="rgb">RGB / sRGB</option>
+                    <option value="cmyk">CMYK</option>
+                  </select>
+                </div>
+                <div class="form-group" style="flex: 2">
+                  <label>Destino Principal</label>
+                  <select id="select-destino">
+                    <option value="insta_feed">Instagram Feed (Post)</option>
+                    <option value="insta_stories">
+                      Instagram Stories / Reels
+                    </option>
+                    <option value="whatsapp">WhatsApp (Mensagem Rápida)</option>
+                    <option value="web_portfolio">Web Portfolio / Site</option>
+                    <option value="print_minilab">
+                      Revelação Fotográfica (10x15, 20x30)
+                    </option>
+                    <option value="print_fineart">
+                      Impressão Fine Art (Papel Algodão)
+                    </option>
+                    <option value="print_grande">
+                      Grandes Formatos (Offset / Canvas)
+                    </option>
+                  </select>
+                </div>
               </div>
-              <button class="btn-submit" id="btn-calcular" style="width: 100%; margin-top: 20px;">Analisar Viabilidade</button>
+              <button
+                class="btn-submit"
+                id="btn-calcular"
+                style="width: 100%; margin-top: 10px"
+              >
+                Analisar Viabilidade
+              </button>
             </div>
 
             <div class="calc-panel">
-              <h3 style="font-family: var(--font-display); margin-bottom: 20px;">2. Diagnóstico de Destino</h3>
-              <div id="diag-vazio" style="color: var(--text-muted); font-style: italic;">Aguardando dados para auditoria...</div>
+              <h3 style="font-family: var(--font-display); margin-bottom: 20px">
+                2. Diagnóstico de Destino
+              </h3>
+              <div
+                id="diag-vazio"
+                style="color: var(--text-muted); font-style: italic"
+              >
+                Aguardando dados para auditoria...
+              </div>
               <div id="resultado-box" class="result-box">
-                <div id="res-meta" style="font-family: monospace; font-size: 0.8rem; margin-bottom: 10px; color: var(--text-muted);"></div>
-                <div id="res-titulo" style="font-weight: 600; font-size: 1.2rem; margin-bottom: 10px;"></div>
-                <div id="res-texto" style="font-size: 0.95rem; line-height: 1.5;"></div>
+                <div
+                  id="res-meta"
+                  style="
+                    font-family: monospace;
+                    font-size: 0.8rem;
+                    margin-bottom: 10px;
+                    color: var(--text-muted);
+                  "
+                ></div>
+                <div
+                  id="res-titulo"
+                  style="
+                    font-weight: 600;
+                    font-size: 1.2rem;
+                    margin-bottom: 10px;
+                  "
+                ></div>
+                <div
+                  id="res-texto"
+                  style="font-size: 0.95rem; line-height: 1.5"
+                ></div>
                 <div id="res-sugestao" class="suggestion-tag"></div>
+                <div id="res-color" class="color-alert"></div>
               </div>
             </div>
 
             <div class="calc-panel full-width">
-              <h3 style="font-family: var(--font-display); margin-bottom: 20px;">Matriz de Comportamento Multi-Suporte</h3>
+              <h3 style="font-family: var(--font-display); margin-bottom: 20px">
+                Matriz de Comportamento Multi-Suporte
+              </h3>
               <div class="table-container">
                 <table id="tabela-capacidade">
                   <thead>
@@ -103,8 +268,7 @@
                       <th>Sugestão de Redimensionamento</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    </tbody>
+                  <tbody></tbody>
                 </table>
               </div>
             </div>
@@ -114,17 +278,21 @@
     </div>
 
     <script>
-      const fileInput = document.getElementById('file-input');
-      const dropZone = document.getElementById('drop-zone');
-      const btnCalcular = document.getElementById('btn-calcular');
-      const destinoSelect = document.getElementById('select-destino');
+      const fileInput = document.getElementById("file-input");
+      const dropZone = document.getElementById("drop-zone");
+      const btnCalcular = document.getElementById("btn-calcular");
+      const destinoSelect = document.getElementById("select-destino");
+      const corSelect = document.getElementById("select-cor");
 
       dropZone.onclick = () => fileInput.click();
-      dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('dragover'); };
-      dropZone.ondragleave = () => dropZone.classList.remove('dragover');
+      dropZone.ondragover = (e) => {
+        e.preventDefault();
+        dropZone.classList.add("dragover");
+      };
+      dropZone.ondragleave = () => dropZone.classList.remove("dragover");
       dropZone.ondrop = (e) => {
         e.preventDefault();
-        dropZone.classList.remove('dragover');
+        dropZone.classList.remove("dragover");
         if (e.dataTransfer.files.length) processar(e.dataTransfer.files[0]);
       };
       fileInput.onchange = (e) => processar(e.target.files[0]);
@@ -134,8 +302,8 @@
         reader.onload = (e) => {
           const img = new Image();
           img.onload = () => {
-            document.getElementById('input-w').value = img.width;
-            document.getElementById('input-h').value = img.height;
+            document.getElementById("input-w").value = img.width;
+            document.getElementById("input-h").value = img.height;
             auditar();
           };
           img.src = e.target.result;
@@ -146,26 +314,34 @@
       btnCalcular.onclick = auditar;
 
       function auditar() {
-        const w = parseInt(document.getElementById('input-w').value);
-        const h = parseInt(document.getElementById('input-h').value);
+        const w = parseInt(document.getElementById("input-w").value);
+        const h = parseInt(document.getElementById("input-h").value);
         const destinoKey = destinoSelect.value;
+        const corKey = corSelect.value;
+
         if (!w || !h) return;
 
-        document.getElementById('diag-vazio').style.display = 'none';
-        const resBox = document.getElementById('resultado-box');
-        resBox.style.display = 'block';
+        document.getElementById("diag-vazio").style.display = "none";
+        const resBox = document.getElementById("resultado-box");
+        resBox.style.display = "block";
 
         const megapixels = ((w * h) / 1000000).toFixed(1);
         const proporcaoAtual = (w / h).toFixed(2);
-        
-        // Definição de Destinos e Regras
+        const arestaLonga = Math.max(w, h);
+
         const specs = {
-          insta_feed: { nome: "Instagram Feed", w: 1080, ratio: "1:1 ou 4:5", ratioVal: [1, 0.8], ppi: 150 },
-          insta_stories: { nome: "Instagram Stories", w: 1080, h: 1920, ratio: "9:16", ratioVal: [0.56], ppi: 300 },
-          whatsapp: { nome: "WhatsApp", w: 1600, ratio: "Livre", ppi: 96 },
-          web_portfolio: { nome: "Web Portfolio", w: 1920, ratio: "Livre", ppi: 72 },
+          insta_feed: { nome: "Instagram Feed", w: 1080, ppi: 150 },
+          insta_stories: {
+            nome: "Instagram Stories",
+            w: 1080,
+            h: 1920,
+            ppi: 300,
+          },
+          whatsapp: { nome: "WhatsApp", w: 1600, ppi: 96 },
+          web_portfolio: { nome: "Web Portfolio", ppi: 72 },
+          print_minilab: { nome: "Minilab", ppi: 300, print: true },
           print_fineart: { nome: "Fine Art", ppi: 300, print: true },
-          print_grande: { nome: "Grande Formato", ppi: 100, print: true }
+          print_grande: { nome: "Grande Formato", ppi: 150, print: true },
         };
 
         const target = specs[destinoKey];
@@ -174,61 +350,129 @@
         let texto = "";
         let sugestao = "";
 
-        // Lógica de Auditoria Específica
+        // 1. DIAGNÓSTICO POR TIPO DE DESTINO
         if (target.print) {
           const cmW = ((w / target.ppi) * 2.54).toFixed(1);
           const cmH = ((h / target.ppi) * 2.54).toFixed(1);
-          titulo = `Viabilidade para ${target.nome}`;
-          texto = `Em ${target.ppi} PPI (Resolução de saída), seu arquivo atinge <strong>${cmW} x ${cmH} cm</strong>.`;
-          sugestao = "Dica: Mantenha em TIFF ou JPEG 100% para evitar artefatos de compressão térmica.";
+
+          if (destinoKey === "print_minilab") {
+            titulo = `Viabilidade para Revelação Comum`;
+            texto = `A 300 PPI, a imagem permite impressão de até <strong>${cmW} x ${cmH} cm</strong>. (Ideal para formatos como 10x15cm, 15x21cm ou 20x30cm mantendo densidade máxima).`;
+            sugestao =
+              "Certifique-se de realizar o crop na proporção do papel 2:3 ou 3:4 antes de enviar.";
+          } else {
+            titulo = `Viabilidade para ${target.nome}`;
+            texto = `Em ${target.ppi} PPI (Resolução de saída), seu arquivo atinge <strong>${cmW} x ${cmH} cm</strong> sem interpolação.`;
+            sugestao =
+              "Dica: Mantenha em TIFF ou JPEG 100% para evitar artefatos de compressão térmica.";
+          }
+        } else if (destinoKey === "web_portfolio") {
+          if (arestaLonga > 2500) {
+            status = "status-warning";
+            titulo = "Aresta Longa Excessiva";
+            texto = `Sua aresta longa é de ${arestaLonga}px. Para um portfólio web, isso gera arquivos pesados que prejudicam o carregamento (SEO) sem trazer ganho real de visualização na maioria dos monitores.`;
+            sugestao = `Redimensione para 1920px na aresta longa.`;
+          } else if (arestaLonga < 1500) {
+            status = "status-bad";
+            titulo = "Baixa Resolução para Zoom";
+            texto = `Aresta longa de ${arestaLonga}px. Em um portfólio onde usuários usam recursos de "pinçar e dar zoom" ou abrem lightboxes, a imagem apresentará falta de nitidez em telas Retina/4K.`;
+            sugestao = "Exporte com pelo menos 1920px na aresta longa.";
+          } else {
+            titulo = "Tamanho Ideal para Portfólio";
+            texto = `Aresta longa de ${arestaLonga}px. Excelente equilíbrio entre qualidade para visualização de detalhes (Lightbox/Zoom) e tempo de carregamento na web.`;
+            sugestao = "Manter como está.";
+          }
         } else {
+          // Lógica para Redes Sociais (Compressão de Algoritmo)
           const excesso = w / target.w;
+          const arestaAlvo = target.h ? Math.max(target.w, target.h) : target.w;
+
           if (excesso > 2) {
             status = "status-warning";
             titulo = "Qualidade Excessiva Detectada";
-            texto = `Sua imagem está ${excesso.toFixed(1)}x maior que o alvo do ${target.nome}. O algoritmo de compressão da rede social causará perda de nitidez (muttering).`;
-            sugestao = `Redimensione para ${target.w}px de largura antes de enviar.`;
+            texto = `Sua imagem está ${excesso.toFixed(
+              1
+            )}x maior que o alvo do ${
+              target.nome
+            }. O algoritmo de compressão da rede social atuará de forma agressiva, causando perda de micro-contraste e nitidez.`;
+            sugestao = `Redimensione para ${arestaAlvo}px na aresta longa antes de enviar.`;
           } else if (excesso < 0.8) {
             status = "status-bad";
             titulo = "Risco de Pixelização";
             texto = `Arquivo pequeno para ${target.nome}. A plataforma esticará os pixels, gerando artefatos visíveis e falta de definição.`;
-            sugestao = "Busque o arquivo original ou use um upscaler de IA.";
+            sugestao = "Busque o arquivo original ou aplique upscale.";
           } else {
-            titulo = "Resolução Ideal";
-            texto = `Arquivo equilibrado para o ${target.nome}. O impacto do processamento automático será mínimo.`;
+            titulo = "Resolução Otimizada";
+            texto = `Arquivo equilibrado para o ${target.nome}. O impacto do processamento automático será imperceptível.`;
             sugestao = "Pronto para publicação.";
+          }
+
+          if (destinoKey === "whatsapp") {
+            sugestao +=
+              " Dica extra: Para manter a qualidade e resolução originais sem compressão, envie o arquivo como 'Documento' no aplicativo.";
           }
         }
 
-        document.getElementById('res-meta').innerText = `${w}x${h}px • ${megapixels}MP • Proporção ${proporcaoAtual}:1`;
-        document.getElementById('res-titulo').innerText = titulo;
-        document.getElementById('res-texto').innerHTML = texto;
-        document.getElementById('res-sugestao').innerText = sugestao;
+        // 2. DIAGNÓSTICO DE COR (RGB vs CMYK)
+        let msgCor = "";
+        if (corKey === "cmyk" && !target.print) {
+          msgCor = `<div class="color-crit"><i class="fa-solid fa-triangle-exclamation"></i> <strong>Atenção ao CMYK:</strong> Telas, navegadores e redes sociais operam em padrão aditivo (luz). Imagens enviadas em CMYK para meios digitais ficarão com cores lavadas, mortas ou até invertidas. Converta seu arquivo para sRGB.</div>`;
+        } else if (corKey === "rgb" && destinoKey === "print_grande") {
+          msgCor = `<div class="color-info"><i class="fa-solid fa-circle-info"></i> <strong>Alerta de Conversão:</strong> A maioria das gráficas offset para grandes formatos exige CMYK. Se enviar em RGB, o RIP da impressora fará uma conversão automática e cores vibrantes podem perder saturação. Confirme com o birô de impressão.</div>`;
+        } else if (
+          corKey === "cmyk" &&
+          (destinoKey === "print_fineart" || destinoKey === "print_minilab")
+        ) {
+          msgCor = `<div class="color-info"><i class="fa-solid fa-circle-info"></i> <strong>Info de Calibração:</strong> Plotters Fine Art e Minilabs fotográficos trabalham nativamente recebendo RGB (convertendo internamente com muitos cartuchos de cor). Enviar CMYK pré-convertido pode reduzir o alcance dinâmico (gamut) da sua impressão.</div>`;
+        }
+
+        document.getElementById(
+          "res-meta"
+        ).innerText = `${w}x${h}px • ${megapixels}MP • Proporção ${proporcaoAtual}:1 • Perfil: ${corKey.toUpperCase()}`;
+        document.getElementById("res-titulo").innerText = titulo;
+        document.getElementById("res-texto").innerHTML = texto;
+        document.getElementById("res-sugestao").innerText = sugestao;
+        document.getElementById("res-color").innerHTML = msgCor;
         resBox.className = `result-box ${status}`;
 
-        // Gerar Tabela Dinâmica Completa
-        gerarTabela(w, h, proporcaoAtual);
+        gerarTabela(w, h, proporcaoAtual, arestaLonga);
       }
 
-      function gerarTabela(w, h, prop) {
-        const tbody = document.querySelector('#tabela-capacidade tbody');
-        tbody.innerHTML = '';
+      function gerarTabela(w, h, prop, arestaLonga) {
+        const tbody = document.querySelector("#tabela-capacidade tbody");
+        tbody.innerHTML = "";
 
         const destinos = [
           { n: "Instagram Feed", p: "1:1 ou 4:5", targetW: 1080, ppi: 150 },
           { n: "Instagram Stories", p: "9:16", targetW: 1080, ppi: 300 },
           { n: "WhatsApp (Foto)", p: "Livre", targetW: 1600, ppi: 96 },
-          { n: "WhatsApp (Doc)", p: "Livre", targetW: w, ppi: "Nativo" },
-          { n: "Web (Retina)", p: "Livre", targetW: 2560, ppi: 144 },
-          { n: "Fine Art (300 PPI)", p: "Nativa", targetW: w, ppi: 300, isPrint: true },
-          { n: "Canvas (150 PPI)", p: "Nativa", targetW: w, ppi: 150, isPrint: true }
+          {
+            n: "Web Portfolio",
+            p: "Livre",
+            targetW: 1920,
+            ppi: 72,
+            isWebZoom: true,
+          },
+          {
+            n: "Minilab (10x15 a 20x30)",
+            p: "Livre",
+            targetW: w,
+            ppi: 300,
+            isPrint: true,
+          },
+          {
+            n: "Fine Art (300 PPI)",
+            p: "Nativa",
+            targetW: w,
+            ppi: 300,
+            isPrint: true,
+          },
         ];
 
-        destinos.forEach(d => {
+        destinos.forEach((d) => {
           let statusStr = "";
           let badge = "";
           let sug = "";
-          const diff = w / d.targetW;
 
           if (d.isPrint) {
             const cmW = ((w / d.ppi) * 2.54).toFixed(1);
@@ -236,19 +480,33 @@
             statusStr = `Saída: ${cmW}x${cmH}cm`;
             badge = "badge-good";
             sug = "Não redimensionar";
-          } else {
-            if (diff > 2.5) {
-              statusStr = "Qualidade Excessiva";
+          } else if (d.isWebZoom) {
+            const diffEdge = arestaLonga / d.targetW;
+            if (diffEdge > 1.3) {
+              statusStr = "Aresta Longa Excessiva";
               badge = "badge-warn";
-              sug = `Reduzir para ${d.targetW}px`;
+              sug = `Reduzir aresta longa para 1920px`;
+            } else if (diffEdge < 0.8) {
+              statusStr = "Baixa Resolução p/ Zoom";
+              badge = "badge-crit";
+              sug = "Aumentar aresta longa";
+            } else {
+              statusStr = "Ideal para Lightbox";
+              badge = "badge-good";
+              sug = "Manter como está";
+            }
+          } else {
+            const diff = w / d.targetW;
+            const targetAresta = d.n.includes("Stories") ? 1920 : d.targetW;
+
+            if (diff > 2.5) {
+              statusStr = "Compressão de Servidor";
+              badge = "badge-warn";
+              sug = `Reduzir aresta longa para ${targetAresta}px`;
             } else if (diff < 0.6) {
-              statusStr = "Pixelização Crítica";
+              statusStr = "Pixelização";
               badge = "badge-crit";
               sug = "Não utilizar";
-            } else if (d.n.includes("WhatsApp (Doc)")) {
-               statusStr = "Preservação Total";
-               badge = "badge-good";
-               sug = "Melhor forma de envio";
             } else {
               statusStr = "Otimizado";
               badge = "badge-good";
@@ -256,7 +514,7 @@
             }
           }
 
-          const tr = document.createElement('tr');
+          const tr = document.createElement("tr");
           tr.innerHTML = `
             <td><strong>${d.n}</strong></td>
             <td>${d.p} / ${d.ppi}</td>
