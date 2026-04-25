@@ -150,7 +150,7 @@
           >
             <h2>Calculadora de Resolução</h2>
             <p class="category-description">
-              Análise comportamental de imagens em relação ao suporte ou plataforma de exibição. 
+              Comportamento técnico por suporte.
             </p>
           </div>
 
@@ -160,8 +160,10 @@
                 1. Entrada e Destino
               </h3>
               <div class="drop-zone" id="drop-zone">
-                <i class="fa-solid fa-upload"></i>
-                <p>Arraste a foto ou clique</p>
+                <div id="drop-content">
+                  <i class="fa-solid fa-upload"></i>
+                  <p>Arraste a foto ou clique</p>
+                </div>
                 <input
                   type="file"
                   id="file-input"
@@ -177,6 +179,10 @@
                 <div class="form-group" style="flex: 1">
                   <label>Altura (px)</label>
                   <input type="number" id="input-h" placeholder="4000" />
+                </div>
+                <div class="form-group" style="flex: 1">
+                  <label>PPI Atual</label>
+                  <input type="number" id="input-ppi" placeholder="Ex: 300" />
                 </div>
               </div>
               <div style="display: flex; gap: 10px; margin-bottom: 20px">
@@ -280,6 +286,7 @@
     <script>
       const fileInput = document.getElementById("file-input");
       const dropZone = document.getElementById("drop-zone");
+      const dropContent = document.getElementById("drop-content");
       const btnCalcular = document.getElementById("btn-calcular");
       const destinoSelect = document.getElementById("select-destino");
       const corSelect = document.getElementById("select-cor");
@@ -298,6 +305,8 @@
       fileInput.onchange = (e) => processar(e.target.files[0]);
 
       function processar(file) {
+        dropContent.innerHTML = `<i class="fa-solid fa-file-image"></i><p style="color: var(--text-main); font-weight: bold; margin-top: 10px;">${file.name}</p>`;
+
         const reader = new FileReader();
         reader.onload = (e) => {
           const img = new Image();
@@ -316,6 +325,7 @@
       function auditar() {
         const w = parseInt(document.getElementById("input-w").value);
         const h = parseInt(document.getElementById("input-h").value);
+        const ppiInput = parseInt(document.getElementById("input-ppi").value);
         const destinoKey = destinoSelect.value;
         const corKey = corSelect.value;
 
@@ -328,17 +338,18 @@
         const megapixels = ((w * h) / 1000000).toFixed(1);
         const proporcaoAtual = (w / h).toFixed(2);
         const arestaLonga = Math.max(w, h);
+        const ppiExibicao = ppiInput ? `${ppiInput} PPI` : "Indefinido";
 
         const specs = {
-          insta_feed: { nome: "Instagram Feed", w: 1080, ppi: 150 },
+          insta_feed: { nome: "Instagram Feed", w: 1080, ppi: 96 },
           insta_stories: {
-            nome: "Instagram Stories",
+            nome: "Instagram Stories / Reels",
             w: 1080,
             h: 1920,
-            ppi: 300,
+            ppi: 96,
           },
           whatsapp: { nome: "WhatsApp", w: 1600, ppi: 96 },
-          web_portfolio: { nome: "Web Portfolio", ppi: 72 },
+          web_portfolio: { nome: "Web Portfolio", ppi: 96 },
           print_minilab: { nome: "Minilab", ppi: 300, print: true },
           print_fineart: { nome: "Fine Art", ppi: 300, print: true },
           print_grande: { nome: "Grande Formato", ppi: 150, print: true },
@@ -357,37 +368,55 @@
 
           if (destinoKey === "print_minilab") {
             titulo = `Viabilidade para Revelação Comum`;
-            texto = `A 300 PPI, a imagem permite impressão de até <strong>${cmW} x ${cmH} cm</strong>. (Ideal para formatos como 10x15cm, 15x21cm ou 20x30cm mantendo densidade máxima).`;
+            texto = `A ${target.ppi} PPI, a imagem permite impressão de até <strong>${cmW} x ${cmH} cm</strong>. (Ideal para formatos como 10x15cm, 15x21cm ou 20x30cm mantendo densidade máxima).`;
             sugestao =
-              "Certifique-se de realizar o crop na proporção do papel 2:3 ou 3:4 antes de enviar.";
-          } else {
-            titulo = `Viabilidade para ${target.nome}`;
+              "Mantenha o PPI nativo da câmera e realize o crop na proporção do papel (2:3 ou 3:4) antes de enviar.";
+          } else if (destinoKey === "print_fineart") {
+            titulo = `Viabilidade para Fine Art`;
             texto = `Em ${target.ppi} PPI (Resolução de saída), seu arquivo atinge <strong>${cmW} x ${cmH} cm</strong> sem interpolação.`;
             sugestao =
-              "Dica: Mantenha em TIFF ou JPEG 100% para evitar artefatos de compressão térmica.";
+              "Mantenha o PPI nativo da câmera na exportação (TIFF ou JPEG 100%).";
+          } else {
+            titulo = `Viabilidade para Grandes Formatos`;
+            texto = `Em ${target.ppi} PPI, a imagem permite impressão de até <strong>${cmW} x ${cmH} cm</strong>.`;
+            sugestao =
+              "Não redimensione. Mantenha os pixels originais da imagem.";
+          }
+
+          // Lógica de Auditoria do PPI informado para Impressão
+          if (ppiInput) {
+            if (ppiInput < target.ppi) {
+              status = "status-warning";
+              const cmW_atual = ((w / ppiInput) * 2.54).toFixed(1);
+              const cmH_atual = ((h / ppiInput) * 2.54).toFixed(1);
+              texto += `<br><br><strong>Atenção ao PPI Informado:</strong> A ${ppiInput} PPI o arquivo atinge fisicamente ${cmW_atual}x${cmH_atual}cm. O laboratório poderá pedir o envio a ${target.ppi} PPI para este suporte.`;
+            } else {
+              texto += `<br><br><strong>PPI Informado Adequado:</strong> ${ppiInput} PPI atende ou supera a exigência do suporte escolhido.`;
+            }
           }
         } else if (destinoKey === "web_portfolio") {
           if (arestaLonga > 2500) {
             status = "status-warning";
             titulo = "Aresta Longa Excessiva";
             texto = `Sua aresta longa é de ${arestaLonga}px. Para um portfólio web, isso gera arquivos pesados que prejudicam o carregamento (SEO) sem trazer ganho real de visualização na maioria dos monitores.`;
-            sugestao = `Redimensione para 1920px na aresta longa.`;
+            sugestao = `Redimensione para 1920px na aresta longa e mantenha em 96ppi (padrão de telas).`;
           } else if (arestaLonga < 1500) {
             status = "status-bad";
             titulo = "Baixa Resolução para Zoom";
-            texto = `Aresta longa de ${arestaLonga}px. Em um portfólio onde usuários usam recursos de "pinçar e dar zoom" ou abrem lightboxes, a imagem apresentará falta de nitidez em telas Retina/4K.`;
-            sugestao = "Exporte com pelo menos 1920px na aresta longa.";
+            texto = `Aresta longa de ${arestaLonga}px. Em um portfólio onde usuários usam recursos de "pinçar e dar zoom", a imagem poderá apresentar falta de nitidez.`;
+            sugestao =
+              "Exporte com pelo menos 1920px na aresta longa e mantenha em 96ppi (padrão de telas).";
           } else {
             titulo = "Tamanho Ideal para Portfólio";
             texto = `Aresta longa de ${arestaLonga}px. Excelente equilíbrio entre qualidade para visualização de detalhes (Lightbox/Zoom) e tempo de carregamento na web.`;
-            sugestao = "Manter como está.";
+            sugestao = "Mantenha em 96ppi (padrão de telas).";
           }
         } else {
           // Lógica para Redes Sociais (Compressão de Algoritmo)
-          const excesso = w / target.w;
           const arestaAlvo = target.h ? Math.max(target.w, target.h) : target.w;
+          const excesso = arestaLonga / arestaAlvo;
 
-          if (excesso > 2) {
+          if (excesso > 1.8) {
             status = "status-warning";
             titulo = "Qualidade Excessiva Detectada";
             texto = `Sua imagem está ${excesso.toFixed(
@@ -395,7 +424,7 @@
             )}x maior que o alvo do ${
               target.nome
             }. O algoritmo de compressão da rede social atuará de forma agressiva, causando perda de micro-contraste e nitidez.`;
-            sugestao = `Redimensione para ${arestaAlvo}px na aresta longa antes de enviar.`;
+            sugestao = `Redimensione para ${arestaAlvo}px na aresta longa e mantenha em 96ppi como padrão de telas.`;
           } else if (excesso < 0.8) {
             status = "status-bad";
             titulo = "Risco de Pixelização";
@@ -404,31 +433,32 @@
           } else {
             titulo = "Resolução Otimizada";
             texto = `Arquivo equilibrado para o ${target.nome}. O impacto do processamento automático será imperceptível.`;
-            sugestao = "Pronto para publicação.";
+            sugestao =
+              "Pronto para publicação. Mantenha em 96ppi como padrão de telas.";
           }
 
           if (destinoKey === "whatsapp") {
-            sugestao +=
-              " Dica extra: Para manter a qualidade e resolução originais sem compressão, envie o arquivo como 'Documento' no aplicativo.";
+            sugestao =
+              "Para manter a resolução original sem compressão, envie o arquivo como 'Documento'. Se enviar como Foto, mantenha em até 1600px de aresta longa e 96ppi como padrão de telas.";
           }
         }
 
         // 2. DIAGNÓSTICO DE COR (RGB vs CMYK)
         let msgCor = "";
         if (corKey === "cmyk" && !target.print) {
-          msgCor = `<div class="color-crit"><i class="fa-solid fa-triangle-exclamation"></i> <strong>Atenção ao CMYK:</strong> Telas, navegadores e redes sociais operam em padrão aditivo (luz). Imagens enviadas em CMYK para meios digitais ficarão com cores lavadas, mortas ou até invertidas. Converta seu arquivo para sRGB.</div>`;
+          msgCor = `<div class="color-crit"><i class="fa-solid fa-triangle-exclamation"></i> <strong>Atenção ao CMYK:</strong> Telas operam em padrão RGB. Imagens em CMYK para meios digitais ficarão com cores lavadas ou invertidas. Converta para sRGB.</div>`;
         } else if (corKey === "rgb" && destinoKey === "print_grande") {
-          msgCor = `<div class="color-info"><i class="fa-solid fa-circle-info"></i> <strong>Alerta de Conversão:</strong> A maioria das gráficas offset para grandes formatos exige CMYK. Se enviar em RGB, o RIP da impressora fará uma conversão automática e cores vibrantes podem perder saturação. Confirme com o birô de impressão.</div>`;
+          msgCor = `<div class="color-info"><i class="fa-solid fa-circle-info"></i> <strong>Alerta de Conversão:</strong> Gráficas offset exigem CMYK. Se enviar em RGB, a conversão automática pode dessaturar cores vibrantes.</div>`;
         } else if (
           corKey === "cmyk" &&
           (destinoKey === "print_fineart" || destinoKey === "print_minilab")
         ) {
-          msgCor = `<div class="color-info"><i class="fa-solid fa-circle-info"></i> <strong>Info de Calibração:</strong> Plotters Fine Art e Minilabs fotográficos trabalham nativamente recebendo RGB (convertendo internamente com muitos cartuchos de cor). Enviar CMYK pré-convertido pode reduzir o alcance dinâmico (gamut) da sua impressão.</div>`;
+          msgCor = `<div class="color-crit"><i class="fa-solid fa-triangle-exclamation"></i> <strong>Atenção ao Perfil de Cor:</strong> Minilabs e laboratórios Fine Art exigem arquivos em RGB (sRGB, AdobeRGB). Converter previamente o arquivo para CMYK reduzirá drasticamente o gamut (alcance de cores) da impressão. Envie em RGB.</div>`;
         }
 
         document.getElementById(
           "res-meta"
-        ).innerText = `${w}x${h}px • ${megapixels}MP • Proporção ${proporcaoAtual}:1 • Perfil: ${corKey.toUpperCase()}`;
+        ).innerText = `${w}x${h}px • ${megapixels}MP • Arquivo: ${ppiExibicao} • Proporção ${proporcaoAtual}:1 • Perfil: ${corKey.toUpperCase()}`;
         document.getElementById("res-titulo").innerText = titulo;
         document.getElementById("res-texto").innerHTML = texto;
         document.getElementById("res-sugestao").innerText = sugestao;
@@ -443,14 +473,26 @@
         tbody.innerHTML = "";
 
         const destinos = [
-          { n: "Instagram Feed", p: "1:1 ou 4:5", targetW: 1080, ppi: 150 },
-          { n: "Instagram Stories", p: "9:16", targetW: 1080, ppi: 300 },
+          { n: "Instagram Feed", p: "1:1 ou 4:5", targetW: 1080, ppi: 96 },
+          {
+            n: "Instagram Stories / Reels",
+            p: "9:16",
+            targetW: 1080,
+            targetH: 1920,
+            ppi: 96,
+          },
           { n: "WhatsApp (Foto)", p: "Livre", targetW: 1600, ppi: 96 },
+          {
+            n: "WhatsApp (Doc)",
+            p: "Nativa",
+            targetW: arestaLonga,
+            ppi: "Nativo",
+          },
           {
             n: "Web Portfolio",
             p: "Livre",
             targetW: 1920,
-            ppi: 72,
+            ppi: 96,
             isWebZoom: true,
           },
           {
@@ -467,6 +509,13 @@
             ppi: 300,
             isPrint: true,
           },
+          {
+            n: "Grande Formato (150 PPI)",
+            p: "Livre",
+            targetW: w,
+            ppi: 150,
+            isPrint: true,
+          },
         ];
 
         destinos.forEach((d) => {
@@ -480,33 +529,24 @@
             statusStr = `Saída: ${cmW}x${cmH}cm`;
             badge = "badge-good";
             sug = "Não redimensionar";
-          } else if (d.isWebZoom) {
-            const diffEdge = arestaLonga / d.targetW;
-            if (diffEdge > 1.3) {
-              statusStr = "Aresta Longa Excessiva";
-              badge = "badge-warn";
-              sug = `Reduzir aresta longa para 1920px`;
-            } else if (diffEdge < 0.8) {
-              statusStr = "Baixa Resolução p/ Zoom";
-              badge = "badge-crit";
-              sug = "Aumentar aresta longa";
-            } else {
-              statusStr = "Ideal para Lightbox";
-              badge = "badge-good";
-              sug = "Manter como está";
-            }
+          } else if (d.n === "WhatsApp (Doc)") {
+            statusStr = "Preservação Total";
+            badge = "badge-good";
+            sug = "Envio sem compressão";
           } else {
-            const diff = w / d.targetW;
-            const targetAresta = d.n.includes("Stories") ? 1920 : d.targetW;
+            const targetAresta = d.targetH
+              ? Math.max(d.targetW, d.targetH)
+              : d.targetW;
+            const diffEdge = arestaLonga / targetAresta;
 
-            if (diff > 2.5) {
-              statusStr = "Compressão de Servidor";
+            if (diffEdge > 1.8) {
+              statusStr = "Aresta Excessiva";
               badge = "badge-warn";
               sug = `Reduzir aresta longa para ${targetAresta}px`;
-            } else if (diff < 0.6) {
-              statusStr = "Pixelização";
+            } else if (diffEdge < 0.7) {
+              statusStr = "Resolução Baixa";
               badge = "badge-crit";
-              sug = "Não utilizar";
+              sug = "Risco de pixelização";
             } else {
               statusStr = "Otimizado";
               badge = "badge-good";
