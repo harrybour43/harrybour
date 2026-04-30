@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>C.L.A.R.A. | Gerador de Contratos</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- Link para o seu estilo padrão -->
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+      /* Estilos extras específicos para o módulo de Contratos para manter a organização */
+      .step-container {
+        display: none;
+        animation: fadeIn 0.3s ease-out forwards;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .step-container.active {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+      }
+      .clause-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        padding: 20px;
+        border-radius: 8px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .clause-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .clause-header h4 {
+        font-family: var(--font-ui);
+        font-weight: 600;
+        font-size: 1rem;
+        margin: 0;
+      }
+      .btn-icon {
+        background: transparent;
+        color: #ef4444; /* Vermelho alerta */
+        border: none;
+        cursor: pointer;
+        font-size: 1.1rem;
+        padding: 5px;
+        transition: opacity 0.2s;
+      }
+      .btn-icon:hover { opacity: 0.7; }
+      
+      .clause-text {
+        width: 100%;
+        background: var(--bg-base);
+        color: var(--text-main);
+        border: 1px solid var(--border-color);
+        padding: 12px;
+        min-height: 80px;
+        font-family: var(--font-ui);
+        font-size: 0.9rem;
+        line-height: 1.5;
+        resize: vertical;
+      }
+      
+      .audit-box {
+        background: rgba(42, 42, 42, 0.5);
+        border-left: 4px solid #10b981; /* Verde Sucesso */
+        padding: 20px;
+        font-family: monospace;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        line-height: 1.6;
+        word-break: break-all;
+      }
+      
+      .warning-box {
+        background: rgba(245, 158, 11, 0.1);
+        border-left: 4px solid #f59e0b; /* Amarelo Aviso */
+        padding: 15px;
+        font-size: 0.9rem;
+        color: var(--text-main);
+        margin-top: 20px;
+      }
+
+      /* Progresso visual */
+      .progress-bar {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 40px;
+        border-bottom: 2px solid var(--border-color);
+        padding-bottom: 15px;
+      }
+      .step-indicator {
+        color: var(--text-muted);
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+      .step-indicator.active {
+        color: var(--text-main);
+      }
+    </style>
+  </head>
+
+  <body data-page="contratos">
+    <div class="app-wrapper no-sidebar">
+      
+      <header class="fixed-header">
+        <a href="#" class="btn-back" onclick="location.reload()">
+          <i class="fa-solid fa-xmark"></i>
+        </a>
+        <h1 class="brand-name" style="font-size: 1.2rem;">C.L.A.R.A. | Contratos</h1>
+        <div class="header-spacer"></div>
+      </header>
+
+      <main class="main-content full-width" style="padding: 40px 20px; margin-top: var(--header-height);">
+        
+        <!-- Indicador de Passos -->
+        <div class="progress-bar" style="max-width: 800px; margin: 0 auto 40px auto;">
+          <span id="ind-1" class="step-indicator active">1. Dados</span>
+          <span id="ind-2" class="step-indicator">2. Cláusulas</span>
+          <span id="ind-3" class="step-indicator">3. Emissão</span>
+        </div>
+
+        <!-- PASSO 1: DADOS DO CLIENTE -->
+        <section id="step-1" class="step-container active">
+          <div class="section-header" style="border-bottom: none; margin-bottom: 20px;">
+            <h2>Ficha do Cliente</h2>
+            <p class="category-description">Preencha ou valide os dados do contratante.</p>
+          </div>
+
+          <form id="client-form" class="contact-form" style="margin: 0 auto; width: 100%; max-width: 100%;" onsubmit="avancarPasso2(event)">
+            <div class="form-group">
+              <label for="client-name">Nome do(a) Responsável</label>
+              <input type="text" id="client-name" required placeholder="Ex: Maria Oliveira" value="Ana Carolina Alves" />
+            </div>
+            
+            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+              <div class="form-group" style="flex: 1; min-width: 200px;">
+                <label for="client-cpf">CPF</label>
+                <input type="text" id="client-cpf" required placeholder="000.000.000-00" value="123.456.789-00" />
+              </div>
+              <div class="form-group" style="flex: 1; min-width: 200px;">
+                <label for="session-date">Data do Ensaio</label>
+                <input type="date" id="session-date" required value="2026-10-12" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="session-type">Tipo de Serviço</label>
+              <input type="text" id="session-type" readonly value="Ensaio Infantil (Smash the Cake)" style="color: var(--text-muted);" />
+            </div>
+
+            <button type="submit" class="btn-submit" style="margin-top: 20px;">Avançar para Cláusulas <i class="fa-solid fa-arrow-right"></i></button>
+          </form>
+        </section>
+
+        <!-- PASSO 2: MONTAGEM DO CONTRATO (Lego) -->
+        <section id="step-2" class="step-container">
+          <div class="section-header" style="border-bottom: none; margin-bottom: 20px;">
+            <h2>Montagem do Contrato</h2>
+            <p class="category-description">Edite o texto ou remova as cláusulas indesejadas.</p>
+          </div>
+
+          <div id="clauses-container" style="display: flex; flex-direction: column; gap: 20px;">
+            <!-- JS vai renderizar as cláusulas aqui -->
+          </div>
+
+          <div style="display: flex; gap: 15px; margin-top: 20px;">
+            <button class="btn-submit" style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); flex: 1;" onclick="voltarPasso1()">Voltar</button>
+            <button class="btn-submit" style="flex: 2; background: #10b981; color: #fff;" onclick="avancarPasso3()">Gerar PDF & Auditoria <i class="fa-solid fa-file-pdf"></i></button>
+          </div>
+        </section>
+
+        <!-- PASSO 3: AUDITORIA E SUCESSO -->
+        <section id="step-3" class="step-container">
+          <div class="section-header" style="border-bottom: none; margin-bottom: 10px; text-align: center;">
+            <i class="fa-solid fa-circle-check" style="font-size: 3rem; color: #10b981; margin-bottom: 15px;"></i>
+            <h2>Contrato Gerado</h2>
+            <p class="category-description">Aguardando assinatura digital do cliente.</p>
+          </div>
+
+          <div id="ai-warnings">
+            <!-- Avisos de coerência renderizados via JS -->
+          </div>
+
+          <h3 style="font-family: var(--font-display); font-size: 1.4rem; margin-top: 30px; margin-bottom: 15px;">Página de Auditoria (Demonstração)</h3>
+          <div class="audit-box" id="audit-log">
+            <!-- Dados de auditoria renderizados via JS -->
+          </div>
+
+          <button class="btn-submit" style="margin-top: 30px;" onclick="location.reload()">
+            <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem;"></i> Enviar Link de Assinatura
+          </button>
+        </section>
+
+      </main>
+    </div>
+
+    <script>
+      // ==========================================
+      // ESTADO DA APLICAÇÃO (Banco de Dados Simulado)
+      // ==========================================
+      let clientInfo = {};
+      
+      // Banco de Cláusulas (Padrão para Ensaio Infantil)
+      let clausesData = [
+        { id: 'c1', title: '1. Objeto do Contrato', tag: 'essencial', text: 'O presente instrumento tem como objeto a prestação de serviços fotográficos para um Ensaio Infantil (Smash the Cake), a ser realizado no dia selecionado, com duração máxima de 2 horas.' },
+        { id: 'c2', title: '2. Prazos e Entrega', tag: 'prazo', text: 'O contratado compromete-se a entregar uma galeria online com 40 fotos tratadas em alta resolução no prazo máximo de 15 dias úteis contados a partir da data da sessão.' },
+        { id: 'c3', title: '3. Direitos de Imagem', tag: 'imagem', text: 'Os contratantes AUTORIZAM de forma gratuita o uso das fotografias do menor para fins de divulgação do portfólio do fotógrafo em redes sociais, site e concursos.' },
+        { id: 'c4', title: '4. Cancelamento e Remarcação', tag: 'multa', text: 'Em caso de imprevistos de saúde da criança ou mau tempo (em locações externas), o ensaio poderá ser remarcado uma única vez sem cobrança de multas, mediante aviso prévio de 24 horas.' },
+        { id: 'c5', title: '5. Do Pagamento', tag: 'financeiro', text: 'O valor total acordado será pago da seguinte forma: 30% no ato da assinatura deste contrato a título de reserva de agenda, e os 70% restantes no dia do ensaio, via PIX.' }
+      ];
+
+      // ==========================================
+      // LÓGICA DE NAVEGAÇÃO E INTERFACE
+      // ==========================================
+      function showStep(stepNum) {
+        document.querySelectorAll('.step-container').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.step-indicator').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(`step-${stepNum}`).classList.add('active');
+        document.getElementById(`ind-${stepNum}`).classList.add('active');
+        window.scrollTo(0,0);
+      }
+
+      function avancarPasso2(e) {
+        e.preventDefault(); // Evita recarregar a página
+        // Salva os dados do input
+        clientInfo = {
+          nome: document.getElementById('client-name').value,
+          cpf: document.getElementById('client-cpf').value,
+          data: document.getElementById('session-date').value
+        };
+        
+        renderClauses();
+        showStep(2);
+      }
+
+      function voltarPasso1() { showStep(1); }
+
+      // ==========================================
+      // LÓGICA DO CONSTRUTOR DE CLÁUSULAS (Lego)
+      // ==========================================
+      function renderClauses() {
+        const container = document.getElementById('clauses-container');
+        container.innerHTML = ''; // Limpa antes de desenhar
+
+        if (clausesData.length === 0) {
+          container.innerHTML = `<p style="text-align:center; color: var(--text-muted);">Nenhuma cláusula selecionada.</p>`;
+          return;
+        }
+
+        // Loop no array para desenhar cada cláusula
+        clausesData.forEach((clause, index) => {
+          // Atualiza a numeração automaticamente baseado na posição do Array
+          const currentNumber = index + 1;
+          const cleanTitle = clause.title.replace(/^[0-9]+\.\s*/, ''); // Remove numeração antiga se houver
+          
+          const card = document.createElement('div');
+          card.className = 'clause-card';
+          card.innerHTML = `
+            <div class="clause-header">
+              <h4>${currentNumber}. ${cleanTitle}</h4>
+              <button class="btn-icon" onclick="deleteClause('${clause.id}')" title="Remover Cláusula">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+            <textarea class="clause-text" oninput="updateClauseText('${clause.id}', this.value)">${clause.text}</textarea>
+          `;
+          container.appendChild(card);
+        });
+      }
+
+      function deleteClause(id) {
+        // Filtra o array removendo o ID selecionado
+        clausesData = clausesData.filter(c => c.id !== id);
+        renderClauses(); // Redesenha a tela para atualizar numeração
+      }
+
+      function updateClauseText(id, newText) {
+        const clause = clausesData.find(c => c.id === id);
+        if (clause) clause.text = newText;
+      }
+
+      // ==========================================
+      // LÓGICA DE AUDITORIA E VALIDAÇÃO (Sem IA)
+      // ==========================================
+      function avancarPasso3() {
+        generateAuditTrail();
+        checkCoherence();
+        showStep(3);
+      }
+
+      function checkCoherence() {
+        const warningsContainer = document.getElementById('ai-warnings');
+        warningsContainer.innerHTML = '';
+        
+        // Regra de Validação: Verificando se a cláusula de Direitos de Imagem existe
+        const hasImageRights = clausesData.some(c => c.tag === 'imagem');
+        
+        if (!hasImageRights) {
+          warningsContainer.innerHTML += `
+            <div class="warning-box">
+              <i class="fa-solid fa-triangle-exclamation"></i> <strong>Atenção Fotógrafo:</strong> Você removeu a cláusula de "Direitos de Imagem". Lembre-se de que você não poderá postar fotos desta criança no seu portfólio de forma legal.
+            </div>
+          `;
+        }
+
+        // Regra de Validação: Cancelamento
+        const hasPenalty = clausesData.some(c => c.tag === 'multa');
+        if (!hasPenalty) {
+          warningsContainer.innerHTML += `
+            <div class="warning-box">
+              <i class="fa-solid fa-triangle-exclamation"></i> <strong>Atenção:</strong> Nenhuma política de remarcação foi definida. O cliente poderá cancelar o ensaio na porta do estúdio sem sofrer multas.
+            </div>
+          `;
+        }
+      }
+
+      function generateAuditTrail() {
+        // Gerando um Hash falso simulando um SHA-256 da fusão de todo o texto
+        const combinedText = clausesData.map(c => c.text).join('');
+        const fakeHash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"; 
+        const now = new Date();
+
+        const auditBox = document.getElementById('audit-log');
+        auditBox.innerHTML = `
+<span style="color: #fff; font-weight: bold;">DOCUMENTO SELADO E AGUARDANDO ACEITE</span><br><br>
+<strong>ID Transação:</strong> TXN-8849-BR<br>
+<strong>Contratante:</strong> ${clientInfo.nome} (CPF: ${clientInfo.cpf})<br>
+<strong>Data do Serviço:</strong> ${clientInfo.data.split('-').reverse().join('/')}<br>
+<strong>Cláusulas Ativas:</strong> ${clausesData.length} blocos registrados.<br><br>
+<span style="color: #60a5fa;">[ SISTEMA DE INTEGRIDADE ]</span><br>
+<strong>Emissão Local:</strong> ${now.toLocaleDateString('pt-BR')} às ${now.toLocaleTimeString('pt-BR')}<br>
+<strong>IP do Emissor:</strong> 177.102.XX.XXX (Validado)<br>
+<strong>Hash do Documento (SHA-256):</strong><br>
+${fakeHash}<br><br>
+<em>*Qualquer alteração posterior ao envio da assinatura invalidará a chave Hash acima.</em>
+        `;
+      }
+    </script>
+  </body>
+</html>
