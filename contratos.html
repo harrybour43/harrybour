@@ -9,196 +9,272 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    
-    <!-- Link para o seu estilo padrão -->
     <link rel="stylesheet" href="style.css" />
 
     <style>
-      /* Estilos extras específicos para o módulo de Contratos para manter a organização */
-      .step-container {
-        display: none;
-        animation: fadeIn 0.3s ease-out forwards;
-        max-width: 800px;
-        margin: 0 auto;
-      }
-      .step-container.active {
-        display: flex;
-        flex-direction: column;
-        gap: 30px;
-      }
+      /* Estilos específicos para o App de Contratos */
+      .step-container { display: none; animation: fadeIn 0.3s ease-out forwards; max-width: 800px; margin: 0 auto; }
+      .step-container.active { display: flex; flex-direction: column; gap: 30px; }
+      
+      .progress-bar { display: flex; justify-content: space-between; margin-bottom: 40px; border-bottom: 2px solid var(--border-color); padding-bottom: 15px; }
+      .step-indicator { color: var(--text-muted); font-weight: 600; font-size: 0.9rem; }
+      .step-indicator.active { color: var(--accent-snc); }
+
+      /* Cards "Lego" do Contrato */
       .clause-card {
         background: var(--bg-surface);
         border: 1px solid var(--border-color);
-        padding: 20px;
-        border-radius: 8px;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
+        border-radius: 12px;
+        overflow: hidden;
       }
       .clause-header {
+        background: var(--bg-elevated);
+        padding: 15px 20px;
+        border-bottom: 1px solid var(--border-color);
         display: flex;
         justify-content: space-between;
         align-items: center;
       }
-      .clause-header h4 {
-        font-family: var(--font-ui);
-        font-weight: 600;
-        font-size: 1rem;
-        margin: 0;
-      }
-      .btn-icon {
-        background: transparent;
-        color: #ef4444; /* Vermelho alerta */
-        border: none;
-        cursor: pointer;
-        font-size: 1.1rem;
-        padding: 5px;
-        transition: opacity 0.2s;
-      }
-      .btn-icon:hover { opacity: 0.7; }
+      .clause-header h4 { margin: 0; font-family: var(--font-display); font-size: 1.2rem; color: #fff; }
       
-      .clause-text {
-        width: 100%;
-        background: var(--bg-base);
-        color: var(--text-main);
-        border: 1px solid var(--border-color);
-        padding: 12px;
-        min-height: 80px;
-        font-family: var(--font-ui);
-        font-size: 0.9rem;
-        line-height: 1.5;
-        resize: vertical;
-      }
+      /* Área de Controles (Inputs, Checkboxes) */
+      .clause-controls { padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+      .control-row { display: flex; gap: 15px; flex-wrap: wrap; }
+      .control-box { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 8px; }
+      .control-box label { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
       
-      .audit-box {
-        background: rgba(42, 42, 42, 0.5);
-        border-left: 4px solid #10b981; /* Verde Sucesso */
-        padding: 20px;
-        font-family: monospace;
-        font-size: 0.85rem;
-        color: var(--text-muted);
-        line-height: 1.6;
-        word-break: break-all;
+      /* Checkbox App Style */
+      .checkbox-group { display: flex; gap: 15px; flex-wrap: wrap; }
+      .checkbox-item {
+        display: flex; align-items: center; gap: 8px; background: var(--bg-base); 
+        padding: 10px 15px; border-radius: 8px; border: 1px solid var(--border-color); cursor: pointer;
+        user-select: none; transition: 0.2s;
       }
-      
-      .warning-box {
-        background: rgba(245, 158, 11, 0.1);
-        border-left: 4px solid #f59e0b; /* Amarelo Aviso */
-        padding: 15px;
-        font-size: 0.9rem;
-        color: var(--text-main);
-        margin-top: 20px;
-      }
+      .checkbox-item:hover { border-color: var(--text-muted); }
+      .checkbox-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent-snc); cursor: pointer; }
 
-      /* Progresso visual */
-      .progress-bar {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 40px;
-        border-bottom: 2px solid var(--border-color);
-        padding-bottom: 15px;
+      /* Área de Texto Dinâmico (Read-only) */
+      .clause-preview-box {
+        background: rgba(0,0,0,0.3);
+        padding: 20px;
+        border-top: 1px dashed var(--border-color);
+        font-family: 'Times New Roman', serif; /* Dá cara de documento */
+        font-size: 1.05rem;
+        line-height: 1.6;
+        color: #d1d5db;
       }
-      .step-indicator {
-        color: var(--text-muted);
-        font-weight: 600;
-        font-size: 0.9rem;
+      .dynamic-var { color: var(--accent-snc); font-weight: bold; background: rgba(255, 123, 0, 0.1); padding: 0 4px; border-radius: 4px; }
+
+      /* Validação e Alertas */
+      .error-msg { color: var(--accent-danger); font-size: 0.8rem; font-weight: 600; display: none; margin-top: -5px; }
+      .error-msg.active { display: block; animation: fadeIn 0.2s; }
+      
+      .audit-card {
+        background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px;
       }
-      .step-indicator.active {
-        color: var(--text-main);
-      }
+      .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+      .summary-item { display: flex; flex-direction: column; gap: 4px; }
+      .summary-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
+      .summary-val { font-size: 1rem; color: #fff; font-weight: 500; }
     </style>
   </head>
 
   <body data-page="contratos">
     <div class="app-wrapper no-sidebar">
-      
       <header class="fixed-header">
-        <a href="#" class="btn-back" onclick="location.reload()">
-          <i class="fa-solid fa-xmark"></i>
-        </a>
-        <h1 class="brand-name" style="font-size: 1.2rem;">C.L.A.R.A. | Contratos</h1>
+        <a href="#" class="btn-back" onclick="location.reload()"><i class="fa-solid fa-xmark"></i></a>
+        <h1 class="brand-name" style="font-size: 1.2rem;">Contratos Inteligentes</h1>
         <div class="header-spacer"></div>
       </header>
 
       <main class="main-content full-width" style="padding: 40px 20px; margin-top: var(--header-height);">
         
-        <!-- Indicador de Passos -->
         <div class="progress-bar" style="max-width: 800px; margin: 0 auto 40px auto;">
-          <span id="ind-1" class="step-indicator active">1. Dados</span>
-          <span id="ind-2" class="step-indicator">2. Cláusulas</span>
+          <span id="ind-1" class="step-indicator active">1. Ficha</span>
+          <span id="ind-2" class="step-indicator">2. Parâmetros</span>
           <span id="ind-3" class="step-indicator">3. Emissão</span>
         </div>
 
         <!-- PASSO 1: DADOS DO CLIENTE -->
         <section id="step-1" class="step-container active">
-          <div class="section-header" style="border-bottom: none; margin-bottom: 20px;">
-            <h2>Ficha do Cliente</h2>
-            <p class="category-description">Preencha ou valide os dados do contratante.</p>
+          <div class="section-header" style="border-bottom: none; margin-bottom: 0;">
+            <h2>Ficha do Projeto</h2>
+            <p class="category-description">Preencha os dados básicos do evento para iniciar a montagem.</p>
           </div>
 
           <form id="client-form" class="contact-form" style="margin: 0 auto; width: 100%; max-width: 100%;" onsubmit="avancarPasso2(event)">
-            <div class="form-group">
-              <label for="client-name">Nome do(a) Responsável</label>
-              <input type="text" id="client-name" required placeholder="Ex: Maria Oliveira" value="Ana Carolina Alves" />
-            </div>
-            
-            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-              <div class="form-group" style="flex: 1; min-width: 200px;">
-                <label for="client-cpf">CPF</label>
-                <input type="text" id="client-cpf" required placeholder="000.000.000-00" value="123.456.789-00" />
+            <div class="control-row">
+              <div class="control-box" style="flex: 2;">
+                <label>Nome do Contratante</label>
+                <input type="text" id="inp-nome" class="input-box" required placeholder="Nome completo" value="Ana Carolina Alves" />
               </div>
-              <div class="form-group" style="flex: 1; min-width: 200px;">
-                <label for="session-date">Data do Ensaio</label>
-                <input type="date" id="session-date" required value="2026-10-12" />
+              <div class="control-box" style="flex: 1;">
+                <label>CPF</label>
+                <input type="text" id="inp-cpf" class="input-box" required placeholder="000.000.000-00" value="123.456.789-00" />
               </div>
             </div>
 
-            <div class="form-group">
-              <label for="session-type">Tipo de Serviço</label>
-              <input type="text" id="session-type" readonly value="Ensaio Infantil (Smash the Cake)" style="color: var(--text-muted);" />
+            <div class="control-row">
+              <div class="control-box">
+                <label>Data do Ensaio</label>
+                <input type="date" id="inp-data" class="input-box" required value="2026-10-12" />
+              </div>
+              <div class="control-box">
+                <label>Local / Endereço</label>
+                <input type="text" id="inp-local" class="input-box" required placeholder="Ex: Parque Ibirapuera" value="Estúdio Harry Bour - Lapa" />
+              </div>
             </div>
 
-            <button type="submit" class="btn-submit" style="margin-top: 20px;">Avançar para Cláusulas <i class="fa-solid fa-arrow-right"></i></button>
+            <div class="control-box">
+              <label>Valor Total do Projeto (R$)</label>
+              <input type="number" id="inp-valor" class="input-box" required placeholder="Ex: 1500" value="1200" style="font-size: 1.2rem; font-weight: bold; color: var(--accent-snc);" />
+            </div>
+
+            <button type="submit" class="btn-submit" style="margin-top: 20px;">Parametrizar Contrato <i class="fa-solid fa-arrow-right"></i></button>
           </form>
         </section>
 
-        <!-- PASSO 2: MONTAGEM DO CONTRATO (Lego) -->
+        <!-- PASSO 2: MONTAGEM DO CONTRATO (Lego Dinâmico) -->
         <section id="step-2" class="step-container">
-          <div class="section-header" style="border-bottom: none; margin-bottom: 20px;">
-            <h2>Montagem do Contrato</h2>
-            <p class="category-description">Edite o texto ou remova as cláusulas indesejadas.</p>
+          <div class="section-header" style="border-bottom: none; margin-bottom: 0;">
+            <h2>Parâmetros Contratuais</h2>
+            <p class="category-description">Ajuste as opções. O texto jurídico se molda automaticamente abaixo.</p>
           </div>
 
-          <div id="clauses-container" style="display: flex; flex-direction: column; gap: 20px;">
-            <!-- JS vai renderizar as cláusulas aqui -->
+          <div style="display: flex; flex-direction: column; gap: 24px;">
+
+            <!-- CLÁUSULA: OBJETO (Automática) -->
+            <div class="clause-card">
+              <div class="clause-header"><h4>1. Objeto e Realização</h4></div>
+              <div class="clause-preview-box" id="prev-obj">
+                O presente instrumento tem como objeto a prestação de serviços de <span class="dynamic-var">Ensaio Infantil</span>, a ser realizado no dia <span class="dynamic-var" id="out-data">--</span>, nas dependências de <span class="dynamic-var" id="out-local">--</span>.
+              </div>
+            </div>
+
+            <!-- CLÁUSULA: ENTREGÁVEIS -->
+            <div class="clause-card">
+              <div class="clause-header"><h4>2. Prazos e Entregáveis</h4></div>
+              <div class="clause-controls">
+                <div class="control-row">
+                  <div class="control-box">
+                    <label>Quantidade de Fotos</label>
+                    <input type="number" id="inp-fotos" class="input-box" list="foto-list" placeholder="Digite ou selecione" value="40" oninput="updatePreviews()" />
+                    <datalist id="foto-list"><option value="20"><option value="40"><option value="60"><option value="Todas as Boas"></datalist>
+                    <div id="err-fotos" class="error-msg">Preencha a quantidade.</div>
+                  </div>
+                  <div class="control-box">
+                    <label>Data Limite de Entrega</label>
+                    <input type="date" id="inp-prazo" class="input-box" onchange="updatePreviews()" />
+                    <div id="err-prazo" class="error-msg">Defina um prazo final.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="clause-preview-box">
+                O CONTRATADO compromete-se a entregar <span class="dynamic-var" id="out-fotos">40</span> fotografias tratadas em alta resolução através de galeria digital, impreterivelmente até o dia <span class="dynamic-var" id="out-prazo">[SELECIONE A DATA]</span>.
+              </div>
+            </div>
+
+            <!-- CLÁUSULA: CANCELAMENTO -->
+            <div class="clause-card">
+              <div class="clause-header"><h4>3. Remarcação sem Multa (Exceções)</h4></div>
+              <div class="clause-controls">
+                <label style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">Quais motivos isentam o cliente de multa?</label>
+                <div class="checkbox-group">
+                  <label class="checkbox-item"><input type="checkbox" id="chk-saude" checked onchange="updatePreviews()"> Motivos de Saúde</label>
+                  <label class="checkbox-item"><input type="checkbox" id="chk-clima" checked onchange="updatePreviews()"> Mau Tempo (Chuva)</label>
+                </div>
+              </div>
+              <div class="clause-preview-box">
+                O ensaio poderá ser remarcado uma única vez sem cobrança de taxas em caso de <span class="dynamic-var" id="out-excecoes">motivos de saúde devidamente comprovados e imprevistos climáticos (chuva)</span>. Nos demais casos, incidirá multa de 20%.
+              </div>
+            </div>
+
+            <!-- CLÁUSULA: PAGAMENTO -->
+            <div class="clause-card">
+              <div class="clause-header"><h4>4. Condições de Pagamento</h4></div>
+              <div class="clause-controls">
+                <div class="control-row">
+                  <div class="control-box" style="flex: 1;">
+                    <label>Sinal de Reserva (%)</label>
+                    <select id="inp-sinal" class="input-box" onchange="updatePreviews()">
+                      <option value="30">30%</option>
+                      <option value="50">50%</option>
+                      <option value="100">100% (À vista)</option>
+                    </select>
+                  </div>
+                  <div class="control-box" style="flex: 2;">
+                    <label>Método de Pagamento</label>
+                    <select id="inp-metodo" class="input-box" onchange="updatePreviews()">
+                      <option value="pix">PIX</option>
+                      <option value="cc">Cartão de Crédito</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Box Condicional: Só aparece se for PIX -->
+                <div class="control-box" id="box-pix">
+                  <label>Chave PIX</label>
+                  <input type="text" id="inp-chave" class="input-box" placeholder="Sua chave PIX" value="harrybour.foto@gmail.com" oninput="updatePreviews()"/>
+                  <div id="err-chave" class="error-msg">Informe a chave para recebimento.</div>
+                </div>
+
+                <!-- Box Condicional: Só aparece se for Cartão -->
+                <div class="control-box" id="box-cc" style="display: none;">
+                  <label>Parcelamento</label>
+                  <select id="inp-parcelas" class="input-box" onchange="updatePreviews()">
+                    <option value="1">À vista no cartão</option>
+                    <option value="3">Até 3x sem juros</option>
+                    <option value="12">Em até 12x (juros do comprador)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="clause-preview-box" id="prev-pagamento">
+                <!-- Texto renderizado via JS -->
+              </div>
+            </div>
+
           </div>
 
           <div style="display: flex; gap: 15px; margin-top: 20px;">
-            <button class="btn-submit" style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); flex: 1;" onclick="voltarPasso1()">Voltar</button>
-            <button class="btn-submit" style="flex: 2; background: #10b981; color: #fff;" onclick="avancarPasso3()">Gerar PDF & Auditoria <i class="fa-solid fa-file-pdf"></i></button>
+            <button class="btn-submit" style="background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); flex: 1;" onclick="showStep(1)">Voltar</button>
+            <button class="btn-submit" style="flex: 2;" onclick="validarEAvancar()">Revisar e Emitir <i class="fa-solid fa-check"></i></button>
           </div>
         </section>
 
-        <!-- PASSO 3: AUDITORIA E SUCESSO -->
+        <!-- PASSO 3: AUDITORIA E PRÉVIA -->
         <section id="step-3" class="step-container">
-          <div class="section-header" style="border-bottom: none; margin-bottom: 10px; text-align: center;">
-            <i class="fa-solid fa-circle-check" style="font-size: 3rem; color: #10b981; margin-bottom: 15px;"></i>
-            <h2>Contrato Gerado</h2>
-            <p class="category-description">Aguardando assinatura digital do cliente.</p>
+          <div class="section-header" style="border-bottom: none; margin-bottom: 0; text-align: center;">
+            <i class="fa-solid fa-shield-halved" style="font-size: 3rem; color: var(--accent-snc); margin-bottom: 15px;"></i>
+            <h2>Auditoria de Emissão</h2>
+            <p class="category-description">Confira os dados antes de gerar o PDF final.</p>
           </div>
 
-          <div id="ai-warnings">
-            <!-- Avisos de coerência renderizados via JS -->
+          <!-- Card de Resumo -->
+          <div class="audit-card">
+            <h3 style="font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 20px; color: #fff; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Resumo Executivo</h3>
+            
+            <div class="summary-grid">
+              <div class="summary-item"><span class="summary-label">Contratante</span><span class="summary-val" id="sum-nome"></span></div>
+              <div class="summary-item"><span class="summary-label">CPF</span><span class="summary-val" id="sum-cpf"></span></div>
+              <div class="summary-item"><span class="summary-label">Valor do Contrato</span><span class="summary-val" id="sum-valor" style="color: var(--accent-snc);"></span></div>
+              <div class="summary-item"><span class="summary-label">Entregáveis</span><span class="summary-val" id="sum-fotos"></span></div>
+              <div class="summary-item"><span class="summary-label">Data do Ensaio</span><span class="summary-val" id="sum-data"></span></div>
+              <div class="summary-item"><span class="summary-label">Data de Entrega</span><span class="summary-val" id="sum-prazo"></span></div>
+            </div>
+
+            <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border-left: 3px solid #10b981;">
+              <span class="summary-label" style="display: block; margin-bottom: 5px;">Métrica de Segurança (Hash Previsto)</span>
+              <span style="font-family: monospace; font-size: 0.8rem; color: #9ca3af; word-break: break-all;">
+                a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
+              </span>
+            </div>
           </div>
 
-          <h3 style="font-family: var(--font-display); font-size: 1.4rem; margin-top: 30px; margin-bottom: 15px;">Página de Auditoria (Demonstração)</h3>
-          <div class="audit-box" id="audit-log">
-            <!-- Dados de auditoria renderizados via JS -->
-          </div>
-
-          <button class="btn-submit" style="margin-top: 30px;" onclick="location.reload()">
-            <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem;"></i> Enviar Link de Assinatura
+          <button class="btn-submit" style="background: #10b981; margin-top: 10px;" onclick="alert('Funcionalidade de PDF nativo rodará via Capacitor no app Android.')">
+            <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem;"></i> Compartilhar Link com Cliente
+          </button>
+          <button class="btn-submit" style="background: transparent; border: 1px solid var(--border-color); margin-top: 0;" onclick="showStep(2)">
+            Voltar para Edição
           </button>
         </section>
 
@@ -207,21 +283,7 @@
 
     <script>
       // ==========================================
-      // ESTADO DA APLICAÇÃO (Banco de Dados Simulado)
-      // ==========================================
-      let clientInfo = {};
-      
-      // Banco de Cláusulas (Padrão para Ensaio Infantil)
-      let clausesData = [
-        { id: 'c1', title: '1. Objeto do Contrato', tag: 'essencial', text: 'O presente instrumento tem como objeto a prestação de serviços fotográficos para um Ensaio Infantil (Smash the Cake), a ser realizado no dia selecionado, com duração máxima de 2 horas.' },
-        { id: 'c2', title: '2. Prazos e Entrega', tag: 'prazo', text: 'O contratado compromete-se a entregar uma galeria online com 40 fotos tratadas em alta resolução no prazo máximo de 15 dias úteis contados a partir da data da sessão.' },
-        { id: 'c3', title: '3. Direitos de Imagem', tag: 'imagem', text: 'Os contratantes AUTORIZAM de forma gratuita o uso das fotografias do menor para fins de divulgação do portfólio do fotógrafo em redes sociais, site e concursos.' },
-        { id: 'c4', title: '4. Cancelamento e Remarcação', tag: 'multa', text: 'Em caso de imprevistos de saúde da criança ou mau tempo (em locações externas), o ensaio poderá ser remarcado uma única vez sem cobrança de multas, mediante aviso prévio de 24 horas.' },
-        { id: 'c5', title: '5. Do Pagamento', tag: 'financeiro', text: 'O valor total acordado será pago da seguinte forma: 30% no ato da assinatura deste contrato a título de reserva de agenda, e os 70% restantes no dia do ensaio, via PIX.' }
-      ];
-
-      // ==========================================
-      // LÓGICA DE NAVEGAÇÃO E INTERFACE
+      // LÓGICA DE INTERFACE
       // ==========================================
       function showStep(stepNum) {
         document.querySelectorAll('.step-container').forEach(el => el.classList.remove('active'));
@@ -233,119 +295,117 @@
       }
 
       function avancarPasso2(e) {
-        e.preventDefault(); // Evita recarregar a página
-        // Salva os dados do input
-        clientInfo = {
-          nome: document.getElementById('client-name').value,
-          cpf: document.getElementById('client-cpf').value,
-          data: document.getElementById('session-date').value
-        };
+        e.preventDefault();
+        // Seta os dados automáticos no passo 2
+        const dataParts = document.getElementById('inp-data').value.split('-');
+        document.getElementById('out-data').innerText = `${dataParts[2]}/${dataParts[1]}/${dataParts[0]}`;
+        document.getElementById('out-local').innerText = document.getElementById('inp-local').value;
         
-        renderClauses();
+        updatePreviews(); // Atualiza tudo
         showStep(2);
       }
 
-      function voltarPasso1() { showStep(1); }
+      // ==========================================
+      // LÓGICA DE PRÉ-VISUALIZAÇÃO EM TEMPO REAL
+      // ==========================================
+      function updatePreviews() {
+        // 1. Atualizar Fotos e Prazo
+        const fotos = document.getElementById('inp-fotos').value || "...";
+        document.getElementById('out-fotos').innerText = fotos;
+
+        const prazoRaw = document.getElementById('inp-prazo').value;
+        if(prazoRaw) {
+          const p = prazoRaw.split('-');
+          document.getElementById('out-prazo').innerText = `${p[2]}/${p[1]}/${p[0]}`;
+        } else {
+          document.getElementById('out-prazo').innerText = "[SELECIONE A DATA]";
+        }
+
+        // 2. Atualizar Exceções (Checkboxes)
+        const saude = document.getElementById('chk-saude').checked;
+        const clima = document.getElementById('chk-clima').checked;
+        let excecoesText = "";
+        
+        if (saude && clima) excecoesText = "motivos de saúde devidamente comprovados e imprevistos climáticos (chuva)";
+        else if (saude) excecoesText = "motivos de saúde devidamente comprovados";
+        else if (clima) excecoesText = "imprevistos climáticos graves (chuva)";
+        else excecoesText = "NENHUM MOTIVO PREVISTO (Qualquer alteração gera multa)";
+
+        document.getElementById('out-excecoes').innerText = excecoesText;
+
+        // 3. Atualizar Matemática do Pagamento
+        const valorTotal = parseFloat(document.getElementById('inp-valor').value) || 0;
+        const percSinal = parseInt(document.getElementById('inp-sinal').value);
+        const valorSinal = (valorTotal * (percSinal / 100)).toFixed(2).replace('.', ',');
+        const valorRestante = (valorTotal - (valorTotal * (percSinal / 100))).toFixed(2).replace('.', ',');
+
+        const metodo = document.getElementById('inp-metodo').value;
+        const boxPix = document.getElementById('box-pix');
+        const boxCc = document.getElementById('box-cc');
+        let txtMetodo = "";
+
+        if (metodo === 'pix') {
+          boxPix.style.display = 'flex'; boxCc.style.display = 'none';
+          const chave = document.getElementById('inp-chave').value || "[CHAVE NÃO INFORMADA]";
+          txtMetodo = `transferência bancária via PIX (Chave: ${chave})`;
+        } else {
+          boxPix.style.display = 'none'; boxCc.style.display = 'flex';
+          const parcelas = document.getElementById('inp-parcelas').options[document.getElementById('inp-parcelas').selectedIndex].text;
+          txtMetodo = `link de pagamento via Cartão de Crédito (${parcelas})`;
+        }
+
+        let txtPagamento = `Pela prestação dos serviços, o CONTRATANTE pagará o valor total de <span class="dynamic-var">R$ ${valorTotal.toFixed(2).replace('.', ',')}</span>.`;
+        
+        if (percSinal < 100) {
+          txtPagamento += ` O pagamento será dividido em: um sinal de garantia de agenda no valor de <span class="dynamic-var">R$ ${valorSinal} (${percSinal}%)</span> pago no ato desta assinatura, e o saldo restante de <span class="dynamic-var">R$ ${valorRestante}</span> acertado no dia do ensaio através de <span class="dynamic-var">${txtMetodo}</span>.`;
+        } else {
+          txtPagamento += ` O pagamento será realizado no valor integral (<span class="dynamic-var">100% de sinal</span>) no ato desta assinatura, garantindo a reserva da agenda, através de <span class="dynamic-var">${txtMetodo}</span>.`;
+        }
+
+        document.getElementById('prev-pagamento').innerHTML = txtPagamento;
+      }
 
       // ==========================================
-      // LÓGICA DO CONSTRUTOR DE CLÁUSULAS (Lego)
+      // VALIDAÇÃO E GERAÇÃO DA AUDITORIA
       // ==========================================
-      function renderClauses() {
-        const container = document.getElementById('clauses-container');
-        container.innerHTML = ''; // Limpa antes de desenhar
+      function validarEAvancar() {
+        let hasError = false;
 
-        if (clausesData.length === 0) {
-          container.innerHTML = `<p style="text-align:center; color: var(--text-muted);">Nenhuma cláusula selecionada.</p>`;
+        // Limpa erros
+        document.querySelectorAll('.error-msg').forEach(el => el.classList.remove('active'));
+
+        // Valida Fotos
+        if(!document.getElementById('inp-fotos').value) {
+          document.getElementById('err-fotos').classList.add('active'); hasError = true;
+        }
+        // Valida Prazo
+        if(!document.getElementById('inp-prazo').value) {
+          document.getElementById('err-prazo').classList.add('active'); hasError = true;
+        }
+        // Valida PIX
+        if(document.getElementById('inp-metodo').value === 'pix' && !document.getElementById('inp-chave').value) {
+          document.getElementById('err-chave').classList.add('active'); hasError = true;
+        }
+
+        if (hasError) {
+          // Faz a tela rolar um pouco para cima para o fotógrafo ver o aviso vermelho
+          window.scrollBy({ top: -100, behavior: 'smooth' });
           return;
         }
 
-        // Loop no array para desenhar cada cláusula
-        clausesData.forEach((clause, index) => {
-          // Atualiza a numeração automaticamente baseado na posição do Array
-          const currentNumber = index + 1;
-          const cleanTitle = clause.title.replace(/^[0-9]+\.\s*/, ''); // Remove numeração antiga se houver
-          
-          const card = document.createElement('div');
-          card.className = 'clause-card';
-          card.innerHTML = `
-            <div class="clause-header">
-              <h4>${currentNumber}. ${cleanTitle}</h4>
-              <button class="btn-icon" onclick="deleteClause('${clause.id}')" title="Remover Cláusula">
-                <i class="fa-solid fa-trash"></i>
-              </button>
-            </div>
-            <textarea class="clause-text" oninput="updateClauseText('${clause.id}', this.value)">${clause.text}</textarea>
-          `;
-          container.appendChild(card);
-        });
-      }
+        // Popula Resumo
+        document.getElementById('sum-nome').innerText = document.getElementById('inp-nome').value;
+        document.getElementById('sum-cpf').innerText = document.getElementById('inp-cpf').value;
+        document.getElementById('sum-valor').innerText = "R$ " + parseFloat(document.getElementById('inp-valor').value).toFixed(2).replace('.', ',');
+        document.getElementById('sum-fotos').innerText = document.getElementById('inp-fotos').value + " fotos tratadas";
+        
+        const d = document.getElementById('inp-data').value.split('-');
+        document.getElementById('sum-data').innerText = `${d[2]}/${d[1]}/${d[0]}`;
+        
+        const p = document.getElementById('inp-prazo').value.split('-');
+        document.getElementById('sum-prazo').innerText = `${p[2]}/${p[1]}/${p[0]}`;
 
-      function deleteClause(id) {
-        // Filtra o array removendo o ID selecionado
-        clausesData = clausesData.filter(c => c.id !== id);
-        renderClauses(); // Redesenha a tela para atualizar numeração
-      }
-
-      function updateClauseText(id, newText) {
-        const clause = clausesData.find(c => c.id === id);
-        if (clause) clause.text = newText;
-      }
-
-      // ==========================================
-      // LÓGICA DE AUDITORIA E VALIDAÇÃO (Sem IA)
-      // ==========================================
-      function avancarPasso3() {
-        generateAuditTrail();
-        checkCoherence();
         showStep(3);
-      }
-
-      function checkCoherence() {
-        const warningsContainer = document.getElementById('ai-warnings');
-        warningsContainer.innerHTML = '';
-        
-        // Regra de Validação: Verificando se a cláusula de Direitos de Imagem existe
-        const hasImageRights = clausesData.some(c => c.tag === 'imagem');
-        
-        if (!hasImageRights) {
-          warningsContainer.innerHTML += `
-            <div class="warning-box">
-              <i class="fa-solid fa-triangle-exclamation"></i> <strong>Atenção Fotógrafo:</strong> Você removeu a cláusula de "Direitos de Imagem". Lembre-se de que você não poderá postar fotos desta criança no seu portfólio de forma legal.
-            </div>
-          `;
-        }
-
-        // Regra de Validação: Cancelamento
-        const hasPenalty = clausesData.some(c => c.tag === 'multa');
-        if (!hasPenalty) {
-          warningsContainer.innerHTML += `
-            <div class="warning-box">
-              <i class="fa-solid fa-triangle-exclamation"></i> <strong>Atenção:</strong> Nenhuma política de remarcação foi definida. O cliente poderá cancelar o ensaio na porta do estúdio sem sofrer multas.
-            </div>
-          `;
-        }
-      }
-
-      function generateAuditTrail() {
-        // Gerando um Hash falso simulando um SHA-256 da fusão de todo o texto
-        const combinedText = clausesData.map(c => c.text).join('');
-        const fakeHash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"; 
-        const now = new Date();
-
-        const auditBox = document.getElementById('audit-log');
-        auditBox.innerHTML = `
-<span style="color: #fff; font-weight: bold;">DOCUMENTO SELADO E AGUARDANDO ACEITE</span><br><br>
-<strong>ID Transação:</strong> TXN-8849-BR<br>
-<strong>Contratante:</strong> ${clientInfo.nome} (CPF: ${clientInfo.cpf})<br>
-<strong>Data do Serviço:</strong> ${clientInfo.data.split('-').reverse().join('/')}<br>
-<strong>Cláusulas Ativas:</strong> ${clausesData.length} blocos registrados.<br><br>
-<span style="color: #60a5fa;">[ SISTEMA DE INTEGRIDADE ]</span><br>
-<strong>Emissão Local:</strong> ${now.toLocaleDateString('pt-BR')} às ${now.toLocaleTimeString('pt-BR')}<br>
-<strong>IP do Emissor:</strong> 177.102.XX.XXX (Validado)<br>
-<strong>Hash do Documento (SHA-256):</strong><br>
-${fakeHash}<br><br>
-<em>*Qualquer alteração posterior ao envio da assinatura invalidará a chave Hash acima.</em>
-        `;
       }
     </script>
   </body>
