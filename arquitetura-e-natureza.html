@@ -39,14 +39,14 @@
 
             <div class="masonry-grid">
               <div class="book-thumbnail" onclick="openFlipbook('arch11')">
-                <img
-                  src="assets/img/arch11-cover.jpg" 
-                  alt="Capa do photobook ARCH11"
-                  class="masonry-item"
-                  style="cursor: pointer;"
-                />
-                <div class="book-thumbnail-title">ARCH11 - CCSP & Memorial</div>
-              </div>
+  <img
+    src="assets/img/arquitetura/page1-capa.jpg" 
+    alt="Capa do photobook ARCH11"
+    class="masonry-item"
+    style="cursor: pointer;"
+  />
+  <div class="book-thumbnail-title">ARCH11 - CCSP & Memorial</div>
+</div>
               
               </div>
           </div>
@@ -77,8 +77,9 @@
      // Banco de dados dos seus photobooks
       const flipbooksData = {
         'arch11': [
-          { type: 'vertical', src: 'assets/img/arquitetura/page1-capa.jpg' },
-          { type: 'vertical', src: 'assets/img/arquitetura/page2-ccsp.jpg' },
+          { type: 'vertical', src: 'assets/img/arquitetura/page1.jpg' }, // Capa (página única/frente)
+          { type: 'vertical', src: 'assets/img/arquitetura/page1.jpg' }, // Capa repetida (verso/esquerda da primeira dupla)
+          { type: 'vertical', src: 'assets/img/arquitetura/page2.jpg' }, // Direita da primeira dupla
           { type: 'spread',   src: 'assets/img/arquitetura/page3-spread.jpg' },
           { type: 'spread',   src: 'assets/img/arquitetura/page4-spread.jpg' },
           { type: 'spread',   src: 'assets/img/arquitetura/page5-spread.jpg' },
