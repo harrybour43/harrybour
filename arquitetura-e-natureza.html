@@ -163,10 +163,27 @@
         }
       }
 
-      // Fechar com ESC
-      document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape") closeFlipbook();
-      });
+      // Controles de Teclado do Flipbook (ESC e Setas)
+document.addEventListener("keydown", function (event) {
+  const modal = document.getElementById('flipbook-modal');
+  
+  // Confirma se o modal está visível na tela antes de aceitar os comandos
+  if (modal && modal.style.display === 'flex') {
+    
+    if (event.key === "Escape") {
+      closeFlipbook();
+    } 
+    else if (event.key === "ArrowRight") {
+      // Seta para a direita: Avança a página
+      if (bookInstance) bookInstance.flipNext();
+    } 
+    else if (event.key === "ArrowLeft") {
+      // Seta para a esquerda: Volta a página
+      if (bookInstance) bookInstance.flipPrev();
+    }
+    
+  }
+});
     </script>
   </body>
 </html>
