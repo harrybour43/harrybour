@@ -1239,11 +1239,11 @@ body[data-page="mapa"] .app-wrapper.no-sidebar .main-content {
   align-items: center;
 }
 
-/* O fundo do livro (simula o papel) */
+/* O fundo do livro */
 .page {
+  position: relative; /* Necessário para ancorar o pseudo-elemento */
   background-color: var(--bg-surface);
   border: 1px solid var(--border-color);
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5); /* Sombra interna próxima ao vinco */
   overflow: hidden;
 }
 
@@ -1253,19 +1253,59 @@ body[data-page="mapa"] .app-wrapper.no-sidebar .main-content {
   background-repeat: no-repeat;
 }
 
-/* Lógica do Spread Horizontal (O Pulo do Gato) */
-/* A metade esquerda da imagem ocupa a página par */
+/* --- EFEITO 3D: ARREDONDAMENTO DA DOBRA INTERNA (VINCO) --- */
+.page::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 60px; /* Largura da queda da sombra da curvatura */
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity 0.3s;
+}
+
+/* Página da Esquerda: O vinco está na DIREITA. 
+   O gradiente escurece em direção à borda direita */
+.page.page-left::after {
+  right: 0;
+  background: linear-gradient(to left, 
+    rgba(0, 0, 0, 0.55) 0%, 
+    rgba(0, 0, 0, 0.30) 15%, 
+    rgba(0, 0, 0, 0.08) 45%, 
+    rgba(0, 0, 0, 0.00) 100%
+  );
+}
+
+/* Página da Direita: O vinco está na ESQUERDA. 
+   O gradiente escurece em direção à borda esquerda */
+.page.page-right::after {
+  left: 0;
+  background: linear-gradient(to right, 
+    rgba(0, 0, 0, 0.55) 0%, 
+    rgba(0, 0, 0, 0.30) 15%, 
+    rgba(0, 0, 0, 0.08) 45%, 
+    rgba(0, 0, 0, 0.00) 100%
+  );
+}
+
+/* Esconde o efeito de curvatura interna nas capas externas quando fechadas */
+.page.page-right:first-child::after,
+.page.page-left:last-child::after {
+  opacity: 0.15; /* Deixa uma sombra bem tênue apenas para simular o acabamento da encadernação */
+}
+
+/* Lógica do Spread Horizontal */
 .spread-left {
   background-size: 200% 100%;
   background-position: left center;
 }
-/* A metade direita da imagem ocupa a página ímpar */
 .spread-right {
   background-size: 200% 100%;
   background-position: right center;
 }
 
-/* Controles de Navegação do Flipbook */
+/* Controles de Navegação */
 .flipbook-controls {
   margin-top: 20px;
   display: flex;

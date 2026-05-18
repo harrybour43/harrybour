@@ -98,7 +98,7 @@
         ]
       };
 
-      function openFlipbook(bookId) {
+       function openFlipbook(bookId) {
         const modal = document.getElementById('flipbook-modal');
         const bookContainer = document.getElementById('book');
         const pagesData = flipbooksData[bookId];
@@ -108,23 +108,28 @@
         // 1. Limpa o container e monta as páginas HTML
         bookContainer.innerHTML = '';
         let htmlContent = '';
+        let pageCounter = 0; // Rastreador de paridade física das páginas
 
         pagesData.forEach(page => {
           if (page.type === 'vertical') {
-            // Página simples
+            // Define o lado com base na regra de imposição de páginas
+            let sideClass = (pageCounter === 0) ? 'page-right' : (pageCounter % 2 === 1 ? 'page-left' : 'page-right');
+            
             htmlContent += `
-              <div class="page">
+              <div class="page ${sideClass}">
                 <div class="page-content" style="background-image: url('${page.src}'); background-size: cover; background-position: center;"></div>
               </div>`;
+            pageCounter++;
           } else if (page.type === 'spread') {
-            // Imagem Horizontal - Ocupa duas páginas (Esquerda e Direita)
+            // Um spread horizontal sempre gera uma folha esquerda e uma direita
             htmlContent += `
-              <div class="page">
+              <div class="page page-left">
                 <div class="page-content spread-left" style="background-image: url('${page.src}');"></div>
               </div>
-              <div class="page">
+              <div class="page page-right">
                 <div class="page-content spread-right" style="background-image: url('${page.src}');"></div>
               </div>`;
+            pageCounter += 2;
           }
         });
 
@@ -134,14 +139,14 @@
 
         // 2. Inicializa a animação 3D do Flipbook
         bookInstance = new St.PageFlip(bookContainer, {
-          width: 450, // Largura base de UMA página
-          height: 600, // Altura base
+          width: 450, 
+          height: 600, 
           size: "stretch",
           minWidth: 300,
           maxWidth: 600,
           minHeight: 400,
           maxHeight: 800,
-          showCover: true, // A primeira e última página agem como capas duras
+          showCover: true, 
           mobileScrollSupport: false,
           maxShadowOpacity: 0.5,
         });
