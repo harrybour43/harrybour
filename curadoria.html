@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <title>Curadoria Pro</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <script src="https://accounts.google.com/gsi/client" onload="initTokenClient()" async defer></script>
+    <script src="https://apis.google.com/js/api.js" onload="gapiLoaded()" async defer></script>
+    
+    <style>
+        /* Layout Principal */
+        body { 
+            background-color: #000; 
+            color: #fff; 
+            margin: 0; 
+            overflow: hidden; 
+            display: flex; 
+            align-items: center; 
+            justify-content: flex-start; 
+            height: 100vh;
+            width: 100vw;
+            flex-direction: column;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            padding-top: 5vh; 
+        }
+
+        #auth_button { 
+            padding: 20px 40px; 
+            background: #fff; 
+            border: none;
+            border-radius: 50px; 
+            font-weight: bold;
+            cursor: pointer;
+            color: #000;
+            box-shadow: 0 6px 0 #ccc, 0 10px 15px rgba(0,0,0,0.5);
+            transition: all 0.1s ease;
+            text-transform: uppercase;
+            margin-top: 30vh; 
+        }
+        #auth_button:active {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 #ccc, 0 4px 6px rgba(0,0,0,0.5);
+        }
+
+        /* ---------------------------------------------------
+           CABEÇALHO (NOME DA FOTO E CONTADOR CENTRALIZADOS)
+           --------------------------------------------------- */
+        #top-bar {
+            position: fixed;
+            top: env(safe-area-inset-top, 20px);
+            left: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column; 
+            justify-content: flex-start;
+            align-items: center; 
+            padding: 0 20px;
+            box-sizing: border-box;
+            z-index: 1000;
+            pointer-events: none;
+            gap: 2px; 
+        }
+
+        #photo-count {
+            font-size: 2.5rem; 
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+            display: none; 
+            line-height: 1;
+        }
+
+        #photo-name {
+            font-size: 1rem;
+            color: #ccc; 
+            font-weight: 500;
+            max-width: 90vw;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: none;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+        }
+
+        /* ---------------------------------------------------
+           CONTAINER DE CARTAS (FOTOS E NAVEGAÇÃO)
+           --------------------------------------------------- */
+        #catalog-container { 
+            position: relative; 
+            width: 95vw; 
+            height: 57vh; 
+            margin-top: 8vh; 
+            display: none;
+            transition: opacity 0.3s ease; 
+        }
+
+        @media (min-width: 768px) {
+            #catalog-container { width: 50vw; }
+        }
+
+        .card { 
+            position: absolute; 
+            width: 100%; 
+            height: 100%; 
+            background: transparent; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease-out, opacity 0.2s ease-out; 
+        }
+
+        .card img { 
+            max-width: 100%; 
+            max-height: 100%; 
+            width: auto;
+            height: auto;
+            object-fit: contain; 
+            pointer-events: none;
+            border-radius: 12px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.7); /* Vinheta reduzida */
+        }
+
+        /* Zonas de Toque Laterais para Navegação */
+        .nav-zone {
+            position: absolute;
+            top: 0; bottom: 0;
+            width: 30%; 
+            display: none; 
+            align-items: center;
+            font-size: 2.5rem;
+            color: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            z-index: 500000; 
+            transition: color 0.2s ease, background 0.2s ease;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #nav-left { 
+            left: 0; 
+            justify-content: flex-start; 
+            padding-left: 10px; 
+            background: linear-gradient(to right, rgba(0,0,0,0.4), transparent);
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+        }
+        #nav-right { 
+            right: 0; 
+            justify-content: flex-end; 
+            padding-right: 10px; 
+            background: linear-gradient(to left, rgba(0,0,0,0.4), transparent);
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+        
+        .nav-zone:hover { color: rgba(255, 255, 255, 0.9); }
+        .nav-zone:active { color: #fff; }
+
+        /* ---------------------------------------------------
+           LAYOUT INFERIOR (CONTROLES SÓLIDOS)
+           --------------------------------------------------- */
+        #bottom-area {
+            position: fixed;
+            bottom: env(safe-area-inset-bottom, 25px); 
+            left: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px; 
+            z-index: 9999;
+            pointer-events: none; 
+        }
+
+        #controls-wrapper {
+            display: none; 
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 0 10px;
+            pointer-events: none;
+        }
+
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: auto;
+        }
+
+        .right-panel {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            pointer-events: auto;
+        }
+
+        .solid-btn {
+            background: rgba(255, 255, 255, 0.05); 
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-transform: uppercase;
+            touch-action: manipulation;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .solid-btn:active {
+            transform: scale(0.96) translateY(2px);
+        }
+
+        .btn-left-stack {
+            width: 130px;
+            height: 46px; 
+            border-radius: 12px;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-undo { border-color: rgba(255, 193, 7, 0.3); box-shadow: 0 4px 15px rgba(255, 193, 7, 0.1); visibility: hidden; }
+        .btn-sync { border-color: rgba(232, 62, 140, 0.3); box-shadow: 0 4px 15px rgba(232, 62, 140, 0.1); }
+
+        .btn-right-action {
+            width: 70px;
+            height: 104px; 
+            flex-direction: column;
+            border-radius: 16px;
+            font-size: 0.65rem;
+            gap: 8px;
+        }
+        .btn-right-action .icon { font-size: 1.4rem; }
+        
+        .btn-reject { border-color: rgba(220, 53, 69, 0.3); box-shadow: 0 4px 15px rgba(220, 53, 69, 0.1); }
+        .btn-manter { border-color: rgba(13, 110, 253, 0.3); box-shadow: 0 4px 15px rgba(13, 110, 253, 0.1); }
+        .btn-top    { border-color: rgba(40, 167, 69, 0.3); box-shadow: 0 4px 15px rgba(40, 167, 69, 0.1); }
+
+        #legend-strip { display: none; justify-content: center; width: 100%; pointer-events: none; }
+        #legend-btn {
+            background: #4b5563; border: none; color: #fff; padding: 10px 30px; border-radius: 25px;
+            font-size: 0.8rem; font-weight: bold; cursor: pointer; box-shadow: 0 6px 0 #374151, 0 10px 15px rgba(0,0,0,0.5);
+            pointer-events: auto; touch-action: manipulation; transition: all 0.1s ease; text-transform: uppercase;
+        }
+        #legend-btn:active { transform: translateY(6px); box-shadow: 0 0 0 #374151, 0 4px 6px rgba(0,0,0,0.5); }
+
+        /* MODAL DE LEGENDA */
+        #legend-modal {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); z-index: 100000;
+            display: none; align-items: center; justify-content: center; flex-direction: column;
+            padding: 20px; box-sizing: border-box; opacity: 0; transition: opacity 0.3s ease;
+        }
+        .legend-content { background: #111; border: 1px solid #333; border-radius: 15px; padding: 30px 20px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .legend-content h2 { margin-top: 0; text-align: center; color: #fff; font-size: 1.2rem; margin-bottom: 20px; }
+        .legend-content ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 15px; }
+        .legend-content li { display: flex; align-items: center; gap: 15px; font-size: 0.9rem; color: #ccc; line-height: 1.4; }
+        .legend-icon { font-size: 1.5rem; min-width: 30px; text-align: center; }
+        .legend-action { font-weight: bold; color: #fff; display: block; margin-bottom: 2px;}
+        
+        /* Atalhos na Legenda */
+        .shortcut-badge { background: #333; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: auto; color: #aaa; border: 1px solid #555; }
+
+        #close-legend { margin-top: 30px; width: 100%; background: #333; color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+
+        #end-screen { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; display: none; flex-direction: column; align-items: center; gap: 20px; z-index: 0; }
+        #empty-message { font-size: 1.2rem; color: #888; text-align: center;}
+
+    </style>
+</head>
+<body>
+
+    <button id="auth_button" onclick="handleAuthClick()">ABRIR PASTA</button>
+    
+    <div id="top-bar">
+        <div id="photo-count">...</div>
+        <div id="photo-name"></div>
+    </div>
+
+    <div id="catalog-container">
+        <div id="end-screen">
+            <div id="empty-message">A pasta está limpa!</div>
+        </div>
+        
+        <div id="nav-left" class="nav-zone" onclick="prevPhoto()">&#10094;</div>
+        <div id="nav-right" class="nav-zone" onclick="nextPhoto()">&#10095;</div>
+    </div>
+
+    <div id="bottom-area">
+        <div id="controls-wrapper">
+            <div class="left-panel">
+                <button id="undo_button" class="solid-btn btn-left-stack btn-undo" onclick="undoLastAction()">↩ Voltar</button>
+                <button class="solid-btn btn-left-stack btn-sync" onclick="reloadFolder()">🔄 Sincronizar</button>
+            </div>
+            
+            <div class="right-panel">
+                <button class="solid-btn btn-right-action btn-reject" onclick="handleGlobalAction(1)">
+                    <span class="icon">🏴</span> REJECT
+                </button>
+                <button class="solid-btn btn-right-action btn-manter" onclick="handleGlobalAction(3)">
+                    <span class="icon">📁</span> MANTER
+                </button>
+                <button class="solid-btn btn-right-action btn-top" onclick="handleGlobalAction(5)">
+                    <span class="icon">🏳️</span> TOP
+                </button>
+            </div>
+        </div>
+
+        <div id="legend-strip">
+            <button id="legend-btn" onclick="toggleLegend()">Legenda e Atalhos</button>
+        </div>
+    </div>
+
+    <div id="legend-modal" onclick="if(event.target === this) toggleLegend()">
+        <div class="legend-content">
+            <h2>Funções do Painel e Atalhos</h2>
+            <ul>
+                <li><div class="legend-icon">↩</div><div><span class="legend-action">VOLTAR</span> Desfaz a última ação.</div><div class="shortcut-badge">Tecla Q</div></li>
+                <li><div class="legend-icon">🔄</div><div><span class="legend-action">SINCRONIZAR</span> Puxa novas fotos.</div><div class="shortcut-badge">Tecla A</div></li>
+                <li><div class="legend-icon">🏴</div><div><span class="legend-action">REJECT</span> Move p/ rejeitadas.</div><div class="shortcut-badge">Tecla S</div></li>
+                <li><div class="legend-icon">📁</div><div><span class="legend-action">MANTER</span> Avaliação posterior.</div><div class="shortcut-badge">Tecla D</div></li>
+                <li><div class="legend-icon">🏳️</div><div><span class="legend-action">TOP</span> Melhores fotos.</div><div class="shortcut-badge">Tecla F</div></li>
+                <li><div class="legend-icon">&#10094;&#10095;</div><div><span class="legend-action">NAVEGAÇÃO</span> Alternar entre fotos.</div><div class="shortcut-badge">Setas</div></li>
+            </ul>
+            <button id="close-legend" onclick="toggleLegend()">Fechar (ESC)</button>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        const CLIENT_ID = '905891014579-fjgqvkgbiucl4c0asn68pbv1p5gm6ofn.apps.googleusercontent.com';
+        const SCOPES = 'https://www.googleapis.com/auth/drive'; 
+        
+        const SOURCE_FOLDER_ID = '1BA8IT7dnXU5QF5aFkqwzokNcbJnL7Ar-'; 
+        const FOLDER_DESTINATIONS = {
+            1: '1-BjrThu-4UVnG3ceMR_cNYfmC2-IJVRV', // Reject
+            3: '1edv5_Wz-ehpqNWa7joxCALyVce37iwxI', // Manter
+            5: '12Z_2tnPrTNhqUztoMvM6mHt9EDhlVRfx'  // Top
+        };
+
+        let tokenClient;
+        let gapiInited = false;
+        let gsisInited = false;
+
+        let nextPageToken = null;
+        let isFetching = false;
+        let undoZIndex = 200000; 
+        
+        const processedIds = new Set(); 
+        let actionHistory = []; 
+        let totalPhotosInFolder = 0; 
+        let currentViewIndex = 0;
+
+        function gapiLoaded() { gapi.load('client', () => {
+            gapi.client.init({ discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'] })
+            .then(() => { gapiInited = true; maybeEnableButtons(); });
+        });}
+
+        function initTokenClient() {
+            tokenClient = google.accounts.oauth2.initTokenClient({ client_id: CLIENT_ID, scope: SCOPES, callback: '' });
+            gsisInited = true;
+            maybeEnableButtons();
+        }
+
+        function maybeEnableButtons() {
+            if (gapiInited && gsisInited) document.getElementById('auth_button').style.display = 'block';
+        }
+
+        function handleAuthClick() {
+            tokenClient.callback = async (resp) => {
+                document.getElementById('auth_button').style.display = 'none';
+                document.getElementById('catalog-container').style.display = 'block';
+                document.getElementById('controls-wrapper').style.display = 'flex'; 
+                document.getElementById('legend-strip').style.display = 'flex'; 
+                
+                document.getElementById('photo-count').style.display = 'block'; 
+                document.getElementById('photo-name').style.display = 'block'; 
+                
+                fetchTotalCount();
+                await listPhotos();
+            };
+            
+            tokenClient.requestAccessToken(); 
+        }
+
+        function toggleLegend() {
+            const modal = document.getElementById('legend-modal');
+            if (modal.style.display === 'flex') {
+                modal.style.opacity = '0';
+                setTimeout(() => modal.style.display = 'none', 300);
+            } else {
+                modal.style.display = 'flex';
+                setTimeout(() => modal.style.opacity = '1', 10);
+            }
+        }
+
+        // --- SISTEMA DE ATALHOS DE TECLADO ---
+        document.addEventListener('keydown', (event) => {
+            const modal = document.getElementById('legend-modal');
+            const isModalOpen = modal.style.display === 'flex';
+
+            if (isModalOpen) {
+                if (event.key === 'Escape') toggleLegend();
+                return; // Bloqueia outros comandos enquanto o modal estiver aberto
+            }
+
+            // Impede disparos múltiplos se o usuário segurar a tecla
+            if (event.repeat) return;
+
+            switch(event.key) {
+                case 'ArrowLeft':
+                    prevPhoto();
+                    break;
+                case 'ArrowRight':
+                    nextPhoto();
+                    break;
+                case 's':
+                case 'S':
+                    handleGlobalAction(1); // Reject
+                    break;
+                case 'd':
+                case 'D':
+                    handleGlobalAction(3); // Manter
+                    break;
+                case 'f':
+                case 'F':
+                    handleGlobalAction(5); // Top
+                    break;
+                case 'a':
+                case 'A':
+                    reloadFolder(); // Sincronizar
+                    break;
+                case 'q':
+                case 'Q':
+                    undoLastAction(); // Desfazer
+                    break;
+            }
+        });
+
+        // --- SISTEMA DE VISIBILIDADE E NAVEGAÇÃO ---
+        function getVisibleCards() {
+            return Array.from(document.querySelectorAll('.card:not(.animating)'));
+        }
+
+        function getActiveCard() {
+            const cards = getVisibleCards();
+            return cards[currentViewIndex] || null;
+        }
+
+        function updateCardsVisibility() {
+            const cards = getVisibleCards();
+            const navLeft = document.getElementById('nav-left');
+            const navRight = document.getElementById('nav-right');
+
+            if(cards.length === 0) {
+                navLeft.style.display = 'none';
+                navRight.style.display = 'none';
+                return;
+            }
+            
+            if (currentViewIndex >= cards.length) currentViewIndex = Math.max(0, cards.length - 1);
+            if (currentViewIndex < 0) currentViewIndex = 0;
+
+            cards.forEach((card, index) => {
+                if (index === currentViewIndex) {
+                    card.style.visibility = 'visible';
+                    card.style.opacity = '1';
+                } else {
+                    card.style.visibility = 'hidden';
+                    card.style.opacity = '0';
+                }
+            });
+
+            navLeft.style.display = currentViewIndex > 0 ? 'flex' : 'none';
+            navRight.style.display = (currentViewIndex < cards.length - 1 || nextPageToken) ? 'flex' : 'none';
+
+            updateFilenameDisplay();
+        }
+
+        function prevPhoto() {
+            if (currentViewIndex > 0) {
+                currentViewIndex--;
+                updateCardsVisibility();
+            }
+        }
+
+        function nextPhoto() {
+            const cards = getVisibleCards();
+            if (currentViewIndex < cards.length - 1) {
+                currentViewIndex++;
+                updateCardsVisibility();
+            } else if (nextPageToken) {
+                listPhotos(); 
+            }
+        }
+
+        function updateFilenameDisplay() {
+            const topCard = getActiveCard();
+            const nameEl = document.getElementById('photo-name');
+            if (topCard) {
+                nameEl.innerText = topCard.dataset.fileName || "Sem título";
+            } else {
+                nameEl.innerText = "Nenhuma foto";
+            }
+        }
+
+        async function fetchTotalCount() {
+            let count = 0;
+            let pageToken = null;
+            const query = `'${SOURCE_FOLDER_ID}' in parents and mimeType contains 'image/' and trashed = false`;
+            const countDisplay = document.getElementById('photo-count');
+            countDisplay.innerText = "...";
+            
+            try {
+                do {
+                    const response = await gapi.client.drive.files.list({
+                        q: query, 
+                        pageSize: 1000, 
+                        fields: 'nextPageToken, files(id)', 
+                        pageToken: pageToken,
+                        orderBy: 'name' 
+                    });
+                    if (response.result.files) count += response.result.files.length;
+                    pageToken = response.result.nextPageToken;
+                } while (pageToken);
+                
+                totalPhotosInFolder = count;
+                updateCounterDisplay();
+            } catch (e) { countDisplay.innerText = "?"; }
+        }
+
+        function updateCounterDisplay() { 
+            document.getElementById('photo-count').innerText = totalPhotosInFolder; 
+        }
+
+        async function listPhotos() {
+            if (isFetching) return;
+            isFetching = true;
+            document.getElementById('end-screen').style.display = 'none';
+
+            const query = `'${SOURCE_FOLDER_ID}' in parents and mimeType contains 'image/' and trashed = false`;
+            const requestParams = {
+                'pageSize': 100, 
+                'fields': 'nextPageToken, files(id, thumbnailLink, parents, name)', 
+                'q': query,
+                'orderBy': 'name' 
+            };
+
+            if (nextPageToken) requestParams.pageToken = nextPageToken;
+            
+            try {
+                const response = await gapi.client.drive.files.list(requestParams);
+                nextPageToken = response.result.nextPageToken || null;
+                addCardsToStack(response.result.files);
+            } catch (e) { console.error("Erro na busca:", e); } 
+            finally { isFetching = false; }
+        }
+
+        function addCardsToStack(files) {
+            const container = document.getElementById('catalog-container');
+            const endScreen = document.getElementById('end-screen');
+
+            if (!files || files.length === 0) { 
+                if (getVisibleCards().length === 0) {
+                    endScreen.style.display = 'flex';
+                    updateFilenameDisplay();
+                }
+                return; 
+            }
+
+            let addedCount = 0;
+            files.forEach((file) => {
+                if (processedIds.has(file.id)) return;
+                processedIds.add(file.id);
+                addedCount++;
+
+                const card = createCardElement(file.id, file.thumbnailLink.replace('=s220', '=s800'), file.name);
+                container.appendChild(card);
+            });
+
+            updateCardsVisibility();
+
+            if (addedCount === 0 && getVisibleCards().length === 0) {
+                if (nextPageToken) listPhotos();
+                else endScreen.style.display = 'flex';
+            }
+        }
+
+        function createCardElement(fileId, imgUrl, fileName) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.dataset.fileId = fileId; 
+            card.dataset.fileName = fileName; 
+            card.innerHTML = `<img src="${imgUrl}">`;
+            return card;
+        }
+
+        function handleGlobalAction(rating) {
+            const activeCard = getActiveCard();
+            if (!activeCard) return;
+            const fileId = activeCard.dataset.fileId;
+            const fileName = activeCard.dataset.fileName;
+            
+            let x = 0, y = 0;
+            if (rating === 1) { x = -500; y = 100; } // Reject
+            else if (rating === 5) { x = 500; y = 100; } // Top
+            else if (rating === 3) { x = 500; y = 100; } // Manter
+            
+            animateOut(activeCard, fileId, rating, x, y, fileName);
+        }
+
+        function animateOut(el, fileId, rating, x, y, fileName) {
+            el.classList.add('animating'); 
+            el.style.transform = `translate(${x}px, ${y}px) rotate(${x/15}deg)`;
+            el.style.opacity = '0';
+            const imgUrl = el.querySelector('img').src;
+            
+            updateCardsVisibility(); 
+
+            setTimeout(() => {
+                el.remove();
+                checkAndFetchMore();
+            }, 200);
+
+            const newParent = FOLDER_DESTINATIONS[rating];
+            gapi.client.drive.files.update({
+                fileId: fileId, addParents: newParent, removeParents: SOURCE_FOLDER_ID
+            }).then(() => {
+                actionHistory.push({ fileId: fileId, destination: newParent, imgUrl: imgUrl, fileName: fileName });
+                updateUndoButtonState();
+                
+                if (totalPhotosInFolder > 0) totalPhotosInFolder--;
+                updateCounterDisplay();
+            }).catch(e => {
+                console.error("Erro na API ao mover imagem:", e);
+            });
+        }
+
+        async function undoLastAction() {
+            if (actionHistory.length === 0) return;
+            
+            const lastAction = actionHistory.pop();
+            updateUndoButtonState();
+
+            try {
+                await gapi.client.drive.files.update({
+                    fileId: lastAction.fileId, addParents: SOURCE_FOLDER_ID, removeParents: lastAction.destination
+                });
+                totalPhotosInFolder++;
+                updateCounterDisplay();
+            } catch (e) {
+                alert("Não foi possível devolver o arquivo para a origem no Drive.");
+                return; 
+            }
+
+            processedIds.delete(lastAction.fileId);
+            document.getElementById('end-screen').style.display = 'none';
+
+            const container = document.getElementById('catalog-container');
+            const card = createCardElement(lastAction.fileId, lastAction.imgUrl, lastAction.fileName);
+            
+            card.style.transform = 'translateY(-100px) scale(0.9)'; 
+            card.style.opacity = '0';
+            
+            const activeCard = getActiveCard();
+            if (activeCard) {
+                container.insertBefore(card, activeCard);
+            } else {
+                container.appendChild(card);
+            }
+
+            updateCardsVisibility();
+
+            requestAnimationFrame(() => {
+                card.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease';
+                card.style.transform = 'translateY(0) scale(1)';
+                card.style.opacity = '1';
+            });
+        }
+
+        function updateUndoButtonState() {
+            const undoBtn = document.getElementById('undo_button');
+            undoBtn.style.visibility = (actionHistory.length > 0) ? 'visible' : 'hidden';
+        }
+
+        function checkAndFetchMore() {
+            const remainingCards = getVisibleCards().length;
+            if (remainingCards <= 50 && nextPageToken) listPhotos();
+            else if (remainingCards === 0 && !nextPageToken) {
+                document.getElementById('end-screen').style.display = 'flex';
+                updateFilenameDisplay();
+            }
+        }
+
+        function reloadFolder() {
+            const container = document.getElementById('catalog-container');
+            container.querySelectorAll('.card').forEach(c => c.remove());
+            
+            nextPageToken = null; 
+            currentViewIndex = 0;
+            processedIds.clear();
+            actionHistory = []; 
+            updateUndoButtonState();
+            
+            document.getElementById('end-screen').style.display = 'none'; 
+            fetchTotalCount();
+            listPhotos(); 
+        }
+    </script>
+</body>
+</html>
