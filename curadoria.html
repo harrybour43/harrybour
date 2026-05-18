@@ -8,326 +8,292 @@
     <script src="https://apis.google.com/js/api.js" onload="gapiLoaded()" async defer></script>
     
     <style>
-        /* Layout Principal */
-        body { 
-            background-color: #000; 
-            color: #fff; 
-            margin: 0; 
-            overflow: hidden; 
-            display: flex; 
-            align-items: center; 
-            justify-content: flex-start; 
-            height: 100vh;
-            width: 100vw;
-            flex-direction: column;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            padding-top: 5vh; 
+        /* ===================================================
+           TOKENS DE DESIGN
+           =================================================== */
+        :root {
+            --bg:           #070707;
+            --surface:      #0f0f0f;
+            --surface-2:    #161616;
+            --surface-3:    #1e1e1e;
+            --border:       rgba(255, 255, 255, 0.06);
+            --border-mid:   rgba(255, 255, 255, 0.10);
+            --border-hi:    rgba(255, 255, 255, 0.18);
+            --text:         #e8e8e8;
+            --text-dim:     #666;
+            --text-muted:   #333;
+            --gold:         #c2994a;
+            --gold-glow:    rgba(194, 153, 74, 0.12);
+            --reject:       #c94444;
+            --reject-glow:  rgba(201, 68,  68,  0.10);
+            --manter:       #3d7ec4;
+            --manter-glow:  rgba(61,  126, 196, 0.10);
+            --top:          #3aaa72;
+            --top-glow:     rgba(58,  170, 114, 0.10);
+            --r-sm:   8px;
+            --r-md:   12px;
+            --r-lg:   18px;
+            --r-pill: 50px;
+            --font-serif:  'Playfair Display', Georgia, serif;
+            --font-ui:     'Barlow Condensed', Arial Narrow, sans-serif;
+            --font-mono:   'DM Mono', 'Courier New', monospace;
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        #auth_button { 
-            padding: 20px 40px; 
-            background: #fff; 
-            border: none;
-            border-radius: 50px; 
-            font-weight: bold;
-            cursor: pointer;
-            color: #000;
-            box-shadow: 0 6px 0 #ccc, 0 10px 15px rgba(0,0,0,0.5);
-            transition: all 0.1s ease;
-            text-transform: uppercase;
-            margin-top: 30vh; 
-        }
-        #auth_button:active {
-            transform: translateY(6px);
-            box-shadow: 0 0 0 #ccc, 0 4px 6px rgba(0,0,0,0.5);
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-        /* ---------------------------------------------------
-           CABEÇALHO (NOME DA FOTO E CONTADOR CENTRALIZADOS)
-           --------------------------------------------------- */
-        #top-bar {
-            position: fixed;
-            top: env(safe-area-inset-top, 20px);
-            left: 0;
-            width: 100%;
-            display: flex;
-            flex-direction: column; 
-            justify-content: flex-start;
-            align-items: center; 
-            padding: 0 20px;
-            box-sizing: border-box;
-            z-index: 1000;
-            pointer-events: none;
-            gap: 2px; 
-        }
-
-        #photo-count {
-            font-size: 2.5rem; 
-            font-weight: bold;
-            color: #fff;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
-            display: none; 
-            line-height: 1;
-        }
-
-        #photo-name {
-            font-size: 1rem;
-            color: #ccc; 
-            font-weight: 500;
-            max-width: 90vw;
-            white-space: nowrap;
+        /* ===================================================
+           LAYOUT BASE
+           =================================================== */
+        body {
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
             overflow: hidden;
-            text-overflow: ellipsis;
-            display: none;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.8);
-        }
-
-        /* ---------------------------------------------------
-           CONTAINER DE CARTAS (FOTOS E NAVEGAÇÃO)
-           --------------------------------------------------- */
-        #catalog-container { 
-            position: relative; 
-            width: 95vw; 
-            height: 57vh; 
-            margin-top: 8vh; 
-            display: none;
-            transition: opacity 0.3s ease; 
-        }
-
-        @media (min-width: 768px) {
-            #catalog-container { width: 50vw; }
-        }
-
-        .card { 
-            position: absolute; 
-            width: 100%; 
-            height: 100%; 
-            background: transparent; 
-            display: flex; 
-            flex-direction: column; 
+            display: flex;
             align-items: center;
-            justify-content: center;
-            transition: transform 0.2s ease-out, opacity 0.2s ease-out; 
+            justify-content: flex-start;
+            flex-direction: column;
+            height: 100dvh;
+            width: 100vw;
+            font-family: var(--font-ui);
+            padding-top: 2vh;
         }
 
-        .card img { 
-            max-width: 100%; 
-            max-height: 100%; 
-            width: auto;
-            height: auto;
-            object-fit: contain; 
-            pointer-events: none;
-            border-radius: 12px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.7); /* Vinheta reduzida */
-        }
-
-        /* Zonas de Toque Laterais para Navegação */
-        .nav-zone {
+        /* ===================================================
+           TELA DE LOGIN
+           =================================================== */
+        #login-title {
             position: absolute;
-            top: 0; bottom: 0;
-            width: 30%; 
-            display: none; 
-            align-items: center;
-            font-size: 2.5rem;
-            color: rgba(255, 255, 255, 0.4);
-            cursor: pointer;
-            z-index: 500000; 
-            transition: color 0.2s ease, background 0.2s ease;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        #nav-left { 
-            left: 0; 
-            justify-content: flex-start; 
-            padding-left: 10px; 
-            background: linear-gradient(to right, rgba(0,0,0,0.4), transparent);
-            border-top-left-radius: 12px;
-            border-bottom-left-radius: 12px;
-        }
-        #nav-right { 
-            right: 0; 
-            justify-content: flex-end; 
-            padding-right: 10px; 
-            background: linear-gradient(to left, rgba(0,0,0,0.4), transparent);
-            border-top-right-radius: 12px;
-            border-bottom-right-radius: 12px;
-        }
-        
-        .nav-zone:hover { color: rgba(255, 255, 255, 0.9); }
-        .nav-zone:active { color: #fff; }
-
-        /* ---------------------------------------------------
-           LAYOUT INFERIOR (CONTROLES SÓLIDOS)
-           --------------------------------------------------- */
-        #bottom-area {
-            position: fixed;
-            bottom: env(safe-area-inset-bottom, 25px); 
-            left: 0;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 15px; 
-            z-index: 9999;
-            pointer-events: none; 
-        }
-
-        #controls-wrapper {
-            display: none; 
-            justify-content: space-between;
-            align-items: flex-end;
-            padding: 0 10px;
-            pointer-events: none;
-        }
-
-        .left-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            pointer-events: auto;
-        }
-
-        .right-panel {
-            display: flex;
-            flex-direction: row;
-            gap: 10px;
-            pointer-events: auto;
-        }
-
-        .solid-btn {
-            background: rgba(255, 255, 255, 0.05); 
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
-            color: #fff;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-transform: uppercase;
-            touch-action: manipulation;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .solid-btn:active {
-            transform: scale(0.96) translateY(2px);
-        }
-
-        .btn-left-stack {
-            width: 130px;
-            height: 46px; 
-            border-radius: 12px;
-            font-size: 0.8rem;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-undo { border-color: rgba(255, 193, 7, 0.3); box-shadow: 0 4px 15px rgba(255, 193, 7, 0.1); visibility: hidden; }
-        .btn-sync { border-color: rgba(232, 62, 140, 0.3); box-shadow: 0 4px 15px rgba(232, 62, 140, 0.1); }
-
-        .btn-right-action {
-            width: 70px;
-            height: 104px; 
-            flex-direction: column;
-            border-radius: 16px;
+            top: calc(33vh - 52px);
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-ui);
             font-size: 0.65rem;
-            gap: 8px;
+            font-weight: 700;
+            letter-spacing: 6px;
+            color: var(--text-muted);
+            pointer-events: none;
+            z-index: 999998;
+            white-space: nowrap;
         }
-        .btn-right-action .icon { font-size: 1.4rem; }
+
+        #auth_button {
+            padding: 15px 52px;
+            background: transparent;
+            border: 1px solid var(--border-mid);
+            border-radius: var(--r-pill);
+            font-family: var(--font-ui);
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text);
+            cursor: pointer;
+            margin-top: 33vh;
+            position: relative;
+            z-index: 999999;
+            transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+        }
+        #auth_button:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-glow); }
+        #auth_button:active { transform: scale(0.97); }
+
+        /* ===================================================
+           BARRA DE PASTAS (TOPO)
+           =================================================== */
+        #folder-nav {
+            width: 100%; display: none; justify-content: center; align-items: center;
+            gap: 4px; padding: 8px 10px 2px; z-index: 1001; flex-wrap: nowrap; overflow-x: auto; box-sizing: border-box;
+        }
+
+        .folder-tab {
+            background: transparent; color: var(--text-dim); border: 1px solid transparent;
+            padding: 7px 13px; border-radius: var(--r-sm); font-family: var(--font-ui);
+            font-size: 0.72rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+            cursor: pointer; white-space: nowrap; transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+            touch-action: manipulation;
+        }
+        .folder-tab:hover { color: var(--text); background: var(--surface-2); border-color: var(--border); }
+        .folder-tab.active { color: var(--text); background: var(--surface-2); border-color: var(--border-mid); box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
+
+        /* ===================================================
+           CONTADOR E NOME DO ARQUIVO
+           =================================================== */
+        #info-bar { position: relative; width: 100%; display: flex; justify-content: center; align-items: baseline; padding: 6px 0 0; z-index: 1000; pointer-events: none; }
+        #photo-count { font-family: var(--font-serif); font-size: 2.6rem; font-weight: 400; color: var(--text); display: none; letter-spacing: -1.5px; line-height: 1; }
         
-        .btn-reject { border-color: rgba(220, 53, 69, 0.3); box-shadow: 0 4px 15px rgba(220, 53, 69, 0.1); }
-        .btn-manter { border-color: rgba(13, 110, 253, 0.3); box-shadow: 0 4px 15px rgba(13, 110, 253, 0.1); }
-        .btn-top    { border-color: rgba(40, 167, 69, 0.3); box-shadow: 0 4px 15px rgba(40, 167, 69, 0.1); }
-
-        #legend-strip { display: none; justify-content: center; width: 100%; pointer-events: none; }
-        #legend-btn {
-            background: #4b5563; border: none; color: #fff; padding: 10px 30px; border-radius: 25px;
-            font-size: 0.8rem; font-weight: bold; cursor: pointer; box-shadow: 0 6px 0 #374151, 0 10px 15px rgba(0,0,0,0.5);
-            pointer-events: auto; touch-action: manipulation; transition: all 0.1s ease; text-transform: uppercase;
-        }
-        #legend-btn:active { transform: translateY(6px); box-shadow: 0 0 0 #374151, 0 4px 6px rgba(0,0,0,0.5); }
-
-        /* MODAL DE LEGENDA */
-        #legend-modal {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); z-index: 100000;
-            display: none; align-items: center; justify-content: center; flex-direction: column;
-            padding: 20px; box-sizing: border-box; opacity: 0; transition: opacity 0.3s ease;
-        }
-        .legend-content { background: #111; border: 1px solid #333; border-radius: 15px; padding: 30px 20px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-        .legend-content h2 { margin-top: 0; text-align: center; color: #fff; font-size: 1.2rem; margin-bottom: 20px; }
-        .legend-content ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 15px; }
-        .legend-content li { display: flex; align-items: center; gap: 15px; font-size: 0.9rem; color: #ccc; line-height: 1.4; }
-        .legend-icon { font-size: 1.5rem; min-width: 30px; text-align: center; }
-        .legend-action { font-weight: bold; color: #fff; display: block; margin-bottom: 2px;}
+        /* Nova classe para estilizar o "/ total" */
+        .count-total { font-family: var(--font-ui); font-size: 1.2rem; color: var(--text-dim); font-weight: 600; letter-spacing: 1px; margin-left: 2px; }
         
-        /* Atalhos na Legenda */
-        .shortcut-badge { background: #333; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: auto; color: #aaa; border: 1px solid #555; }
+        #filename-display { width: 100%; text-align: center; font-family: var(--font-mono); font-style: italic; font-size: 0.6rem; font-weight: 300; color: var(--text-muted); margin-top: 5px; min-height: 1rem; z-index: 1000; letter-spacing: 0.2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 16px; }
 
-        #close-legend { margin-top: 30px; width: 100%; background: #333; color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        /* ===================================================
+           PALCO DA IMAGEM
+           =================================================== */
+        #catalog-container {
+            position: relative; width: 86vw; height: 50vh; margin-top: 10px; display: none; transition: opacity 0.25s ease; margin-left: auto; margin-right: auto; z-index: 10;
+        }
 
-        #end-screen { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; display: none; flex-direction: column; align-items: center; gap: 20px; z-index: 0; }
-        #empty-message { font-size: 1.2rem; color: #888; text-align: center;}
+        @media screen and (min-width: 951px) {
+            #catalog-container { width: 80vw; max-width: 920px; height: calc(100dvh - 230px); margin-top: 8px; }
+            .card img { max-width: 800px !important; max-height: 800px !important; }
+        }
 
+        .card { position: absolute; width: 100%; height: 100%; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: transform 0.2s ease-out, opacity 0.2s ease-out; }
+        .card img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; pointer-events: none; border-radius: var(--r-md); box-shadow: 0 2px 4px rgba(0,0,0,0.6), 0 8px 24px rgba(0,0,0,0.7), 0 24px 64px rgba(0,0,0,0.5); }
+
+        /* ===================================================
+           ZONAS DE NAVEGAÇÃO LATERAL
+           =================================================== */
+        .nav-zone { position: absolute; top: 0; bottom: 0; width: 35%; display: none; align-items: center; font-size: 2rem; color: rgba(255, 255, 255, 0.12); cursor: pointer; z-index: 500000; transition: color 0.15s ease; user-select: none; touch-action: manipulation; }
+        #nav-left  { left: 0;  justify-content: flex-start; padding-left: 12px; }
+        #nav-right { right: 0; justify-content: flex-end;   padding-right: 12px; }
+        .nav-zone:active { color: rgba(255, 255, 255, 0.5); }
+
+        /* ===================================================
+           TELA DE PASTA VAZIA E MODAIS
+           =================================================== */
+        #end-screen { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; display: none; flex-direction: column; align-items: center; gap: 16px; z-index: 0; }
+        #empty-message { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 400; color: var(--text-muted); text-align: center; letter-spacing: 0.3px; }
+
+        /* ===================================================
+           ÁREA INFERIOR — CONTROLES
+           =================================================== */
+        #bottom-area { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; flex-direction: column; z-index: 999999; pointer-events: none; padding-bottom: env(safe-area-inset-bottom, 0px); }
+        #controls-wrapper { display: none; flex-direction: column; gap: 8px; padding: 0 10px 8px; pointer-events: none; position: relative; }
+
+        .left-panel { display: flex; flex-direction: row; gap: 8px; pointer-events: auto; align-items: center; }
+        #undo-zone { position: absolute; right: 10px; bottom: calc(8px + 64px + 8px); pointer-events: auto; }
+        .right-panel { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; pointer-events: auto; width: 100%; }
+        .btn-text { display: inline; margin-left: 5px; }
+
+        .solid-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text); font-family: var(--font-ui); font-weight: 700; font-size: 0.72rem; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease; touch-action: manipulation; }
+        .solid-btn:active { transform: scale(0.95); }
+
+        .btn-left-stack { height: 44px; padding: 0 16px; border-radius: var(--r-sm); gap: 6px; }
+        #undo_button { height: 44px; padding: 0 14px; border-radius: var(--r-sm); gap: 5px; }
+        .btn-undo { border-color: rgba(194, 153, 74, 0.2); color: var(--gold); visibility: hidden; }
+        .btn-undo:hover { background: var(--gold-glow); border-color: var(--gold); }
+        .btn-sync { border-color: var(--border); }
+        .btn-sync:hover { background: var(--surface-2); border-color: var(--border-mid); }
+        
+        .btn-right-action { height: 64px; border-radius: var(--r-md); font-size: 0.7rem; letter-spacing: 1.5px; gap: 8px; flex-direction: column; }
+        .btn-right-action .icon { font-size: 1.2rem; }
+        .btn-reject { border-color: rgba(201, 68, 68, 0.2); color: #bb5555; }
+        .btn-reject:hover { background: var(--reject-glow); border-color: var(--reject); color: #e06666; }
+        .btn-manter { border-color: rgba(61, 126, 196, 0.2); color: #5588bb; }
+        .btn-manter:hover { background: var(--manter-glow); border-color: var(--manter); color: #6699cc; }
+        .btn-top { border-color: rgba(58, 170, 114, 0.2); color: #44997a; }
+        .btn-top:hover { background: var(--top-glow); border-color: var(--top); color: #55bb88; }
+
+        #hide-strip { display: none; justify-content: center; width: 100%; pointer-events: none; padding: 0 10px 10px; }
+        #hide-btn { background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 9px 40px; border-radius: var(--r-pill); font-family: var(--font-ui); font-size: 0.66rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; pointer-events: auto; transition: border-color 0.15s ease, color 0.15s ease; }
+        #hide-btn:hover { border-color: var(--border-mid); color: var(--text-dim); }
+
+        /* ===================================================
+           MOBILE GERAL (≤ 950px)
+           =================================================== */
+        @media screen and (max-width: 950px) {
+            body { padding-top: 1vh; }
+            .btn-text { display: none !important; }
+            .folder-tab { font-size: 1rem !important; padding: 9px 10px !important; border-radius: var(--r-md) !important; }
+            #photo-count { font-size: 2rem; }
+            .btn-left-stack, #undo_button { width: 54px !important; height: 54px !important; padding: 0 !important; border-radius: var(--r-md) !important; font-size: 1.3rem !important; gap: 0 !important; }
+            .btn-right-action { height: 66px; flex-direction: column !important; gap: 0 !important; font-size: 0.58rem !important; }
+            .btn-right-action .icon { font-size: 1.5rem; }
+            #undo-zone { bottom: calc(8px + 66px + 8px); }
+            #catalog-container { height: 47vh; }
+        }
+
+        /* ===================================================
+           MOBILE LANDSCAPE
+           =================================================== */
+        @media screen and (max-width: 950px) and (orientation: landscape), screen and (max-height: 600px) and (orientation: landscape) {
+            body { padding-top: 0; }
+            .landscape-only { display: block; }
+            #info-bar { position: fixed; top: 12px; right: 5%; left: auto; transform: none; width: auto; z-index: 1002; justify-content: flex-end; }
+            #filename-display { position: fixed; top: 44px; right: 5%; left: auto; transform: none; width: 40vw; z-index: 1002; text-align: right; padding: 0; }
+            #catalog-container { width: 42vw; height: 96dvh; margin-top: 2vh; margin-bottom: 2vh; margin-left: auto; margin-right: auto; }
+            #nav-left, #nav-right { display: none !important; }
+            #folder-nav { position: fixed; top: 50%; left: 2%; transform: translateY(-50%); display: grid !important; grid-template-columns: 1fr 1fr; width: 132px; background: rgba(7, 7, 7, 0.75); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 8px; gap: 8px; z-index: 1001; margin: 0; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+            .folder-tab { text-align: center; margin: 0; }
+            .left-panel .btn-sync { display: none !important; }
+            #hide-strip { position: fixed; right: 5%; bottom: 5%; width: auto; z-index: 1000; justify-content: flex-end; display: flex !important; padding: 0; }
+            .right-panel { position: fixed; right: 5%; bottom: calc(5% + 66px); display: flex !important; flex-direction: row; grid-template-columns: unset; gap: 10px; z-index: 1000; padding: 0; width: auto; }
+            .right-panel .btn-reject { position: fixed; right: calc(5% + 66px); bottom: 5%; }
+            .left-panel { position: fixed; right: 5%; bottom: calc(5% + 148px); left: auto; flex-direction: column; z-index: 1000; }
+            #undo-zone { position: fixed; right: calc(5% + 66px); bottom: calc(5% + 148px); left: auto; z-index: 1000; }
+        }
+
+        /* ===================================================
+           DESKTOP (> 950px)
+           =================================================== */
+        @media screen and (min-width: 951px) {
+            #folder-nav { padding: 10px 16px 4px; gap: 5px; }
+            .folder-tab { padding: 7px 16px; }
+            #photo-count { font-size: 3rem; }
+            #controls-wrapper { padding: 0 16px 14px; gap: 10px; }
+            #hide-strip { padding: 0 16px 14px; }
+            .btn-left-stack { height: 42px; font-size: 0.72rem; }
+            #undo_button    { height: 42px; font-size: 0.72rem; }
+            .btn-right-action { height: 60px; flex-direction: row; gap: 8px; font-size: 0.72rem; }
+            .btn-right-action .icon { font-size: 1rem; }
+            #undo-zone { bottom: calc(14px + 60px + 10px); }
+            #hide-btn { font-size: 0.66rem; }
+        }
     </style>
 </head>
 <body>
 
+    <div id="login-title">CURADORIA PRO</div>
     <button id="auth_button" onclick="handleAuthClick()">ABRIR PASTA</button>
     
-    <div id="top-bar">
-        <div id="photo-count">...</div>
-        <div id="photo-name"></div>
+    <div id="folder-nav">
+        <button class="folder-tab active" id="tab-beauty" title="Mudar para Beauty (Tecla +)" onclick="changeFolder('BEAUTY')">Beauty</button>
+        <button class="folder-tab" id="tab-book" title="Mudar para Book (Tecla +)" onclick="changeFolder('BOOK')">Book</button>
+        <button class="folder-tab" id="tab-manter" title="Mudar para Mantidas (Tecla +)" onclick="changeFolder('MANTER')">Mantidas</button>
+        <button class="folder-tab" id="tab-top" title="Mudar para Melhores (Tecla +)" onclick="changeFolder('TOP')">Melhores</button>
     </div>
+    
+    <div id="info-bar">
+        <div id="photo-count">...</div>
+    </div>
+    <div id="filename-display"></div>
 
     <div id="catalog-container">
         <div id="end-screen">
             <div id="empty-message">A pasta está limpa!</div>
         </div>
         
-        <div id="nav-left" class="nav-zone" onclick="prevPhoto()">&#10094;</div>
-        <div id="nav-right" class="nav-zone" onclick="nextPhoto()">&#10095;</div>
+        <div id="nav-left" class="nav-zone" title="Navegar (Seta Esquerda)" onclick="prevPhoto()">&#10094;</div>
+        <div id="nav-right" class="nav-zone" title="Navegar (Seta Direita)" onclick="nextPhoto()">&#10095;</div>
     </div>
 
     <div id="bottom-area">
         <div id="controls-wrapper">
+            <div id="undo-zone">
+                <button id="undo_button" class="solid-btn btn-left-stack btn-undo" title="Desfazer Movimentação (Teclas: 1 ou A)" onclick="undoLastAction()">↩ <span class="btn-text">Voltar</span></button>
+            </div>
+
             <div class="left-panel">
-                <button id="undo_button" class="solid-btn btn-left-stack btn-undo" onclick="undoLastAction()">↩ Voltar</button>
-                <button class="solid-btn btn-left-stack btn-sync" onclick="reloadFolder()">🔄 Sincronizar</button>
+                <button class="solid-btn btn-left-stack btn-sync" title="Sincronizar (Teclas: 3 ou G)" onclick="reloadFolder()">🔄 <span class="btn-text">Sync</span></button>
             </div>
             
             <div class="right-panel">
-                <button class="solid-btn btn-right-action btn-reject" onclick="handleGlobalAction(1)">
-                    <span class="icon">🏴</span> REJECT
+                <button class="solid-btn btn-right-action btn-reject" title="Rejeitar (Teclas: 4 ou S)" onclick="handleGlobalAction(1)">
+                    <span class="icon">🏴</span> <span class="btn-text">REJECT</span>
                 </button>
-                <button class="solid-btn btn-right-action btn-manter" onclick="handleGlobalAction(3)">
-                    <span class="icon">📁</span> MANTER
+                <button class="solid-btn btn-right-action btn-manter" title="Manter (Teclas: 5 ou D)" onclick="handleGlobalAction(3)">
+                    <span class="icon">✅</span> <span class="btn-text">MANTER</span>
                 </button>
-                <button class="solid-btn btn-right-action btn-top" onclick="handleGlobalAction(5)">
-                    <span class="icon">🏳️</span> TOP
+                <button class="solid-btn btn-right-action btn-top" title="Melhores (Teclas: 6 ou F)" onclick="handleGlobalAction(5)">
+                    <span class="icon">⭐</span> <span class="btn-text">TOP</span>
                 </button>
             </div>
         </div>
 
-        <div id="legend-strip">
-            <button id="legend-btn" onclick="toggleLegend()">Legenda e Atalhos</button>
-        </div>
-    </div>
-
-    <div id="legend-modal" onclick="if(event.target === this) toggleLegend()">
-        <div class="legend-content">
-            <h2>Funções do Painel e Atalhos</h2>
-            <ul>
-                <li><div class="legend-icon">↩</div><div><span class="legend-action">VOLTAR</span> Desfaz a última ação.</div><div class="shortcut-badge">Tecla Q</div></li>
-                <li><div class="legend-icon">🔄</div><div><span class="legend-action">SINCRONIZAR</span> Puxa novas fotos.</div><div class="shortcut-badge">Tecla A</div></li>
-                <li><div class="legend-icon">🏴</div><div><span class="legend-action">REJECT</span> Move p/ rejeitadas.</div><div class="shortcut-badge">Tecla S</div></li>
-                <li><div class="legend-icon">📁</div><div><span class="legend-action">MANTER</span> Avaliação posterior.</div><div class="shortcut-badge">Tecla D</div></li>
-                <li><div class="legend-icon">🏳️</div><div><span class="legend-action">TOP</span> Melhores fotos.</div><div class="shortcut-badge">Tecla F</div></li>
-                <li><div class="legend-icon">&#10094;&#10095;</div><div><span class="legend-action">NAVEGAÇÃO</span> Alternar entre fotos.</div><div class="shortcut-badge">Setas</div></li>
-            </ul>
-            <button id="close-legend" onclick="toggleLegend()">Fechar (ESC)</button>
+        <div id="hide-strip">
+            <button id="hide-btn" title="Esconder (Teclas: 0 ou X)" onclick="toggleControls()">ESCONDER</button>
         </div>
     </div>
 
@@ -335,7 +301,19 @@
         const CLIENT_ID = '905891014579-fjgqvkgbiucl4c0asn68pbv1p5gm6ofn.apps.googleusercontent.com';
         const SCOPES = 'https://www.googleapis.com/auth/drive'; 
         
-        const SOURCE_FOLDER_ID = '1BA8IT7dnXU5QF5aFkqwzokNcbJnL7Ar-'; 
+        // --- MAPEAMENTO DAS PASTAS SOURCE ---
+        const SOURCE_FOLDERS = {
+            BEAUTY: '11VNMaaXCr2pR-0ispSvjn38AHq9VgsfP',
+            BOOK: '1szTtFyDUtVBCIWC-z-V4sts50HlAvG33',
+            MANTER: '1edv5_Wz-ehpqNWa7joxCALyVce37iwxI', // Mesma ID do destino "Manter"
+            TOP: '12Z_2tnPrTNhqUztoMvM6mHt9EDhlVRfx'     // Mesma ID do destino "Top"
+        };
+        const FOLDER_KEYS = ['BEAUTY', 'BOOK', 'MANTER', 'TOP'];
+        
+        // Pasta atual, inicia no Beauty
+        let currentSourceFolderId = SOURCE_FOLDERS.BEAUTY;
+
+        // --- PASTAS DE DESTINO ---
         const FOLDER_DESTINATIONS = {
             1: '1-BjrThu-4UVnG3ceMR_cNYfmC2-IJVRV', // Reject
             3: '1edv5_Wz-ehpqNWa7joxCALyVce37iwxI', // Manter
@@ -348,7 +326,7 @@
 
         let nextPageToken = null;
         let isFetching = false;
-        let undoZIndex = 200000; 
+        let isFetchingTotal = false;
         
         const processedIds = new Set(); 
         let actionHistory = []; 
@@ -373,12 +351,13 @@
         function handleAuthClick() {
             tokenClient.callback = async (resp) => {
                 document.getElementById('auth_button').style.display = 'none';
+                document.getElementById('login-title').style.display = 'none';
+                
+                document.getElementById('folder-nav').style.display = 'flex';
                 document.getElementById('catalog-container').style.display = 'block';
                 document.getElementById('controls-wrapper').style.display = 'flex'; 
-                document.getElementById('legend-strip').style.display = 'flex'; 
-                
+                document.getElementById('hide-strip').style.display = 'flex'; 
                 document.getElementById('photo-count').style.display = 'block'; 
-                document.getElementById('photo-name').style.display = 'block'; 
                 
                 fetchTotalCount();
                 await listPhotos();
@@ -387,69 +366,59 @@
             tokenClient.requestAccessToken(); 
         }
 
-        function toggleLegend() {
-            const modal = document.getElementById('legend-modal');
-            if (modal.style.display === 'flex') {
-                modal.style.opacity = '0';
-                setTimeout(() => modal.style.display = 'none', 300);
+        // --- FUNÇÃO PARA TROCAR DE PASTA ---
+        function changeFolder(folderKey) {
+            if (currentSourceFolderId === SOURCE_FOLDERS[folderKey]) return; // Já está na pasta
+
+            currentSourceFolderId = SOURCE_FOLDERS[folderKey];
+
+            // Atualiza o visual das abas
+            document.querySelectorAll('.folder-tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(`tab-${folderKey.toLowerCase()}`).classList.add('active');
+
+            // Recarrega o conteúdo da nova pasta
+            reloadFolder();
+        }
+
+        // --- FUNÇÃO PARA CICLAR PASTAS (Teclado +) ---
+        function cycleFolder() {
+            let currentIndex = FOLDER_KEYS.findIndex(key => SOURCE_FOLDERS[key] === currentSourceFolderId);
+            let nextIndex = (currentIndex + 1) % FOLDER_KEYS.length;
+            changeFolder(FOLDER_KEYS[nextIndex]);
+        }
+
+        function toggleControls() {
+            const controls = document.getElementById('controls-wrapper');
+            const btn = document.getElementById('hide-btn');
+            if (controls.style.display === 'none') {
+                controls.style.display = 'flex';
+                btn.innerText = 'ESCONDER';
             } else {
-                modal.style.display = 'flex';
-                setTimeout(() => modal.style.opacity = '1', 10);
+                controls.style.display = 'none';
+                btn.innerText = 'MOSTRAR';
             }
         }
 
         // --- SISTEMA DE ATALHOS DE TECLADO ---
         document.addEventListener('keydown', (event) => {
-            const modal = document.getElementById('legend-modal');
-            const isModalOpen = modal.style.display === 'flex';
-
-            if (isModalOpen) {
-                if (event.key === 'Escape') toggleLegend();
-                return; // Bloqueia outros comandos enquanto o modal estiver aberto
-            }
-
-            // Impede disparos múltiplos se o usuário segurar a tecla
-            if (event.repeat) return;
+            if (event.repeat) return; // Evita disparos múltiplos segurando a tecla
 
             switch(event.key) {
-                case 'ArrowLeft':
-                    prevPhoto();
-                    break;
-                case 'ArrowRight':
-                    nextPhoto();
-                    break;
-                case 's':
-                case 'S':
-                    handleGlobalAction(1); // Reject
-                    break;
-                case 'd':
-                case 'D':
-                    handleGlobalAction(3); // Manter
-                    break;
-                case 'f':
-                case 'F':
-                    handleGlobalAction(5); // Top
-                    break;
-                case 'a':
-                case 'A':
-                    reloadFolder(); // Sincronizar
-                    break;
-                case 'q':
-                case 'Q':
-                    undoLastAction(); // Desfazer
-                    break;
+                case 'ArrowLeft': prevPhoto(); break;
+                case 'ArrowRight': nextPhoto(); break;
+                case '4': case 's': case 'S': handleGlobalAction(1); break;
+                case '5': case 'd': case 'D': handleGlobalAction(3); break;
+                case '6': case 'f': case 'F': handleGlobalAction(5); break;
+                case '3': case 'g': case 'G': reloadFolder(); break;
+                case '1': case 'a': case 'A': undoLastAction(); break;
+                case '0': case 'x': case 'X': toggleControls(); break;
+                case '+': cycleFolder(); break;
             }
         });
 
         // --- SISTEMA DE VISIBILIDADE E NAVEGAÇÃO ---
-        function getVisibleCards() {
-            return Array.from(document.querySelectorAll('.card:not(.animating)'));
-        }
-
-        function getActiveCard() {
-            const cards = getVisibleCards();
-            return cards[currentViewIndex] || null;
-        }
+        function getVisibleCards() { return Array.from(document.querySelectorAll('.card:not(.animating)')); }
+        function getActiveCard() { const cards = getVisibleCards(); return cards[currentViewIndex] || null; }
 
         function updateCardsVisibility() {
             const cards = getVisibleCards();
@@ -459,6 +428,8 @@
             if(cards.length === 0) {
                 navLeft.style.display = 'none';
                 navRight.style.display = 'none';
+                updateFilenameDisplay();
+                updateCounterDisplay(); // Atualiza contador quando não há cartas
                 return;
             }
             
@@ -479,6 +450,7 @@
             navRight.style.display = (currentViewIndex < cards.length - 1 || nextPageToken) ? 'flex' : 'none';
 
             updateFilenameDisplay();
+            updateCounterDisplay(); // Atualiza o contador durante a navegação/mudança de tela
         }
 
         function prevPhoto() {
@@ -500,7 +472,7 @@
 
         function updateFilenameDisplay() {
             const topCard = getActiveCard();
-            const nameEl = document.getElementById('photo-name');
+            const nameEl = document.getElementById('filename-display');
             if (topCard) {
                 nameEl.innerText = topCard.dataset.fileName || "Sem título";
             } else {
@@ -509,11 +481,12 @@
         }
 
         async function fetchTotalCount() {
+            isFetchingTotal = true;
             let count = 0;
             let pageToken = null;
-            const query = `'${SOURCE_FOLDER_ID}' in parents and mimeType contains 'image/' and trashed = false`;
+            const query = `'${currentSourceFolderId}' in parents and mimeType contains 'image/' and trashed = false`;
             const countDisplay = document.getElementById('photo-count');
-            countDisplay.innerText = "...";
+            countDisplay.innerHTML = "...";
             
             try {
                 do {
@@ -529,12 +502,37 @@
                 } while (pageToken);
                 
                 totalPhotosInFolder = count;
+            } catch (e) { 
+                console.error("Erro ao contar:", e);
+            } finally {
+                isFetchingTotal = false;
                 updateCounterDisplay();
-            } catch (e) { countDisplay.innerText = "?"; }
+            }
         }
 
         function updateCounterDisplay() { 
-            document.getElementById('photo-count').innerText = totalPhotosInFolder; 
+            // Se ainda está calculando o total, mantém o "..."
+            if (isFetchingTotal) {
+                document.getElementById('photo-count').innerHTML = "...";
+                return;
+            }
+
+            // Se não há fotos na pasta
+            if (totalPhotosInFolder === 0) {
+                document.getElementById('photo-count').innerHTML = "0";
+                return;
+            }
+            
+            const cards = getVisibleCards();
+            let current = "..."; // fallback se estiver renderizando
+            
+            // A posição da foto atual na fila de não processadas é exatamente index + 1
+            if (cards.length > 0) {
+                current = currentViewIndex + 1;
+            }
+            
+            // Atualiza o contador usando o estilo especial para a segunda metade (/ Total)
+            document.getElementById('photo-count').innerHTML = `${current}<span class="count-total">/ ${totalPhotosInFolder}</span>`; 
         }
 
         async function listPhotos() {
@@ -542,7 +540,7 @@
             isFetching = true;
             document.getElementById('end-screen').style.display = 'none';
 
-            const query = `'${SOURCE_FOLDER_ID}' in parents and mimeType contains 'image/' and trashed = false`;
+            const query = `'${currentSourceFolderId}' in parents and mimeType contains 'image/' and trashed = false`;
             const requestParams = {
                 'pageSize': 100, 
                 'fields': 'nextPageToken, files(id, thumbnailLink, parents, name)', 
@@ -627,10 +625,21 @@
             }, 200);
 
             const newParent = FOLDER_DESTINATIONS[rating];
+            const sourceFolderAtTimeOfAction = currentSourceFolderId;
+
+            // Evitar chamadas desnecessárias se estivermos mandando o arquivo para a mesma pasta que ele já está
+            if (sourceFolderAtTimeOfAction === newParent) {
+                actionHistory.push({ fileId: fileId, destination: newParent, sourceFolder: sourceFolderAtTimeOfAction, imgUrl: imgUrl, fileName: fileName, noOp: true });
+                updateUndoButtonState();
+                if (totalPhotosInFolder > 0) totalPhotosInFolder--;
+                updateCounterDisplay();
+                return;
+            }
+
             gapi.client.drive.files.update({
-                fileId: fileId, addParents: newParent, removeParents: SOURCE_FOLDER_ID
+                fileId: fileId, addParents: newParent, removeParents: sourceFolderAtTimeOfAction
             }).then(() => {
-                actionHistory.push({ fileId: fileId, destination: newParent, imgUrl: imgUrl, fileName: fileName });
+                actionHistory.push({ fileId: fileId, destination: newParent, sourceFolder: sourceFolderAtTimeOfAction, imgUrl: imgUrl, fileName: fileName, noOp: false });
                 updateUndoButtonState();
                 
                 if (totalPhotosInFolder > 0) totalPhotosInFolder--;
@@ -646,40 +655,46 @@
             const lastAction = actionHistory.pop();
             updateUndoButtonState();
 
-            try {
-                await gapi.client.drive.files.update({
-                    fileId: lastAction.fileId, addParents: SOURCE_FOLDER_ID, removeParents: lastAction.destination
-                });
+            // Desfaz alteração na API do Drive (caso ela realmente tenha acontecido)
+            if (!lastAction.noOp) {
+                try {
+                    await gapi.client.drive.files.update({
+                        fileId: lastAction.fileId, addParents: lastAction.sourceFolder, removeParents: lastAction.destination
+                    });
+                } catch (e) {
+                    alert("Não foi possível devolver o arquivo para a origem no Drive.");
+                    return; 
+                }
+            }
+
+            // Atualiza o contador se voltamos para a mesma pasta
+            if (currentSourceFolderId === lastAction.sourceFolder) {
                 totalPhotosInFolder++;
-                updateCounterDisplay();
-            } catch (e) {
-                alert("Não foi possível devolver o arquivo para a origem no Drive.");
-                return; 
+
+                processedIds.delete(lastAction.fileId);
+                document.getElementById('end-screen').style.display = 'none';
+
+                const container = document.getElementById('catalog-container');
+                const card = createCardElement(lastAction.fileId, lastAction.imgUrl, lastAction.fileName);
+                
+                card.style.transform = 'translateY(-100px) scale(0.9)'; 
+                card.style.opacity = '0';
+                
+                const activeCard = getActiveCard();
+                if (activeCard) {
+                    container.insertBefore(card, activeCard);
+                } else {
+                    container.appendChild(card);
+                }
+
+                updateCardsVisibility();
+
+                requestAnimationFrame(() => {
+                    card.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease';
+                    card.style.transform = 'translateY(0) scale(1)';
+                    card.style.opacity = '1';
+                });
             }
-
-            processedIds.delete(lastAction.fileId);
-            document.getElementById('end-screen').style.display = 'none';
-
-            const container = document.getElementById('catalog-container');
-            const card = createCardElement(lastAction.fileId, lastAction.imgUrl, lastAction.fileName);
-            
-            card.style.transform = 'translateY(-100px) scale(0.9)'; 
-            card.style.opacity = '0';
-            
-            const activeCard = getActiveCard();
-            if (activeCard) {
-                container.insertBefore(card, activeCard);
-            } else {
-                container.appendChild(card);
-            }
-
-            updateCardsVisibility();
-
-            requestAnimationFrame(() => {
-                card.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease';
-                card.style.transform = 'translateY(0) scale(1)';
-                card.style.opacity = '1';
-            });
         }
 
         function updateUndoButtonState() {
@@ -704,9 +719,13 @@
             currentViewIndex = 0;
             processedIds.clear();
             actionHistory = []; 
+            totalPhotosInFolder = 0; 
+            
             updateUndoButtonState();
             
             document.getElementById('end-screen').style.display = 'none'; 
+            document.getElementById('photo-count').innerHTML = "..."; 
+            
             fetchTotalCount();
             listPhotos(); 
         }
