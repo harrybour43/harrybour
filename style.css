@@ -1215,3 +1215,94 @@ body[data-page="mapa"] .app-wrapper.no-sidebar .main-content {
   background-color: var(--text-main); 
   color: var(--bg-base); 
 }
+/* ==========================================
+   FLIPBOOK (Leitor de Photobooks)
+========================================== */
+.flipbook-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: var(--bg-overlay);
+  backdrop-filter: blur(5px);
+  z-index: 3000;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.flipbook-container {
+  width: 90vw;
+  max-width: 1200px;
+  height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* O fundo do livro (simula o papel) */
+.page {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5); /* Sombra interna próxima ao vinco */
+  overflow: hidden;
+}
+
+.page-content {
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+}
+
+/* Lógica do Spread Horizontal (O Pulo do Gato) */
+/* A metade esquerda da imagem ocupa a página par */
+.spread-left {
+  background-size: 200% 100%;
+  background-position: left center;
+}
+/* A metade direita da imagem ocupa a página ímpar */
+.spread-right {
+  background-size: 200% 100%;
+  background-position: right center;
+}
+
+/* Controles de Navegação do Flipbook */
+.flipbook-controls {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  color: var(--text-main);
+  font-family: var(--font-ui);
+}
+
+.flipbook-controls button {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.flipbook-controls button:hover {
+  background: var(--bg-surface);
+}
+
+/* Miniatura do Livro na Galeria */
+.book-thumbnail {
+  position: relative;
+  transition: transform 0.2s;
+}
+.book-thumbnail:hover {
+  transform: translateY(-5px);
+}
+.book-thumbnail-title {
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-top: 10px;
+  letter-spacing: 1px;
+}
